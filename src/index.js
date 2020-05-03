@@ -12,10 +12,102 @@ const dserror = makeLogger(
   "background-color: #ff0000; color: #ffffff; padding: 2px 5px; border-radius: 2px"
 );
 
+class SharedSpriteManager {
+  constructor() {
+    this.sprites = [];
+  }
+  async init() {
+    // subscribe to sprite_list
+    this.sprite_list = ds.record.getList("sprites");
+
+    this.sprite_list.on("entry-added", (id, index) => {
+      dslog("sprites entry-added", id, index);
+      this.attachSprite(id);
+    });
+
+    this.sprite_list.on("entry-removed", (id, index) => {
+      dslog("sprites entry-removed", id, index);
+      this.detachSprite(id);
+    });
+
+    // populate sprites
+    await this.sprite_list.whenReady();
+    const ids = this.sprite_list.getEntries();
+    ids.forEach((id) => {
+      this.attachSprite(id);
+    });
+  }
+
+  attachSprite(id) {
+    const r = ds.record.getRecord(id);
+    const s = new DraggedSprite(id, r);
+    this.sprites.push(s);
+
+    king = r;
+  }
+
+  detachSprite(id) {
+    ds.record.getRecord(id).discard();
+    this.sprites = this.sprites.filter((s) => s.id !== id);
+  }
+
+  async addSharedSprite(x, y, w, h, src, type = "SharedSprite", id) {
+    id = id || `sprites/${ds.getUid()}`;
+    const r = await ds.record.getRecord(id);
+    r.set({ x, y, w, h, src, type });
+    await r.whenReady();
+
+    this.sprite_list.addEntry(id);
+    return r;
+  }
+
+  clear() {
+    // remove records from the list first, then delete them
+    // so that ids in the list are always valid records
+    const ids = this.sprite_list.getEntries();
+    this.sprite_list.setEntries([]);
+    ids.forEach(async (id) => {
+      ds.record.getRecord(id).delete();
+    });
+  }
+
+  mousePressed(e) {
+    this.sprites.forEach((s) => s.mousePressed && s.mousePressed(e));
+
+    for (let i = this.sprites.length - 1; i >= 0; i--) {
+      const s = this.sprites[i];
+      const data = s.getData();
+      if (
+        s.mousePressedInside &&
+        mouseX > data.x &&
+        mouseY > data.y &&
+        mouseX < data.x + data.w &&
+        mouseY < data.y + data.h
+      ) {
+        s.mousePressedInside(e);
+        break;
+      }
+    }
+  }
+
+  mouseReleased(e) {
+    this.sprites.forEach((s) => s.mouseReleased && s.mouseReleased(e));
+  }
+
+  mouseMoved(e) {
+    this.sprites.forEach((s) => s.mouseMoved && s.mouseMoved(e));
+  }
+
+  mouseDragged(e) {
+    this.sprites.forEach((s) => s.mouseDragged && s.mouseDragged(e));
+  }
+}
+
 let ds;
-let sprite_list;
-let sprites = [];
-let images = [];
+
+const images = [];
+
+const spriteManager = new SharedSpriteManager();
 
 let king;
 
@@ -40,25 +132,41 @@ function setup() {
 
   const add_sprite_button = createButton("add sprite");
   add_sprite_button.mousePressed(() => {
-    king = addSharedSprite(random(100), random(100), 60, 88, "images/king.png");
+    king = spriteManager.addSharedSprite(
+      random(100),
+      random(100),
+      60,
+      88,
+      "images/king.png"
+    );
   });
 }
 
 function draw() {
   background(50);
-  sprites.forEach((s) => s.draw());
+  spriteManager.sprites.forEach((s) => s.draw && s.draw());
+}
+
+function mousePressed(e) {
+  spriteManager.mousePressed(e);
+}
+
+function mouseReleased(e) {
+  spriteManager.mouseReleased(e);
+}
+
+function mouseMoved(e) {
+  spriteManager.mouseMoved(e);
+}
+
+function mouseDragged(e) {
+  spriteManager.mouseDragged(e);
 }
 
 function init() {
-  // remove records from the list first, then delete them
-  // so that ids in the list are always valid records
-  const ids = sprite_list.getEntries();
-  sprite_list.setEntries([]);
-  ids.forEach(async (id) => {
-    ds.record.getRecord(id).delete();
-  });
+  spriteManager.clear();
 
-  king = addSharedSprite(50, 50, 60, 88, "images/king.png");
+  king = spriteManager.addSharedSprite(50, 50, 60, 88, "images/king.png");
 }
 
 async function setupDeepstream() {
@@ -76,143 +184,9 @@ async function setupDeepstream() {
     dslog("connectionStateChanged", connectionState)
   );
 
-  // subscribe to sprite_list
-  sprite_list = ds.record.getList("sprites");
-
-  sprite_list.on("entry-added", (id, index) => {
-    dslog("sprites entry-added", id, index);
-    attachSprite(id);
-  });
-
-  sprite_list.on("entry-removed", (id, index) => {
-    dslog("sprites entry-removed", id, index);
-    detachSprite(id);
-  });
-
-  // populate sprites
-  await sprite_list.whenReady();
-  const ids = sprite_list.getEntries();
-  ids.forEach((id) => {
-    attachSprite(id);
-  });
-}
-
-// i can't include the class name in the record
-// and then instantiate the correct object because
-// i instantiate the object _before_ the record is loaded
-// i'd either have to figure out another way instantiate and add to list (null placeholder)
-// or maybe use an entity component pattern instead
-// all shared sprites are shared sprites, but they have a component that gives them behavior
-
-function attachSprite(id) {
-  const r = ds.record.getRecord(id);
-  const s = new DraggedSprite(id, r);
-  sprites.push(s);
-
-  king = r;
-}
-
-function detachSprite(id) {
-  ds.record.getRecord(id).discard();
-  sprites = sprites.filter((sprite) => sprite.id !== id);
-}
-
-async function addSharedSprite(x, y, w, h, src, type = "SharedSprite", id) {
-  id = id || `sprites/${ds.getUid()}`;
-  const r = await ds.record.getRecord(id);
-  r.set({ x, y, w, h, src, type });
-  await r.whenReady();
-
-  sprite_list.addEntry(id);
-  return r;
-}
-
-class SharedSprite {
-  constructor(id, record) {
-    this.id = id;
-    this.record = record;
-  }
-
-  draw() {
-    const data = this.getData();
-    if (!data) return;
-
-    noSmooth();
-    image(images[data.src], data.x, data.y, data.w, data.h);
-    fill("white");
-    text(this.id.substr(-5), data.x, data.y);
-  }
-
-  getData() {
-    if (!this.record.isReady) {
-      return false;
-    }
-
-    const data = this.record.get();
-
-    if (!data || isEmpty(data)) {
-      console.error("!data", this.id);
-      return false;
-    }
-    return data;
-  }
-}
-
-class DraggedSprite extends SharedSprite {
-  mousePressed(e) {
-    const data = this.getData();
-    if (!data) return;
-
-    if (
-      mouseX > data.x &&
-      mouseY > data.y &&
-      mouseX < data.x + data.w &&
-      mouseY < data.y + data.h
-    ) {
-      this.dragging = true;
-      console.log("drag");
-    }
-  }
-
-  mouseDragged(e) {
-    if (this.dragging) {
-      const data = this.getData();
-      if (!data) return;
-      this.record.set("x", mouseX - data.w * 0.5);
-      this.record.set("y", mouseY - data.h * 0.5);
-    }
-  }
-
-  mouseReleased() {
-    this.dragging = false;
-  }
+  await spriteManager.init();
 }
 
 window.addEventListener("unload", function (event) {
-  console.log("I am the 3rd one.");
+  console.log("I'm Unloading!");
 });
-
-function mousePressed(e) {
-  console.log("mousePressed");
-  sprites.forEach((s) => {
-    s.mousePressed && s.mousePressed(e);
-  });
-}
-
-function mouseReleased(e) {
-  sprites.forEach((s) => {
-    s.mouseReleased && s.mouseReleased(e);
-  });
-}
-
-function mouseMoved(e) {
-  sprites.forEach((s) => {
-    s.mouseMoved && s.mouseMoved(e);
-  });
-}
-
-function mouseDragged(e) {
-  sprites.forEach((s) => {
-    s.mouseDragged && s.mouseDragged(e);
-  });
-}
