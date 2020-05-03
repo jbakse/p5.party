@@ -1,0 +1,329 @@
+# General
+# Each server within a cluster needs a unique name. Set to UUID to have deepstream autogenerate a unique id
+serverName: UUID
+# Show the deepstream logo on startup
+showLogo: true
+# Log messages with this level and above. Valid levels are DEBUG, INFO, WARN, ERROR, OFF
+logLevel: INFO
+# Plugin startup timeout – deepstream init will fail if any plugins fail to emit a 'done' event within this timeout
+dependencyInitializationTimeout: 5000
+# Directory where all plugins reside
+#libDir: ../lib
+# Exit the process a fatal error occurs, like losing a cache connection
+exitOnFatalError: false
+
+rpc:
+  # Timeout for client RPC acknowledgement
+  ackTimeout: 1000
+  # Timeout for actual RPC provider response
+  responseTimeout: 10000
+
+record:
+  # Maximum time permitted to fetch from cache
+  cacheRetrievalTimeout: 30000
+  # Maximum time permitted to fetch from storage
+  storageRetrievalTimeout: 30000
+  # A list of prefixes that, when a record starts with one of the prefixes the
+  # records data won't be stored in the db
+  # storageExclusionPrefixes:
+  #   - no-storage/
+  #   - temporary-data/
+  # A list of prefixes that, when a record is updated via setData and it matches one of the prefixes
+  # it will be permissioned and written directly to the cache and storage layers
+  # storageHotPathPrefixes:
+  #   - analytics/
+  #   - metrics/
+
+  # Invalid configuration: data should NOT have additional properties
+listen:
+  # Try finding a provider randomly rather than by the order they subscribed to.
+  shuffleProviderss: true
+  # The amount of time to wait for a provider to acknowledge or reject a listen request
+  responseTimeout: 500
+  # The amount of time before trying to reattempt finding matches for subscriptions. This
+  # is not a cheap operation so it's recommended to raise keep this at minutes rather then
+  # second intervals if you are experiencing heavy loads
+  rematchInterval: 60000
+  # The amount of time a server will refuse to retry finding a subscriber after a previously
+  # failed attempt. This is used to avoid servers constantly trying to find a match without a
+  # cooldown period
+  matchCooldown: 10000
+
+httpServer:
+  type: default
+  options:
+    # url path for http health-checks, GET requests to this path will return 200 if deepstream is alive
+    healthCheckPath: /health-check
+    # -- CORS --
+    # if disabled, only requests with an 'Origin' header matching one specified under 'origins'
+    # below will be permitted and the 'Access-Control-Allow-Credentials' response header will be
+    # enabled
+    allowAllOrigins: true
+    # a list of allowed origins
+    origins:
+      - 'https://example.com'
+    # Options required to create an ssl app
+    # ssl:
+    #   key: fileLoad(ssl/key.pem)
+    #   cert: fileLoad(ssl/cert.pem)
+    #   ca: ...
+
+  # type: uws
+  # options:
+  #   # url path for http health-checks, GET requests to this path will return 200 if deepstream is alive
+  #   healthCheckPath: /health-check
+  #   # Headers to copy over from websocket
+  #   headers:
+  #     - user-agent
+  #   # Options required to create an ssl app
+  #   # ssl:
+  #   #   key: file(ssl/key.pem)
+  #   #   cert: file(ssl/cert.pem)
+  #   ##  dhParams: ...
+  #   ##  passphrase: ...
+
+# Connection Endpoint Configuration
+# to disable, replace configuration with null eg. `http: null`
+connectionEndpoints:
+  - type: ws-binary
+    options:
+      # url path websocket connections connect to
+      urlPath: /deepstream
+      # the amount of milliseconds between each ping/heartbeat message
+      heartbeatInterval: 30000
+      # the amount of milliseconds that writes to sockets are buffered
+      outgoingBufferTimeout: 10
+      # the maximum amount of bytes to buffer before flushing, stops the client from large enough packages
+      # to block its responsiveness
+      maxBufferByteSize: 100000
+
+      # Security
+      # amount of time a connection can remain open while not being logged in
+      unauthenticatedClientTimeout: 180000
+      # invalid login attempts before the connection is cut
+      maxAuthAttempts: 3
+      # maximum allowed size of an individual message in bytes
+      maxMessageSize: 1048576
+
+  - type: ws-text
+    options:
+      # url path websocket connections connect to
+      urlPath: /deepstream-v3
+      # the amount of milliseconds between each ping/heartbeat message
+      heartbeatInterval: 30000
+      # the amount of milliseconds that writes to sockets are buffered
+      outgoingBufferTimeout: 10
+      # the maximum amount of bytes to buffer before flushing, stops the client from large enough packages
+      # to block its responsiveness
+      maxBufferByteSize: 100000
+
+      # Security
+      # amount of time a connection can remain open while not being logged in
+      unauthenticatedClientTimeout: 180000
+      # invalid login attempts before the connection is cut
+      maxAuthAttempts: 3
+      # maximum allowed size of an individual message in bytes
+      maxMessageSize: 1048576
+
+  - type: ws-json
+    options:
+      # url path websocket connections connect to
+      urlPath: /deepstream-json
+      # the amount of milliseconds between each ping/heartbeat message
+      heartbeatInterval: 30000
+      # the amount of milliseconds that writes to sockets are buffered
+      outgoingBufferTimeout: 10
+      # the maximum amount of bytes to buffer before flushing, stops the client from large enough packages
+      # to block its responsiveness
+      maxBufferByteSize: 100000
+
+      # Security
+      # amount of time a connection can remain open while not being logged in
+      unauthenticatedClientTimeout: 180000
+      # invalid login attempts before the connection is cut
+      maxAuthAttempts: 3
+      # maximum allowed size of an individual message in bytes
+      maxMessageSize: 1048576
+
+
+  - type: http
+    options:
+      # allow 'authData' parameter in POST requests, if disabled only token and OPEN auth is
+      # possible
+      allowAuthData: true
+      # enable the authentication endpoint for requesting tokens/userData.
+      # note: a custom authentication handler is required for token generation
+      enableAuthEndpoint: false
+      # path for authentication requests
+      authPath: /api/auth
+      # path for POST requests
+      postPath: /api
+      # path for GET requests
+      getPath: /api
+      # maximum allowed size of an individual message in bytes
+      maxMessageSize: 1024
+
+  # - type: mqtt
+  #   options:
+  #       # port for the mqtt server
+  #       port: 1883
+  #       # host for the mqtt server
+  #       host: 0.0.0.0
+  #       # timeout for idle devices
+  #       idleTimeout: 60000
+
+# Logger Configuration
+logger:
+  # use either the default logger, this does not currently support meta objects
+  type: default
+  options:
+    colors: true
+
+  # log using json, this supports meta objects
+  # name: pino
+  # options:
+  # # value of logLevel (line 4) will always overwrite this value
+  #   logLevel: INFO
+
+  # name: winston
+  # options:
+  #   transports:
+  #     # specify a list of transports (console, file, time)
+  #     -
+  #       type: console
+  #       options:
+  #         level: verbose
+  #         colorize: true
+  #     -
+  #       type: file
+  #       level: debug
+  #       options:
+  #         filename: 'logs.json'
+  #     -
+  #       type: time
+  #       level: warn
+  #       options:
+  #         filename: time-rotated-logfile
+  #         datePattern: .yyyy-MM-dd-HH-mm
+
+# cache:
+#   name: redis
+#   options:
+#     host: ${REDIS_HOST}
+#     port: ${REDIS_PORT}
+
+# storage:
+#   name: mongodb
+#   options:
+#     connectionString: ${MONGO_CONNECTION_STRING}
+#     db: default
+
+# Authentication
+auth:
+  - type: none
+
+  # # reading users and passwords from the storage layer
+  # - type: storage
+  #   options:
+  #     # the table users are stored in storage
+  #     table: Users
+  #     # the split character used for tables (defaults to /)
+  #     tableSplitChar: string
+  #     # automatically create users if they don't exist in the database
+  #     createUser: true
+  #     # the name of a HMAC digest algorithm
+  #     hash: 'md5'
+  #     # the number of times the algorithm should be applied
+  #     iterations: 100
+  #     # the length of the resulting key
+  #     # keyLength: 32
+
+  # - type: file
+  #   options:
+  #     # Path to the user file. Can be json, js or yml
+  #     users: fileLoad(users.yml)
+  #     # the name of a HMAC digest algorithm
+  #     hash: 'md5'
+  #     # the number of times the algorithm should be applied
+  #     iterations: 100
+  #     # the length of the resulting key
+  #     keyLength: 32
+
+  # # getting permissions from a http webhook
+  # - type: http
+  #   options:
+  #     # a post request will be send to this url on every incoming connection
+  #     endpointUrl: https://someurl.com/validateLogin
+  #     # any of these will be treated as access granted
+  #     permittedStatusCodes: [ 200 ]
+  #     # if the webhook didn't respond after this amount of milliseconds, the connection will be rejected
+  #     requestTimeout: 2000
+  #     # promote the following items from the login auth data into headers
+  #     promoteToHeader:
+  #       - token
+  #     # the codes which the auth handler should retry. This is useful for when the API you depend on is
+  #     # flaky or going through a not so blue/green deployment
+  #     retryStatusCodes: [ 404, 504 ]
+  #     # the maximum amount of retries before returning a false login
+  #     retryAttempts: 3
+  #     # the time in milliseconds between retries
+  #     retryInterval: 5000
+
+# Permissioning
+permission:
+  type: config
+  options:
+    # Permissions file
+    permissions: fileLoad(permissions.yml)
+    # Amount of times nested cross-references will be loaded. Avoids endless loops
+    maxRuleIterations: 3
+    # PermissionResults are cached to increase performance. Lower number means more loading
+    cacheEvacuationInterval: 60000
+
+monitoring:
+  type: none
+
+  # # Allows monitoring stats to be requested via HTTP, useful for polling agents
+  # # such as LogStach
+  # type: http
+  # options:
+  #   url: /monitoring
+  #   allowOpenPermissions: false
+  #   headerKey: deepstream-password2
+  #   headerValue: deepstream-secret
+
+  # # Logs monitoring stats, useful for kibana where you can visualize meta data
+  # type: log
+  # options:
+  #   logInterval: 30000
+  #   monitoringKey: DEEPSTREAM_MONITORING
+
+# clusterNode:
+#   type: default
+#   options:
+#     host: localhost
+#     port: 6379
+
+# Custom Plugins
+# plugins:
+#   custom:
+#     path: '...'
+
+# heap-snapshot:
+#   name: 'heap-snapshot'
+#   options:
+#     interval: 60000
+#     outputDir: file(../heap-snapshots)
+
+# aws:
+#   name: aws
+#   options:
+#     accessKeyId: ${AWS_ACCESS_KEY}
+#     secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
+#     services:
+#       - type: s3-sync
+#         options:
+#           syncInterval: 60000
+#           syncDir: file(../heap-snapshots)
+#           bucketName: ${SYNC_BUCKET_NAME}
+#           bucketRegion: ${AWS_DEFAULT_REGION}

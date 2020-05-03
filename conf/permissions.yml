@@ -1,0 +1,20 @@
+presence:
+  "*":
+    allow: true
+record:
+  "*":
+    create: true
+    write: true
+    read: true
+    delete: true
+    listen: true
+    notify: true
+event:
+  "*":
+    publish: true
+    subscribe: true
+    listen: true
+rpc:
+  "*":
+    provide: true
+    request: true

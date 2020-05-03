@@ -1,0 +1,10 @@
+authtoken: 7tfKgBYVRo2Ui2C2Rn9mP_4ywuLGHKheSmU7czvjFoE
+tunnels:
+  web:
+    proto: http
+    addr: 5500
+    # subdomain: tte-web
+  stream:
+    proto: tcp
+    addr: 6020
+    # subdomain: tte-stream
