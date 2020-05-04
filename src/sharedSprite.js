@@ -38,7 +38,6 @@ class SharedSprite {
 
 class DraggedSprite extends SharedSprite {
   mousePressedInside(e) {
-    console.log("mpi");
     const data = this.getData();
     if (!data) return;
 
