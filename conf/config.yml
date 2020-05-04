@@ -33,7 +33,6 @@ record:
   # storageHotPathPrefixes:
   #   - analytics/
   #   - metrics/
-
   # Invalid configuration: data should NOT have additional properties
 listen:
   # Try finding a provider randomly rather than by the order they subscribed to.
@@ -52,6 +51,7 @@ listen:
 httpServer:
   type: default
   options:
+    port: ${PORT}
     # url path for http health-checks, GET requests to this path will return 200 if deepstream is alive
     healthCheckPath: /health-check
     # -- CORS --
@@ -61,7 +61,7 @@ httpServer:
     allowAllOrigins: true
     # a list of allowed origins
     origins:
-      - 'https://example.com'
+      - "https://example.com"
     # Options required to create an ssl app
     # ssl:
     #   key: fileLoad(ssl/key.pem)
@@ -145,7 +145,6 @@ connectionEndpoints:
       # maximum allowed size of an individual message in bytes
       maxMessageSize: 1048576
 
-
   - type: http
     options:
       # allow 'authData' parameter in POST requests, if disabled only token and OPEN auth is
@@ -184,7 +183,6 @@ logger:
   # options:
   # # value of logLevel (line 4) will always overwrite this value
   #   logLevel: INFO
-
   # name: winston
   # options:
   #   transports:
@@ -221,7 +219,6 @@ logger:
 # Authentication
 auth:
   - type: none
-
   # # reading users and passwords from the storage layer
   # - type: storage
   #   options:
@@ -237,7 +234,6 @@ auth:
   #     iterations: 100
   #     # the length of the resulting key
   #     # keyLength: 32
-
   # - type: file
   #   options:
   #     # Path to the user file. Can be json, js or yml
@@ -248,7 +244,6 @@ auth:
   #     iterations: 100
   #     # the length of the resulting key
   #     keyLength: 32
-
   # # getting permissions from a http webhook
   # - type: http
   #   options:
@@ -282,7 +277,6 @@ permission:
 
 monitoring:
   type: none
-
   # # Allows monitoring stats to be requested via HTTP, useful for polling agents
   # # such as LogStach
   # type: http
@@ -291,13 +285,11 @@ monitoring:
   #   allowOpenPermissions: false
   #   headerKey: deepstream-password2
   #   headerValue: deepstream-secret
-
   # # Logs monitoring stats, useful for kibana where you can visualize meta data
   # type: log
   # options:
   #   logInterval: 30000
   #   monitoringKey: DEEPSTREAM_MONITORING
-
 # clusterNode:
 #   type: default
 #   options:
