@@ -172,7 +172,7 @@ function init() {
 async function setupDeepstream() {
   // connect to ds server
   // ds = new DeepstreamClient("localhost:6020");
-  ds = new DeepstreamClient("deepstream-server-1.herokuapp.com");
+  ds = new DeepstreamClient("wss://deepstream-server-1.herokuapp.com");
   const name = randomName();
   await ds.login({ username: name });
   dslog("login complete", name);
