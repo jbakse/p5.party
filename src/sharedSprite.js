@@ -6,64 +6,98 @@
 // all shared sprites are shared sprites, but they have a component that gives them behavior
 
 class SharedSprite {
+  _id;
+  _record;
+  _behavior = {};
+
   constructor(id, record) {
-    this.id = id;
-    this.record = record;
+    this._id = id;
+    this._record = record;
+    this._record.whenReady((r) => {
+      const type = r.get("type");
+      if (!type) return;
+
+      for (let key in behaviors[type]) {
+        this[key] = behaviors[type][key];
+      }
+    });
   }
 
   draw() {
-    const data = this.getData();
+    const data = this._getData();
     if (!data) return;
 
     noSmooth();
     image(images[data.src], data.x, data.y, data.w, data.h);
     fill("white");
-    text(this.id.substr(-5), data.x, data.y);
+    text(this._id.substr(-5), data.x, data.y);
   }
 
-  getData() {
-    if (!this.record.isReady) {
+  containsPoint(x, y) {
+    const data = this._getData();
+    if (!data) return;
+
+    return (
+      mouseX > data.x &&
+      mouseY > data.y &&
+      mouseX < data.x + data.w &&
+      mouseY < data.y + data.h
+    );
+  }
+
+  _getData() {
+    if (!this._record.isReady) {
       return false;
     }
 
-    const data = this.record.get();
+    const data = this._record.get();
 
     if (!data || isEmpty(data)) {
-      console.error("!data", this.id);
+      console.error("!data", this._id);
       return false;
     }
     return data;
   }
 }
 
-class DraggedSprite extends SharedSprite {
+const behaviors = {};
+
+behaviors.DraggedSprite = {
   mousePressedInside(e) {
-    const data = this.getData();
+    const data = this._getData();
     if (!data) return;
-
-    // if (
-    //   mouseX > data.x &&
-    //   mouseY > data.y &&
-    //   mouseX < data.x + data.w &&
-    //   mouseY < data.y + data.h
-    // ) {
-    //   this.dragging = true;
-    //   console.log("drag");
-    // }
-
     this.dragging = true;
-  }
+  },
 
   mouseDragged(e) {
     if (this.dragging) {
-      const data = this.getData();
+      const data = this._getData();
       if (!data) return;
-      this.record.set("x", mouseX - data.w * 0.5);
-      this.record.set("y", mouseY - data.h * 0.5);
+      this._record.set("x", mouseX - data.w * 0.5);
+      this._record.set("y", mouseY - data.h * 0.5);
     }
-  }
+  },
 
   mouseReleased() {
     this.dragging = false;
-  }
-}
+  },
+};
+
+behaviors.D6 = {
+  draw() {
+    const data = this._getData();
+    if (!data) return;
+
+    fill("red");
+    rect(data.x, data.y, data.w, data.h);
+    fill("white");
+    text(this._id.substr(-5), data.x, data.y);
+    text(data.value, data.x + 20, data.y + 20);
+  },
+  mousePressedInside(e) {
+    const v = Math.floor(Math.random() * 6) + 1;
+    console.log("pressed", v);
+
+    this._record.set("value", v);
+  },
+};

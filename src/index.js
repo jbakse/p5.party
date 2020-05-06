@@ -4,7 +4,7 @@ const images = [];
 
 const spriteManager = new SharedSpriteManager();
 
-let king;
+let debug_king;
 
 function preload() {
   images["images/king.png"] = loadImage("images/king.png");
@@ -23,7 +23,6 @@ async function setup() {
 function draw() {
   background(50);
   spriteManager.draw();
-  // spriteManager.sprites.forEach((s) => s.draw && s.draw());
 }
 
 function mousePressed(e) {
@@ -43,6 +42,8 @@ function mouseDragged(e) {
 }
 
 window.addEventListener("unload", function (event) {
+  spriteManager.unload();
+
   console.log("I'm Unloading!");
 });
 
@@ -54,8 +55,8 @@ function makeButtons() {
 
   const nudge_button = createButton("nudge");
   nudge_button.mousePressed(() => {
-    const data = king.get();
-    king.set("x", data.x + 10);
+    const data = debug_king.get();
+    debug_king.set("x", data.x + 10);
   });
 
   const add_sprite_button = createButton("add sprite");
@@ -63,9 +64,10 @@ function makeButtons() {
     king = spriteManager.addSharedSprite(
       random(100),
       random(100),
-      60,
-      88,
-      "images/king.png"
+      40,
+      40,
+      "images/king.png",
+      "D6"
     );
   });
 }

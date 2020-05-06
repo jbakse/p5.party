@@ -1,0 +1,2 @@
+- Should shared spritelisten to the canvas events directly?
+  - This would let all the events handlers be private
