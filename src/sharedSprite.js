@@ -67,6 +67,7 @@ behaviors.DraggedSprite = {
     const data = this._getData();
     if (!data) return;
     this.dragging = true;
+    console.log("dragged");
   },
 
   mouseDragged(e) {

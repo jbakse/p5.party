@@ -64,10 +64,10 @@ function makeButtons() {
     king = spriteManager.addSharedSprite(
       random(100),
       random(100),
-      40,
-      40,
+      50,
+      68,
       "images/king.png",
-      "D6"
+      "DraggedSprite"
     );
   });
 }
