@@ -12,3 +12,7 @@ function isEmpty(o) {
 function pick(a) {
   return a[Math.floor(Math.random() * a.length)];
 }
+
+function roundTo(n, b) {
+  return Math.round(n / b) * b;
+}

@@ -9,21 +9,24 @@ class SharedSprite {
   _id;
   _record;
   _components = [];
+  _componentNames = [];
 
   constructor(id, record) {
     this._id = id;
     this._record = record;
     this._record.whenReady((r) => {
-      console.log("r", r);
+      const componentNames = r.get("components");
+      if (Array.isArray(componentNames)) {
+        this._componentNames = componentNames;
 
-      const components = r.get("components");
-      if (Array.isArray(components)) {
-        this._components = components;
+        for (const name of componentNames) {
+          const c = new components[name]();
+          c.sharedSprite = this;
+          this._components.push(c);
+        }
       }
-      this._setup();
-      // for (let key in components[type]) {
-      //   this[key] = components[type][key];
-      // }
+      // this._setup();
+      this.sendMessage("setup");
     });
   }
 
@@ -55,50 +58,13 @@ class SharedSprite {
 
   // component handlers
 
-  _setup() {
+  // similar to Unity's GameObject's SendMessage()
+  sendMessage(methodName, value) {
+    if (!methodName) return false;
+    // console.log(this._components);
     for (const c of this._components) {
-      components[c] && components[c].setup && components[c].setup.bind(this)();
-    }
-  }
-
-  mouseReleased() {
-    for (const c of this._components) {
-      components[c] &&
-        components[c].mouseReleased &&
-        components[c].mouseReleased.bind(this)();
-    }
-  }
-  mouseMoved() {
-    for (const c of this._components) {
-      components[c] &&
-        components[c].mouseMoved &&
-        components[c].mouseMoved.bind(this)();
-    }
-  }
-  mouseDragged() {
-    for (const c of this._components) {
-      components[c] &&
-        components[c].mouseDragged &&
-        components[c].mouseDragged.bind(this)();
-    }
-  }
-  draw() {
-    for (const c of this._components) {
-      components[c] && components[c].draw && components[c].draw.bind(this)();
-    }
-  }
-  mousePressed() {
-    for (const c of this._components) {
-      components[c] &&
-        components[c].mousePressed &&
-        components[c].mousePressed.bind(this)();
-    }
-  }
-  mousePressedInside() {
-    for (const c of this._components) {
-      components[c] &&
-        components[c].mousePressedInside &&
-        components[c].mousePressedInside.bind(this)();
+      // console.log(c, methodName);
+      c[methodName] && c[methodName](value);
     }
   }
 }

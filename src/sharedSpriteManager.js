@@ -45,20 +45,32 @@ class SharedSpriteManager {
     });
   }
 
+  mousePressed(e) {
+    this._sprites.forEach((s) => s.sendMessage("mousePressed", e));
+
+    for (let i = this._sprites.length - 1; i >= 0; i--) {
+      const s = this._sprites[i];
+      if (s.containsPoint(mouseX, mouseY)) {
+        s.sendMessage("mousePressedInside", e);
+        break;
+      }
+    }
+  }
+
   mouseReleased(e) {
-    this._sprites.forEach((s) => s.mouseReleased(e));
+    this._sprites.forEach((s) => s.sendMessage("mouseReleased", e));
   }
 
   mouseMoved(e) {
-    this._sprites.forEach((s) => s.mouseMoved(e));
+    this._sprites.forEach((s) => s.sendMessage("mouseMoved", e));
   }
 
   mouseDragged(e) {
-    this._sprites.forEach((s) => s.mouseDragged(e));
+    this._sprites.forEach((s) => s.sendMessage("mouseDragged", e));
   }
 
   draw() {
-    this._sprites.forEach((s) => s.draw());
+    this._sprites.forEach((s) => s.sendMessage("draw"));
   }
 
   unload() {
@@ -76,17 +88,5 @@ class SharedSpriteManager {
   _detachSprite(id) {
     ds.record.getRecord(id).discard();
     this.sprites = this._sprites.filter((s) => s.id !== id);
-  }
-
-  mousePressed(e) {
-    this._sprites.forEach((s) => s.mousePressed(e));
-
-    for (let i = this._sprites.length - 1; i >= 0; i--) {
-      const s = this._sprites[i];
-      if (s.containsPoint(mouseX, mouseY)) {
-        s.mousePressedInside(e);
-        break;
-      }
-    }
   }
 }
