@@ -11,16 +11,22 @@ components.draggable = {
   },
 
   mouseDragged(e) {
+    const data = this._getData();
+    if (!data) return;
+
     if (this.dragging) {
-      this._record.set("x", mouseX - this.offsetX);
-      this._record.set("y", mouseY - this.offsetY);
+      this._record.set("x", roundTo(mouseX - this.offsetX, data.snapTo || 1));
+      this._record.set("y", roundTo(mouseY - this.offsetY, data.snapTo || 1));
     }
   },
 
   mouseReleased(e) {
+    const data = this._getData();
+    if (!data) return;
+
     if (this.dragging) {
-      this._record.set("x", mouseX - this.offsetX);
-      this._record.set("y", mouseY - this.offsetY);
+      this._record.set("x", roundTo(mouseX - this.offsetX, data.snapTo || 1));
+      this._record.set("y", roundTo(mouseY - this.offsetY, data.snapTo || 1));
     }
     this.dragging = false;
   },
@@ -67,7 +73,7 @@ components.d6 = {
 
     push();
     fill("black");
-    textSize(32);
+    textSize(16);
     textAlign(CENTER, CENTER);
     textFont("Courier New");
     text(data.value, data.x + data.w * 0.5, data.y + data.h * 0.5);
@@ -80,3 +86,7 @@ components.d6 = {
     this._record.set("value", v);
   },
 };
+
+function roundTo(n, b) {
+  return Math.round(n / b) * b;
+}

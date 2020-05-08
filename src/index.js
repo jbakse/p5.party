@@ -9,6 +9,9 @@ let debug_king;
 function preload() {
   images["images/king.png"] = loadImage("images/king.png");
   images["images/die.png"] = loadImage("images/die.png");
+  images["images/green_1.png"] = loadImage("images/green_1.png");
+  images["images/green_2.png"] = loadImage("images/green_2.png");
+  images["images/train.png"] = loadImage("images/train.png");
 }
 
 async function setup() {
@@ -60,15 +63,32 @@ function makeButtons() {
     debug_king.set("x", data.x + 10);
   });
 
-  const add_sprite_button = createButton("add sprite");
-  add_sprite_button.mousePressed(() => {
+  const d6 = createButton("d6");
+  d6.mousePressed(() => {
     king = spriteManager.addSharedSprite(
-      random(100),
-      random(100),
-      64,
-      64,
+      random(width - 32),
+      random(height - 32),
+      32,
+      32,
       ["pixelImage", "draggable", "label", "d6"],
       { src: "images/die.png" }
     );
+  });
+
+  const ttt = createButton("ttt");
+  ttt.mousePressed(() => {
+    spriteManager.addSharedSprite(16, 16, 256, 80, ["pixelImage"], {
+      src: "images/train.png",
+    });
+
+    spriteManager.addSharedSprite(64, 48, 16, 16, ["pixelImage", "draggable"], {
+      src: "images/green_1.png",
+      snapTo: 16,
+    });
+
+    spriteManager.addSharedSprite(96, 48, 16, 16, ["pixelImage", "draggable"], {
+      src: "images/green_2.png",
+      snapTo: 16,
+    });
   });
 }
