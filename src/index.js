@@ -8,6 +8,7 @@ let debug_king;
 
 function preload() {
   images["images/king.png"] = loadImage("images/king.png");
+  images["images/die.png"] = loadImage("images/die.png");
 }
 
 async function setup() {
@@ -64,10 +65,10 @@ function makeButtons() {
     king = spriteManager.addSharedSprite(
       random(100),
       random(100),
-      40,
-      40,
-      "images/king.png",
-      "D6"
+      64,
+      64,
+      ["pixelImage", "draggable", "label", "d6"],
+      { src: "images/die.png" }
     );
   });
 }

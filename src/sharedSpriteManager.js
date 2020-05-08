@@ -24,10 +24,10 @@ class SharedSpriteManager {
     ids.forEach((id) => this._attachSprite(id));
   }
 
-  async addSharedSprite(x, y, w, h, src, type = "SharedSprite", id) {
+  async addSharedSprite(x, y, w, h, components = [], data, id) {
     const full_id = `sprites/${id || ds.getUid()}`;
     const r = await ds.record.getRecord(full_id);
-    r.set({ x, y, w, h, src, type });
+    r.set({ x, y, w, h, components, ...data });
     await r.whenReady();
 
     // wait till record is ready before adding to list
@@ -46,19 +46,19 @@ class SharedSpriteManager {
   }
 
   mouseReleased(e) {
-    this._sprites.forEach((s) => s.mouseReleased && s.mouseReleased(e));
+    this._sprites.forEach((s) => s.mouseReleased(e));
   }
 
   mouseMoved(e) {
-    this._sprites.forEach((s) => s.mouseMoved && s.mouseMoved(e));
+    this._sprites.forEach((s) => s.mouseMoved(e));
   }
 
   mouseDragged(e) {
-    this._sprites.forEach((s) => s.mouseDragged && s.mouseDragged(e));
+    this._sprites.forEach((s) => s.mouseDragged(e));
   }
 
   draw() {
-    this._sprites.forEach((s) => s.draw && s.draw());
+    this._sprites.forEach((s) => s.draw());
   }
 
   unload() {
@@ -79,11 +79,11 @@ class SharedSpriteManager {
   }
 
   mousePressed(e) {
-    this._sprites.forEach((s) => s.mousePressed && s.mousePressed(e));
+    this._sprites.forEach((s) => s.mousePressed(e));
 
     for (let i = this._sprites.length - 1; i >= 0; i--) {
       const s = this._sprites[i];
-      if (s.mousePressedInside && s.containsPoint(mouseX, mouseY)) {
+      if (s.containsPoint(mouseX, mouseY)) {
         s.mousePressedInside(e);
         break;
       }
