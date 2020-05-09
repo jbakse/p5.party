@@ -49,6 +49,7 @@ components.pixelImage = class {
     const data = this.sharedSprite.getData();
     if (!data) return;
     push();
+    tint(data.color || "white");
     noSmooth();
     image(images[data.src], data.x, data.y, data.w, data.h);
     pop();
@@ -109,11 +110,13 @@ components.cursor = class {
     const data = this.sharedSprite.getData();
     if (!data) return;
 
+    if (ds.clientName === data.creator) {
+      return;
+    }
     push();
+    tint(data.color || "white");
     noSmooth();
-    fill(data.color || "white");
-    noStroke();
-    ellipse(data.x, data.y, 20, 20);
+    image(images[data.src], data.x, data.y, data.w, data.h);
     pop();
   }
 
@@ -121,16 +124,19 @@ components.cursor = class {
     const data = this.sharedSprite.getData();
     if (!data) return;
     if (ds.clientName !== data.creator) return;
-    console.log("set");
+
     this.sharedSprite._record.set("x", roundTo(mouseX, data.snapTo || 1));
     this.sharedSprite._record.set("y", roundTo(mouseY, data.snapTo || 1));
   }
 
+  mouseDragged(e) {
+    this.mouseMoved(e);
+  }
+
   cleanUp() {
     console.log("cleanup");
-    this.sharedSprite.remove();
+    const data = this.sharedSprite.getData();
+    if (!data) return;
+    if (ds.clientName === data.creator) this.sharedSprite.remove();
   }
 };
-
-// figure out how to have cursor only "work" on own screen
-// get rid of private member access!

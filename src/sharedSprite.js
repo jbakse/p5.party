@@ -67,5 +67,3 @@ class SharedSprite {
     spriteManager.removeSharedSprite(this._id);
   }
 }
-
-//todo, shouldn't rely on globals for ds, spriteManager

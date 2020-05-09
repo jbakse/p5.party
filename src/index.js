@@ -12,10 +12,18 @@ function preload() {
   images["images/green_1.png"] = loadImage("images/green_1.png");
   images["images/green_2.png"] = loadImage("images/green_2.png");
   images["images/train.png"] = loadImage("images/train.png");
+  images["images/cursor.png"] = loadImage("images/cursor.png");
 }
 
 async function setup() {
-  createCanvas(400, 400);
+  const canvas = createCanvas(400, 400);
+
+  canvas.canvas.addEventListener("mousedown", (e) =>
+    console.log("mousedown", e)
+  );
+
+  console.log(p5);
+
   background(50);
 
   makeButtons();
@@ -23,8 +31,9 @@ async function setup() {
   await initDeepstream();
   await spriteManager.init();
 
-  spriteManager.addSharedSprite(0, 0, 0, 0, ["cursor"], {
+  spriteManager.addSharedSprite(0, 0, 32, 32, 10000, ["cursor"], {
     color: randomColorString(),
+    src: "images/cursor.png",
   });
 }
 
@@ -74,6 +83,7 @@ function makeButtons() {
       random(height - 32),
       32,
       32,
+      0,
       ["pixelImage", "draggable", "label", "d6"],
       { src: "images/die.png" }
     );
@@ -81,18 +91,34 @@ function makeButtons() {
 
   const ttt = createButton("ttt");
   ttt.mousePressed(() => {
-    spriteManager.addSharedSprite(16, 16, 256, 80, ["pixelImage"], {
+    spriteManager.addSharedSprite(16, 16, 256, 80, 0, ["pixelImage"], {
       src: "images/train.png",
     });
 
-    spriteManager.addSharedSprite(64, 48, 16, 16, ["pixelImage", "draggable"], {
-      src: "images/green_1.png",
-      snapTo: 16,
-    });
+    spriteManager.addSharedSprite(
+      64,
+      48,
+      16,
+      16,
+      0,
+      ["pixelImage", "draggable"],
+      {
+        src: "images/green_1.png",
+        snapTo: 16,
+      }
+    );
 
-    spriteManager.addSharedSprite(96, 48, 16, 16, ["pixelImage", "draggable"], {
-      src: "images/green_2.png",
-      snapTo: 16,
-    });
+    spriteManager.addSharedSprite(
+      96,
+      48,
+      16,
+      16,
+      0,
+      ["pixelImage", "draggable"],
+      {
+        src: "images/green_2.png",
+        snapTo: 16,
+      }
+    );
   });
 }
