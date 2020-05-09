@@ -17,6 +17,7 @@ async function initDeepstream() {
   ds = new DeepstreamClient("wss://deepstream-server-1.herokuapp.com");
   const name = randomName();
   await ds.login({ username: name });
+  ds.clientName = name;
   dslog("login complete", name);
 
   ds.on("error", (error, event, topic) =>

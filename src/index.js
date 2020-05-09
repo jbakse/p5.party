@@ -22,6 +22,10 @@ async function setup() {
 
   await initDeepstream();
   await spriteManager.init();
+
+  spriteManager.addSharedSprite(0, 0, 0, 0, ["cursor"], {
+    color: randomColorString(),
+  });
 }
 
 function draw() {

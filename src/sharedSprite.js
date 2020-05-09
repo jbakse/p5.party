@@ -1,10 +1,3 @@
-// i can't include the class name in the record
-// and then instantiate the correct object because
-// i instantiate the object _before_ the record is loaded
-// i'd either have to figure out another way instantiate and add to list (null placeholder)
-// or maybe use an entity component pattern instead
-// all shared sprites are shared sprites, but they have a component that gives them behavior
-
 class SharedSprite {
   _id;
   _record;
@@ -25,13 +18,12 @@ class SharedSprite {
           this._components.push(c);
         }
       }
-      // this._setup();
       this.sendMessage("setup");
     });
   }
 
   containsPoint(x, y) {
-    const data = this._getData();
+    const data = this.getData();
     if (!data) return;
 
     return (
@@ -42,7 +34,7 @@ class SharedSprite {
     );
   }
 
-  _getData() {
+  getData() {
     if (!this._record.isReady) {
       return false;
     }
@@ -56,8 +48,11 @@ class SharedSprite {
     return data;
   }
 
-  // component handlers
+  setData(path, value, cb) {
+    this._record.set(path, value, cb);
+  }
 
+  // sendMessage
   // similar to Unity's GameObject's SendMessage()
   sendMessage(methodName, value) {
     if (!methodName) return false;
@@ -67,4 +62,10 @@ class SharedSprite {
       c[methodName] && c[methodName](value);
     }
   }
+
+  remove() {
+    spriteManager.removeSharedSprite(this._id);
+  }
 }
+
+//todo, shouldn't rely on globals for ds, spriteManager

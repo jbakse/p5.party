@@ -2,7 +2,7 @@ const components = {};
 
 components.draggable = class {
   mousePressedInside(e) {
-    const data = this.sharedSprite._getData();
+    const data = this.sharedSprite.getData();
     if (!data) return;
 
     this.dragging = true;
@@ -11,7 +11,7 @@ components.draggable = class {
   }
 
   mouseDragged(e) {
-    const data = this.sharedSprite._getData();
+    const data = this.sharedSprite.getData();
     if (!data) return;
 
     if (this.dragging) {
@@ -27,7 +27,7 @@ components.draggable = class {
   }
 
   mouseReleased(e) {
-    const data = this.sharedSprite._getData();
+    const data = this.sharedSprite.getData();
     if (!data) return;
 
     if (this.dragging) {
@@ -46,17 +46,18 @@ components.draggable = class {
 
 components.pixelImage = class {
   draw() {
-    const data = this.sharedSprite._getData();
+    const data = this.sharedSprite.getData();
     if (!data) return;
-
+    push();
     noSmooth();
     image(images[data.src], data.x, data.y, data.w, data.h);
+    pop();
   }
 };
 
 components.label = class {
   draw() {
-    const data = this.sharedSprite._getData();
+    const data = this.sharedSprite.getData();
     if (!data) return;
 
     push();
@@ -74,7 +75,7 @@ components.label = class {
 
 components.d6 = class {
   setup() {
-    const data = this.sharedSprite._getData();
+    const data = this.sharedSprite.getData();
     if (!data) return;
 
     if (!data.value) {
@@ -84,7 +85,7 @@ components.d6 = class {
   }
 
   draw() {
-    const data = this.sharedSprite._getData();
+    const data = this.sharedSprite.getData();
     if (!data) return;
 
     push();
@@ -102,3 +103,34 @@ components.d6 = class {
     this.sharedSprite._record.set("value", v);
   }
 };
+
+components.cursor = class {
+  draw() {
+    const data = this.sharedSprite.getData();
+    if (!data) return;
+
+    push();
+    noSmooth();
+    fill(data.color || "white");
+    noStroke();
+    ellipse(data.x, data.y, 20, 20);
+    pop();
+  }
+
+  mouseMoved(e) {
+    const data = this.sharedSprite.getData();
+    if (!data) return;
+    if (ds.clientName !== data.creator) return;
+    console.log("set");
+    this.sharedSprite._record.set("x", roundTo(mouseX, data.snapTo || 1));
+    this.sharedSprite._record.set("y", roundTo(mouseY, data.snapTo || 1));
+  }
+
+  cleanUp() {
+    console.log("cleanup");
+    this.sharedSprite.remove();
+  }
+};
+
+// figure out how to have cursor only "work" on own screen
+// get rid of private member access!

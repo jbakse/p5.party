@@ -27,12 +27,17 @@ class SharedSpriteManager {
   async addSharedSprite(x, y, w, h, components = [], data, id) {
     const full_id = `sprites/${id || ds.getUid()}`;
     const r = await ds.record.getRecord(full_id);
-    r.set({ x, y, w, h, components, ...data });
+    r.set({ creator: ds.clientName, x, y, w, h, components, ...data });
     await r.whenReady();
 
     // wait till record is ready before adding to list
     this._sprite_list.addEntry(full_id);
     return r;
+  }
+
+  removeSharedSprite(id) {
+    this._sprite_list.removeEntry(id);
+    ds.record.getRecord(id).delete();
   }
 
   clear() {
@@ -75,6 +80,7 @@ class SharedSpriteManager {
 
   unload() {
     console.log("unload sharedSpriteManager");
+    this._sprites.forEach((s) => s.sendMessage("cleanUp"));
   }
 
   _attachSprite(id) {
@@ -86,7 +92,11 @@ class SharedSpriteManager {
   }
 
   _detachSprite(id) {
+    console.log(id);
+    console.log(this._sprites);
     ds.record.getRecord(id).discard();
-    this.sprites = this._sprites.filter((s) => s.id !== id);
+    this._sprites = this._sprites.filter((s) => s._id !== id);
   }
 }
+
+//todo send events to sprites for "attach" and "detatch" ?

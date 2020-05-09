@@ -5,6 +5,11 @@ function randomName() {
   return name;
 }
 
+function randomColorString() {
+  const colors = ["FF", "00", "88"];
+  return `#${pick(colors)}${pick(colors)}${pick(colors)}`;
+}
+
 function isEmpty(o) {
   return Object.keys(o).length === 0;
 }
