@@ -39,3 +39,5 @@
 - add broadcast event function on sharedSpriteManager.js
 
 - use actually unique id's for client ids
+
+- use "#" for privates

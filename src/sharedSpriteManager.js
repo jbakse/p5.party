@@ -1,4 +1,4 @@
-class SharedSpriteManager {
+export class SharedSpriteManager {
   _sprites = [];
   _sprite_list;
 

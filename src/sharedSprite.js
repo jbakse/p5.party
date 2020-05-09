@@ -1,4 +1,4 @@
-class SharedSprite {
+export class SharedSprite {
   _id;
   _record;
   _components = [];
