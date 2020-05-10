@@ -118,9 +118,12 @@ export class SharedSpriteManager {
   }
 
   _detachSprite(id) {
-    console.log(id);
-    console.log(this.#sprites);
     ds.record.getRecord(id).discard();
-    this.#sprites = this.#sprites.filter((s) => s._id !== id);
+    this.#sprites.forEach((s) => {
+      if (s.id != id) {
+        s.sendMessage("detach");
+      }
+    });
+    this.#sprites = this.#sprites.filter((s) => s.id !== id);
   }
 }

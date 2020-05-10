@@ -146,4 +146,8 @@ components.cursor = class {
     if (!data) return;
     if (ds.clientName === data.creator) this.sharedSprite.remove();
   }
+
+  detach() {
+    console.log("detach", this);
+  }
 };

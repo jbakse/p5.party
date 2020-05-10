@@ -8,12 +8,15 @@ x.get rid of private member access! javascript doesn't enforce this, but we shou
 
 x.mouseClicked + all other mouse events
 
+.attach/detach lifecyle events
+    .attach (needs to be after components are connected)
+    x.detach
 
 
+.change _ methods to #
 
 .todo, shouldn't rely on globals for ds, spriteManager
 
-.attach/detach lifecyle events
 
 
 .todo organize record
