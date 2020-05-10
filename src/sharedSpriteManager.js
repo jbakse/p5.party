@@ -100,6 +100,10 @@ export class SharedSpriteManager {
     });
   }
 
+  broadcastMessage(message, data) {
+    this.#sprites.forEach((s) => s.sendMessage(message, data));
+  }
+
   draw() {
     this.#sprites.sort((a, b) => {
       (b.getData().z || 0) - (a.getData().z || 0);

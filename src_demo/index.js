@@ -47,7 +47,9 @@ function draw() {
 }
 
 // eslint-disable-next-line no-unused-vars
-function mousePressed(e) {}
+function mousePressed(e) {
+  spriteManager.broadcastMessage("talk");
+}
 
 // eslint-disable-next-line no-unused-vars
 function mouseReleased(e) {}

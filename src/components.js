@@ -82,6 +82,9 @@ components.label = class {
 };
 
 components.d6 = class {
+  talk() {
+    console.log("talk");
+  }
   setup() {
     const data = this.sharedSprite.getData();
     if (!data) return;

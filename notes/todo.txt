@@ -8,9 +8,9 @@ x.get rid of private member access! javascript doesn't enforce this, but we shou
 
 x.mouseClicked + all other mouse events
 
-.attach/detach lifecyle events
+x.attach/detach lifecyle events
     x.attach (needs to be after components are connected)
-        .called "setup"
+        x.called "setup"
     x.detach
 
 
@@ -27,25 +27,36 @@ x.todo organize record
       .z
 
 
+x.add broadcast event function on sharedSpriteManager.js
 
 
+.init sequence
+    .todo, shouldn't rely on globals for ds, spriteManager
+    .add an "appName" and "roomName" to the DS connection, and use names to prefix
 
-.todo, shouldn't rely on globals for ds, spriteManager
+
+.rename "data" to "shared" in game object?
+    .load shared onto the components
+    .auto send changes (mutation observer, just check?)
+    .w/ debounce in frames
+    .add a send() command to send manually (instead of auto or to push an immediate in addition to auto)
+    .populate data field differently
+
+        .change name to `shared`
+        .put `shared` on the components
+        .components can just read e.g. this.shared.x
+        .components can just write e.g. this.shared.x, changes will be shared automatically
+        .add function to cause immediate sync-write
+        .allow to configure sync-write frequency
+
 
 .handle removing owned sprites when owner leaves automatically?
 
-.populate data field differently
 
-  .change name to `shared`
-  .put `shared` on the components
-  .components can just read e.g. this.shared.x
-  .components can just write e.g. this.shared.x, changes will be shared automatically
-  .add function to cause immediate sync-write
-  .allow to configure sync-write frequency
 
-.make it so you don't have to forward all the events
+x.make it so you don't have to forward all the events from p5 handlers (install listeners from sprite manager)
 
-.add broadcast event function on sharedSpriteManager.js
+
 
 .use actually unique id's for client ids
 
