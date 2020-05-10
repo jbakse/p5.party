@@ -14,7 +14,9 @@
     "@deepstream/server": "^5.0.16"
   },
   "devDependencies": {
-    "eslint": "^7.0.0"
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.0.0",
+    "eslint-config-p5js": "^1.0.1"
   },
   "engines": {
     "node": "14.1.0"

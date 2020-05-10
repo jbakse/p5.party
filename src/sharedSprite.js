@@ -1,10 +1,15 @@
+import { components } from "./components.js";
+import { isEmptyObject } from "./util.js";
+
 export class SharedSprite {
   _id;
   _record;
   _components = [];
   _componentNames = [];
+  _manager;
 
-  constructor(id, record) {
+  constructor(manager, id, record) {
+    this._manager = manager;
     this._id = id;
     this._record = record;
     this._record.whenReady((r) => {
@@ -27,10 +32,7 @@ export class SharedSprite {
     if (!data) return;
 
     return (
-      mouseX > data.x &&
-      mouseY > data.y &&
-      mouseX < data.x + data.w &&
-      mouseY < data.y + data.h
+      x > data.x && y > data.y && x < data.x + data.w && y < data.y + data.h
     );
   }
 
@@ -41,7 +43,7 @@ export class SharedSprite {
 
     const data = this._record.get();
 
-    if (!data || isEmpty(data)) {
+    if (!data || isEmptyObject(data)) {
       console.error("!data", this._id);
       return false;
     }
@@ -64,6 +66,6 @@ export class SharedSprite {
   }
 
   remove() {
-    spriteManager.removeSharedSprite(this._id);
+    this._manager.removeSharedSprite(this._id);
   }
 }

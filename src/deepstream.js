@@ -1,30 +1,36 @@
-let ds;
+import { makeLogger } from "./logging.js";
+import { randomName } from "./util.js";
 
-const dslog = makeLogger(
+/* globals DeepstreamClient */
+export let ds;
+
+export const dsLog = makeLogger(
   "log",
   "ds",
   "background-color: #888; color: #00ffff; padding: 2px 5px; border-radius: 2px"
 );
 
-const dserror = makeLogger(
+export const dsError = makeLogger(
   "log",
   "ds",
   "background-color: #ff0000; color: #ffffff; padding: 2px 5px; border-radius: 2px"
 );
 
-async function initDeepstream() {
+export async function initDeepstream(
+  host = "wss://deepstream-server-1.herokuapp.com"
+) {
   // ds = new DeepstreamClient("localhost:6020");
-  ds = new DeepstreamClient("wss://deepstream-server-1.herokuapp.com");
+  ds = new DeepstreamClient(host);
   const name = randomName();
   await ds.login({ username: name });
   ds.clientName = name;
-  dslog("login complete", name);
+  dsLog("login complete", name);
 
   ds.on("error", (error, event, topic) =>
-    dserror("error", error, event, topic)
+    dsError("error", error, event, topic)
   );
 
   ds.on("connectionStateChanged", (connectionState) =>
-    dslog("connectionStateChanged", connectionState)
+    dsLog("connectionStateChanged", connectionState)
   );
 }

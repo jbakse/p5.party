@@ -1,3 +1,9 @@
+import { ds, dsLog } from "./deepstream.js";
+import { SharedSprite } from "./sharedSprite.js";
+
+// eslint-disable-next-line no-unused-vars
+/* global debug_king:writable */
+
 export class SharedSpriteManager {
   _sprites = [];
   _sprite_list;
@@ -9,12 +15,12 @@ export class SharedSpriteManager {
     this._sprite_list = ds.record.getList("sprites");
 
     this._sprite_list.on("entry-added", (id, index) => {
-      dslog("sprites entry-added", id, index);
+      dsLog("sprites entry-added", id, index);
       this._attachSprite(id);
     });
 
     this._sprite_list.on("entry-removed", (id, index) => {
-      dslog("sprites entry-removed", id, index);
+      dsLog("sprites entry-removed", id, index);
       this._detachSprite(id);
     });
 
@@ -89,7 +95,7 @@ export class SharedSpriteManager {
 
   _attachSprite(id) {
     const r = ds.record.getRecord(id);
-    const s = new SharedSprite(id, r);
+    const s = new SharedSprite(this, id, r);
     this._sprites.push(s);
 
     debug_king = r;

@@ -41,3 +41,7 @@
 - use actually unique id's for client ids
 
 - use "#" for privates
+
+- remove debug_king
+
+MutationObserver

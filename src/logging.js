@@ -38,7 +38,7 @@ const _consoleError = console.error.bind(
   "background-color: black; color: red;"
 );
 
-const makeLogger = (type, prefix, style) => {
+export const makeLogger = (type, prefix, style) => {
   return console[type].bind(window.console, `%c${prefix}`, style);
 };
 
@@ -65,7 +65,7 @@ window.logging = {
 };
 
 /** @hidden */
-const setLoggingLevel = (level) => {
+export const setLoggingLevel = (level) => {
   const levelNum = ["trace", "info", "report", "log", "warn", "error"].indexOf(
     level
   );

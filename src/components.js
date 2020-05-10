@@ -1,4 +1,10 @@
-const components = {};
+import { roundTo } from "./util.js";
+
+import { ds } from "./deepstream.js";
+
+export const components = {};
+
+/* global images */
 
 components.draggable = class {
   mousePressedInside(e) {
@@ -123,6 +129,7 @@ components.cursor = class {
   mouseMoved(e) {
     const data = this.sharedSprite.getData();
     if (!data) return;
+
     if (ds.clientName !== data.creator) return;
 
     this.sharedSprite._record.set("x", roundTo(mouseX, data.snapTo || 1));
