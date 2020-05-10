@@ -6,8 +6,6 @@ const images = [];
 
 const spriteManager = new ss.SharedSpriteManager();
 
-let debug_king;
-
 /* exported preload */
 
 // eslint-disable-next-line no-unused-vars
@@ -77,12 +75,6 @@ function makeButtons() {
   const clear_button = createButton("clear");
   clear_button.mousePressed(() => {
     spriteManager.clear();
-  });
-
-  const nudge_button = createButton("nudge");
-  nudge_button.mousePressed(() => {
-    const data = debug_king.get();
-    debug_king.set("x", data.x + 10);
   });
 
   const d6 = createButton("d6");
