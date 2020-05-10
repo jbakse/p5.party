@@ -29,7 +29,12 @@ async function setup() {
   await ss.initDeepstream();
   await spriteManager.init(canvas.canvas);
 
-  spriteManager.addSharedSprite(0, 0, 32, 32, 10000, ["cursor"], {
+  spriteManager.addSharedSprite(["cursor"], {
+    x: 0,
+    y: 0,
+    w: 32,
+    h: 32,
+    z: 10000,
     color: "red",
     src: "images/cursor.png",
   });
@@ -61,15 +66,14 @@ function makeButtons() {
 
   const d6 = createButton("d6");
   d6.mousePressed(() => {
-    spriteManager.addSharedSprite(
-      random(width - 32),
-      random(height - 32),
-      32,
-      32,
-      0,
-      ["pixelImage", "draggable", "label", "d6"],
-      { src: "images/die.png" }
-    );
+    spriteManager.addSharedSprite(["pixelImage", "draggable", "label", "d6"], {
+      x: random(width - 32),
+      y: random(height - 32),
+      w: 32,
+      h: 32,
+      z: 0,
+      src: "images/die.png",
+    });
   });
 
   const ttt = createButton("ttt");
@@ -78,30 +82,24 @@ function makeButtons() {
       src: "images/train.png",
     });
 
-    spriteManager.addSharedSprite(
-      64,
-      48,
-      16,
-      16,
-      0,
-      ["pixelImage", "draggable"],
-      {
-        src: "images/green_1.png",
-        snapTo: 16,
-      }
-    );
+    spriteManager.addSharedSprite(["pixelImage", "draggable"], {
+      x: 64,
+      y: 48,
+      w: 16,
+      h: 16,
+      z: 0,
+      src: "images/green_1.png",
+      snapTo: 16,
+    });
 
-    spriteManager.addSharedSprite(
-      96,
-      48,
-      16,
-      16,
-      0,
-      ["pixelImage", "draggable"],
-      {
-        src: "images/green_2.png",
-        snapTo: 16,
-      }
-    );
+    spriteManager.addSharedSprite(["pixelImage", "draggable"], {
+      x: 96,
+      y: 48,
+      w: 16,
+      h: 16,
+      z: 0,
+      src: "images/green_2.png",
+      snapTo: 16,
+    });
   });
 }

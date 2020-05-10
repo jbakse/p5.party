@@ -72,10 +72,12 @@ export class SharedSpriteManager {
     ids.forEach((id) => this._attachSprite(id));
   }
 
-  async addSharedSprite(x, y, w, h, z, components = [], data, id) {
+  async addSharedSprite(components = [], shared, id) {
     const full_id = `sprites/${id || ds.getUid()}`;
     const r = await ds.record.getRecord(full_id);
-    r.set({ creator: ds.clientName, x, y, w, h, z, components, ...data });
+
+    shared = { x: 0, y: 0, w: 0, h: 0, z: 0, ...shared };
+    r.set({ creator: ds.clientName, components, shared });
     await r.whenReady();
 
     // wait till record is ready before adding to list

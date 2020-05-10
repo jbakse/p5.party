@@ -8,6 +8,7 @@ export const components = {};
 
 components.draggable = class {
   mousePressedInside(e) {
+    console.log("mousePressed");
     const data = this.sharedSprite.getData();
     if (!data) return;
 
@@ -19,7 +20,7 @@ components.draggable = class {
   mouseDragged(e) {
     const data = this.sharedSprite.getData();
     if (!data) return;
-
+    console.log("dragg");
     if (this.dragging) {
       this.sharedSprite.setData(
         "x",

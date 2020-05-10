@@ -14,6 +14,8 @@ export class SharedSprite {
     this.#record = record;
     this.#record.whenReady((r) => {
       const componentNames = r.get("components");
+      console.log("cnames", componentNames);
+
       if (Array.isArray(componentNames)) {
         this.#componentNames = componentNames;
 
@@ -41,7 +43,7 @@ export class SharedSprite {
       return false;
     }
 
-    const data = this.#record.get();
+    const data = this.#record.get("shared");
 
     if (!data || isEmptyObject(data)) {
       console.error("!data", this.id);
@@ -52,9 +54,9 @@ export class SharedSprite {
 
   setData(path, value, cb) {
     if (cb) {
-      this.#record.set(path, value, cb);
+      this.#record.set("shared." + path, value, cb);
     } else {
-      this.#record.set(path, value);
+      this.#record.set("shared." + path, value);
     }
   }
 

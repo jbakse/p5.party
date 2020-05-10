@@ -9,27 +9,28 @@ x.get rid of private member access! javascript doesn't enforce this, but we shou
 x.mouseClicked + all other mouse events
 
 .attach/detach lifecyle events
-    .attach (needs to be after components are connected)
+    x.attach (needs to be after components are connected)
+        .called "setup"
     x.detach
 
 
-.change _ methods to #
-
-.todo, shouldn't rely on globals for ds, spriteManager
 
 
-
-.todo organize record
-
+x.todo organize record
   .record
     .creator
-    .owner
     .shared
       .x
       .y
       .w
       .h
       .z
+
+
+
+
+
+.todo, shouldn't rely on globals for ds, spriteManager
 
 .handle removing owned sprites when owner leaves automatically?
 
