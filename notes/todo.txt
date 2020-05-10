@@ -6,11 +6,15 @@ x.Should shared spritelisten to the canvas events directly?
 x.get rid of private member access! javascript doesn't enforce this, but we shouldn't do it!
     x.move to "#" instead of "_"
 
+x.mouseClicked + all other mouse events
+
+
+
+
 .todo, shouldn't rely on globals for ds, spriteManager
 
 .attach/detach lifecyle events
 
-.mouseClicked + all other mouse events
 
 .todo organize record
 

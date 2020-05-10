@@ -40,6 +40,16 @@ export class SharedSpriteManager {
       this.#sprites.forEach((s) => s.sendMessage("mouseReleased", e));
     });
 
+    canvas.addEventListener("click", (e) => {
+      this.#sprites.forEach((s) => s.sendMessage("click", e));
+      this.#sprites.forEach((s) => s.sendMessage("mouseClicked", e));
+    });
+
+    canvas.addEventListener("wheel", (e) => {
+      this.#sprites.forEach((s) => s.sendMessage("wheel", e));
+      this.#sprites.forEach((s) => s.sendMessage("mouseWheel", e));
+    });
+
     // unload listenter
     window.addEventListener("unload", this._unload.bind(this));
 
