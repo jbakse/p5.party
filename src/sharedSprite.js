@@ -2,25 +2,25 @@ import { components } from "./components.js";
 import { isEmptyObject } from "./util.js";
 
 export class SharedSprite {
-  _id;
-  _record;
-  _components = [];
-  _componentNames = [];
-  _manager;
+  id;
+  #record;
+  #components = [];
+  #componentNames = [];
+  #manager;
 
   constructor(manager, id, record) {
-    this._manager = manager;
-    this._id = id;
-    this._record = record;
-    this._record.whenReady((r) => {
+    this.#manager = manager;
+    this.id = id;
+    this.#record = record;
+    this.#record.whenReady((r) => {
       const componentNames = r.get("components");
       if (Array.isArray(componentNames)) {
-        this._componentNames = componentNames;
+        this.#componentNames = componentNames;
 
         for (const name of componentNames) {
           const c = new components[name]();
           c.sharedSprite = this;
-          this._components.push(c);
+          this.#components.push(c);
         }
       }
       this.sendMessage("setup");
@@ -37,35 +37,38 @@ export class SharedSprite {
   }
 
   getData() {
-    if (!this._record.isReady) {
+    if (!this.#record.isReady) {
       return false;
     }
 
-    const data = this._record.get();
+    const data = this.#record.get();
 
     if (!data || isEmptyObject(data)) {
-      console.error("!data", this._id);
+      console.error("!data", this.id);
       return false;
     }
     return data;
   }
 
   setData(path, value, cb) {
-    this._record.set(path, value, cb);
+    if (cb) {
+      this.#record.set(path, value, cb);
+    } else {
+      this.#record.set(path, value);
+    }
   }
 
   // sendMessage
   // similar to Unity's GameObject's SendMessage()
   sendMessage(methodName, value) {
     if (!methodName) return false;
-    // console.log(this._components);
-    for (const c of this._components) {
-      // console.log(c, methodName);
+
+    for (const c of this.#components) {
       c[methodName] && c[methodName](value);
     }
   }
 
   remove() {
-    this._manager.removeSharedSprite(this._id);
+    this.#manager.removeSharedSprite(this.id);
   }
 }

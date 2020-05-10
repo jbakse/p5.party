@@ -3,7 +3,8 @@ x.Reorg as library/module
 x.Should shared spritelisten to the canvas events directly?
   x.This would let all the events handlers be private
 
-.get rid of private member access! javascript doesn't enforce this, but we shouldn't do it!
+x.get rid of private member access! javascript doesn't enforce this, but we shouldn't do it!
+    x.move to "#" instead of "_"
 
 .todo, shouldn't rely on globals for ds, spriteManager
 

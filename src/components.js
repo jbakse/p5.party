@@ -21,11 +21,11 @@ components.draggable = class {
     if (!data) return;
 
     if (this.dragging) {
-      this.sharedSprite._record.set(
+      this.sharedSprite.setData(
         "x",
         roundTo(mouseX - this.offsetX, data.snapTo || 1)
       );
-      this.sharedSprite._record.set(
+      this.sharedSprite.setData(
         "y",
         roundTo(mouseY - this.offsetY, data.snapTo || 1)
       );
@@ -37,11 +37,11 @@ components.draggable = class {
     if (!data) return;
 
     if (this.dragging) {
-      this.sharedSprite._record.set(
+      this.sharedSprite.setData(
         "x",
         roundTo(mouseX - this.offsetX, data.snapTo || 1)
       );
-      this.sharedSprite._record.set(
+      this.sharedSprite.setData(
         "y",
         roundTo(mouseY - this.offsetY, data.snapTo || 1)
       );
@@ -72,7 +72,7 @@ components.label = class {
     textAlign(CENTER);
 
     text(
-      this.sharedSprite._id.substr(-5),
+      this.sharedSprite.id.substr(-5),
       data.x + data.w * 0.5,
       data.y + data.h + 10
     );
@@ -87,7 +87,7 @@ components.d6 = class {
 
     if (!data.value) {
       const v = Math.floor(Math.random() * 6) + 1;
-      this.sharedSprite._record.set("value", v);
+      this.sharedSprite.setData("value", v);
     }
   }
 
@@ -107,7 +107,7 @@ components.d6 = class {
   mousePressedInside(e) {
     const v = Math.floor(Math.random() * 6) + 1;
 
-    this.sharedSprite._record.set("value", v);
+    this.sharedSprite.setData("value", v);
   }
 };
 
@@ -132,8 +132,8 @@ components.cursor = class {
 
     if (ds.clientName !== data.creator) return;
 
-    this.sharedSprite._record.set("x", roundTo(mouseX, data.snapTo || 1));
-    this.sharedSprite._record.set("y", roundTo(mouseY, data.snapTo || 1));
+    this.sharedSprite.setData("x", roundTo(mouseX, data.snapTo || 1));
+    this.sharedSprite.setData("y", roundTo(mouseY, data.snapTo || 1));
   }
 
   mouseDragged(e) {
