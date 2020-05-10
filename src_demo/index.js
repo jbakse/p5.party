@@ -22,16 +22,12 @@ function preload() {
 async function setup() {
   const canvas = createCanvas(400, 400);
 
-  canvas.canvas.addEventListener("mousedown", (e) =>
-    console.log("mousedown", e)
-  );
-
   background(50);
 
   makeButtons();
 
   await ss.initDeepstream();
-  await spriteManager.init();
+  await spriteManager.init(canvas.canvas);
 
   spriteManager.addSharedSprite(0, 0, 32, 32, 10000, ["cursor"], {
     color: "red",
@@ -46,30 +42,16 @@ function draw() {
 }
 
 // eslint-disable-next-line no-unused-vars
-function mousePressed(e) {
-  spriteManager.mousePressed(e);
-}
+function mousePressed(e) {}
 
 // eslint-disable-next-line no-unused-vars
-function mouseReleased(e) {
-  spriteManager.mouseReleased(e);
-}
+function mouseReleased(e) {}
 
 // eslint-disable-next-line no-unused-vars
-function mouseMoved(e) {
-  spriteManager.mouseMoved(e);
-}
+function mouseMoved(e) {}
 
 // eslint-disable-next-line no-unused-vars
-function mouseDragged(e) {
-  spriteManager.mouseDragged(e);
-}
-
-window.addEventListener("unload", function (event) {
-  spriteManager.unload();
-
-  console.log("I'm Unloading!");
-});
+function mouseDragged(e) {}
 
 function makeButtons() {
   const clear_button = createButton("clear");

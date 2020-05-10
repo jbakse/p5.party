@@ -1,10 +1,8 @@
 x.Reorg as library/module
 
-.Should shared spritelisten to the canvas events directly?
+x.Should shared spritelisten to the canvas events directly?
+  x.This would let all the events handlers be private
 
-  .This would let all the events handlers be private
-
-.handle this automatically removing owned sprites when owner leaves automatically?
 .get rid of private member access! javascript doesn't enforce this, but we shouldn't do it!
 
 .todo, shouldn't rely on globals for ds, spriteManager
@@ -24,6 +22,8 @@ x.Reorg as library/module
       .w
       .h
       .z
+
+.handle removing owned sprites when owner leaves automatically?
 
 .populate data field differently
 

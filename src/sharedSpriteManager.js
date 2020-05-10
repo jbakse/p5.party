@@ -6,10 +6,43 @@ import { SharedSprite } from "./sharedSprite.js";
 export class SharedSpriteManager {
   _sprites = [];
   _sprite_list;
+  _canvas;
 
   constructor() {}
 
-  async init() {
+  async init(canvas) {
+    // connect canvas listeners
+    this._canvas = canvas;
+
+    canvas.addEventListener("mousedown", (e) => {
+      this._sprites.forEach((s) => s.sendMessage("mousedown", e));
+      this._sprites.forEach((s) => s.sendMessage("mousePressed", e));
+      for (let i = this._sprites.length - 1; i >= 0; i--) {
+        const s = this._sprites[i];
+        if (s.containsPoint(mouseX, mouseY)) {
+          s.sendMessage("mousePressedInside", e);
+          break;
+        }
+      }
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+      this._sprites.forEach((s) => s.sendMessage("mousemove", e));
+      if (e.buttons > 0) {
+        this._sprites.forEach((s) => s.sendMessage("mouseDragged", e));
+      } else {
+        this._sprites.forEach((s) => s.sendMessage("mouseMoved", e));
+      }
+    });
+
+    canvas.addEventListener("mouseup", (e) => {
+      this._sprites.forEach((s) => s.sendMessage("mouseup", e));
+      this._sprites.forEach((s) => s.sendMessage("mouseReleased", e));
+    });
+
+    // unload listenter
+    window.addEventListener("unload", this._unload.bind(this));
+
     // subscribe to sprite_list
     this._sprite_list = ds.record.getList("sprites");
 
@@ -55,30 +88,6 @@ export class SharedSpriteManager {
     });
   }
 
-  mousePressed(e) {
-    this._sprites.forEach((s) => s.sendMessage("mousePressed", e));
-
-    for (let i = this._sprites.length - 1; i >= 0; i--) {
-      const s = this._sprites[i];
-      if (s.containsPoint(mouseX, mouseY)) {
-        s.sendMessage("mousePressedInside", e);
-        break;
-      }
-    }
-  }
-
-  mouseReleased(e) {
-    this._sprites.forEach((s) => s.sendMessage("mouseReleased", e));
-  }
-
-  mouseMoved(e) {
-    this._sprites.forEach((s) => s.sendMessage("mouseMoved", e));
-  }
-
-  mouseDragged(e) {
-    this._sprites.forEach((s) => s.sendMessage("mouseDragged", e));
-  }
-
   draw() {
     this._sprites.sort((a, b) => {
       (b._record.get("z") || 0) - (a._record.get("z") || 0);
@@ -87,8 +96,8 @@ export class SharedSpriteManager {
     this._sprites.forEach((s) => s.sendMessage("draw"));
   }
 
-  unload() {
-    console.log("unload sharedSpriteManager");
+  _unload() {
+    console.log("unload", this);
     this._sprites.forEach((s) => s.sendMessage("cleanUp"));
   }
 
