@@ -16,7 +16,9 @@ export const dsError = makeLogger(
   "background-color: #ff0000; color: #ffffff; padding: 2px 5px; border-radius: 2px"
 );
 
-export async function initDeepstream(
+export async function init(
+  app = "default",
+  room = "default",
   host = "wss://deepstream-server-1.herokuapp.com"
 ) {
   // ds = new DeepstreamClient("localhost:6020");
@@ -24,6 +26,8 @@ export async function initDeepstream(
   const name = randomName();
   await ds.login({ username: name });
   ds.clientName = name;
+  ds.app = app;
+  ds.room = room;
   dsLog("login complete", name);
 
   ds.on("error", (error, event, topic) =>

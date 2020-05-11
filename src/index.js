@@ -1,11 +1,11 @@
 console.log("src/index.js");
 
-import { SharedSprite } from "./sharedSprite.js";
+// import { SharedSprite } from "./sharedSprite.js";
 import { SharedSpriteManager } from "./sharedSpriteManager.js";
-import { initDeepstream } from "./deepstream.js";
+import { init } from "./deepstream.js";
 
 window.ss = {
-  SharedSprite,
+  // SharedSprite,
   SharedSpriteManager,
-  initDeepstream,
+  init,
 };

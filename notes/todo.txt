@@ -30,9 +30,9 @@ x.todo organize record
 x.add broadcast event function on sharedSpriteManager.js
 
 
-.init sequence
-    .todo, shouldn't rely on globals for ds, spriteManager
-    .add an "appName" and "roomName" to the DS connection, and use names to prefix
+x.init sequence
+    x.todo, shouldn't rely on globals for ds, spriteManager
+    x.add an "appName" and "roomName" to the DS connection, and use names to prefix
 
 
 .rename "data" to "shared" in game object?
@@ -68,3 +68,6 @@ x.remove debug_king
 
 
 .vue debugmode
+
+
+.add sharedSpriteManager.getSprite(name)

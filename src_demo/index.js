@@ -26,23 +26,24 @@ async function setup() {
 
   makeButtons();
 
-  await ss.initDeepstream();
+  await ss.init("ttt", "main");
   await spriteManager.init(canvas.canvas);
 
-  spriteManager.addSharedSprite(["cursor"], {
-    x: 0,
-    y: 0,
-    w: 32,
-    h: 32,
-    z: 10000,
-    color: "red",
-    src: "images/cursor.png",
-  });
+  // spriteManager.addSharedSprite(["cursor"], {
+  //   x: 0,
+  //   y: 0,
+  //   w: 32,
+  //   h: 32,
+  //   z: 10000,
+  //   color: "red",
+  //   src: "images/cursor.png",
+  // });
 }
 
 // eslint-disable-next-line no-unused-vars
 function draw() {
-  background(50);
+  if (!spriteManager.isReady) return;
+  background(0);
   spriteManager.draw();
 }
 
@@ -80,7 +81,12 @@ function makeButtons() {
 
   const ttt = createButton("ttt");
   ttt.mousePressed(() => {
-    spriteManager.addSharedSprite(16, 16, 256, 80, 0, ["pixelImage"], {
+    spriteManager.addSharedSprite(["pixelImage"], {
+      x: 16,
+      y: 16,
+      w: 256,
+      h: 80,
+      z: 0,
       src: "images/train.png",
     });
 

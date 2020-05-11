@@ -4,13 +4,14 @@ import { SharedSprite } from "./sharedSprite.js";
 // eslint-disable-next-line no-unused-vars
 
 export class SharedSpriteManager {
+  isReady = false;
   #sprites = [];
   #sprite_list;
   #canvas;
 
   constructor() {}
 
-  async init(canvas) {
+  async init(canvas, listname = "sprites") {
     // connect canvas listeners
     this.#canvas = canvas;
 
@@ -54,7 +55,7 @@ export class SharedSpriteManager {
     window.addEventListener("unload", this._unload.bind(this));
 
     // subscribe to sprite_list
-    this.#sprite_list = ds.record.getList("sprites");
+    this.#sprite_list = ds.record.getList(`${ds.app}-${ds.room}/${listname}`);
 
     this.#sprite_list.on("entry-added", (id, index) => {
       dsLog("sprites entry-added", id, index);
@@ -70,19 +71,20 @@ export class SharedSpriteManager {
     await this.#sprite_list.whenReady();
     const ids = this.#sprite_list.getEntries();
     ids.forEach((id) => this._attachSprite(id));
+    this.isReady = true;
   }
 
   async addSharedSprite(components = [], shared, id) {
-    const full_id = `sprites/${id || ds.getUid()}`;
-    const r = await ds.record.getRecord(full_id);
+    const sprite_name = `${ds.app}-${ds.room}-ss/${id || ds.getUid()}`;
+    const r = await ds.record.getRecord(sprite_name);
 
     shared = { x: 0, y: 0, w: 0, h: 0, z: 0, ...shared };
     r.set({ creator: ds.clientName, components, shared });
     await r.whenReady();
 
     // wait till record is ready before adding to list
-    this.#sprite_list.addEntry(full_id);
-    return r;
+    this.#sprite_list.addEntry(sprite_name);
+    return sprite_name;
   }
 
   removeSharedSprite(id) {
