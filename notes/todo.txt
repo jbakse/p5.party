@@ -44,8 +44,11 @@ x.init sequence
         .(currentlsy "set" consider name)
     .add function to cause immediate sync-write of all pending (debounced) writes
     .allow to configure sync-write frequency
-           
         
+
+  .worry about deep assignments on that proxy (its not seen!)
+        https://github.com/ElliotNB/observable-slim
+        https://stackoverflow.com/questions/41299642/how-to-use-javascript-proxy-for-nested-objects
 
 
 .handle removing owned sprites when owner leaves automatically?

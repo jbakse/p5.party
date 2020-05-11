@@ -15,6 +15,8 @@ components.draggable = class {
 
   mouseDragged(e) {
     if (this.dragging) {
+      // this.shared.pos = { x: 0, y: 0 };
+      // this.shared.pos.x = 10;
       this.shared.x = roundTo(mouseX - this.offsetX, this.shared.snapTo || 1);
       this.shared.y = roundTo(mouseY - this.offsetY, this.shared.snapTo || 1);
     }

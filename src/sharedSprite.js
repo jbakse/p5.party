@@ -23,6 +23,7 @@ export class SharedSprite {
         // return obj[prop];
         // },
         set: (obj, prop, value) => {
+          // console.log("set", obj, prop, value);
           if (obj[prop] !== value) {
             this.setData(prop, value);
           }
