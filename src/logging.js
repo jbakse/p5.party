@@ -1,7 +1,6 @@
 // https://stackoverflow.com/questions/13815640/a-proper-wrapper-for-console-log-with-correct-line-number
 
 /* tslint:disable no-console */
-console.log("logging.js");
 
 const _consoleTrace = console.info.bind(
   window.console,

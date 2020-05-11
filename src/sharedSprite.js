@@ -3,6 +3,8 @@ import { isEmptyObject } from "./util.js";
 
 export class SharedSprite {
   id;
+  shared = {};
+  #shared = {};
   #record;
   #components = [];
   #componentNames = [];
@@ -13,8 +15,23 @@ export class SharedSprite {
     this.id = id;
     this.#record = record;
     this.#record.whenReady((r) => {
+      this.#shared = r.get("shared");
+
+      this.shared = new Proxy(this.#shared, {
+        // get: function (obj, prop) {
+        // console.log("someone got my", prop);
+        // return obj[prop];
+        // },
+        set: (obj, prop, value) => {
+          if (obj[prop] !== value) {
+            this.setData(prop, value);
+          }
+          obj[prop] = value;
+          return true;
+        },
+      });
+
       const componentNames = r.get("components");
-      console.log("cnames", componentNames);
 
       if (Array.isArray(componentNames)) {
         this.#componentNames = componentNames;
@@ -22,10 +39,22 @@ export class SharedSprite {
         for (const name of componentNames) {
           const c = new components[name]();
           c.sharedSprite = this;
+          c.shared = this.shared;
           this.#components.push(c);
         }
       }
       this.sendMessage("setup");
+    });
+    this.#record.subscribe("shared", (shared) => {
+      // replace the CONTENTS of this.shared
+      // don't replace shared itself as components have a reference to it
+
+      for (const key in this.#shared) {
+        delete this.shared[key];
+      }
+      for (const key in shared) {
+        this.#shared[key] = shared[key];
+      }
     });
   }
 

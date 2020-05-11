@@ -35,19 +35,17 @@ x.init sequence
     x.add an "appName" and "roomName" to the DS connection, and use names to prefix
 
 
-.rename "data" to "shared" in game object?
-    .load shared onto the components
-    .auto send changes (mutation observer, just check?)
+.rework data in components
+    x.rename "data" to "shared" in game object?
+    x.load shared onto the components
+    x.auto send changes (proxy!, ~just check?~)
     .w/ debounce in frames
     .add a send() command to send manually (instead of auto or to push an immediate in addition to auto)
-    .populate data field differently
-
-        .change name to `shared`
-        .put `shared` on the components
-        .components can just read e.g. this.shared.x
-        .components can just write e.g. this.shared.x, changes will be shared automatically
-        .add function to cause immediate sync-write
-        .allow to configure sync-write frequency
+        .(currentlsy "set" consider name)
+    .add function to cause immediate sync-write of all pending (debounced) writes
+    .allow to configure sync-write frequency
+           
+        
 
 
 .handle removing owned sprites when owner leaves automatically?
