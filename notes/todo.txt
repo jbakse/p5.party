@@ -49,7 +49,7 @@ x.init sequence
   .worry about deep assignments on that proxy (its not seen!)
         https://github.com/ElliotNB/observable-slim
         https://stackoverflow.com/questions/41299642/how-to-use-javascript-proxy-for-nested-objects
-
+        https://github.com/sindresorhus/on-change
 
 .handle removing owned sprites when owner leaves automatically?
 
@@ -61,14 +61,15 @@ x.make it so you don't have to forward all the events from p5 handlers (install 
 
 .use actually unique id's for client ids
 
-.use "#" for privates
+x.use "#" for privates
 
 x.remove debug_king
 
-.MutationObserver
 
 
 .vue debugmode
 
 
 .add sharedSpriteManager.getSprite(name)
+
+.can spriteManager.createSprite return an instance of the sprite?
