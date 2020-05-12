@@ -34,6 +34,16 @@ x.init sequence
     x.todo, shouldn't rely on globals for ds, spriteManager
     x.add an "appName" and "roomName" to the DS connection, and use names to prefix
 
+x.make it so you don't have to forward all the events from p5 handlers (install listeners from sprite manager)
+
+x.use "#" for privates
+
+x.remove debug_king
+
+
+
+
+
 
 .rework data in components
     x.rename "data" to "shared" in game object?
@@ -51,19 +61,19 @@ x.init sequence
         https://stackoverflow.com/questions/41299642/how-to-use-javascript-proxy-for-nested-objects
         https://github.com/sindresorhus/on-change
 
-.handle removing owned sprites when owner leaves automatically?
-
-
-
-x.make it so you don't have to forward all the events from p5 handlers (install listeners from sprite manager)
 
 
 
 .use actually unique id's for client ids
 
-x.use "#" for privates
+.handle removing owned sprites when owner leaves automatically?
 
-x.remove debug_king
+
+
+
+
+.expose a SharedRecord class of some kind 
+
 
 
 
@@ -71,5 +81,6 @@ x.remove debug_king
 
 
 .add sharedSpriteManager.getSprite(name)
+  .and change name of creaetSprite "factory" method that creates the record, make it clear.
 
 .can spriteManager.createSprite return an instance of the sprite?

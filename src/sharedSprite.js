@@ -2,6 +2,19 @@ import { components } from "./components.js";
 
 import { ds } from "./deepstream.js";
 
+/**
+ * Record Shape
+ * creator: id
+ * shared: {}
+ */
+
+/**
+ * Sprite Record Shape
+ * creator: id
+ * components: [name, name, ...]
+ * shared: {}
+ */
+
 export class SharedRecord {
   isReady = false;
 
@@ -89,6 +102,7 @@ export class SharedRecord {
 export class SharedSprite {
   id;
   shared = {};
+  isReady = false;
   #components = [];
   #componentNames = [];
   #manager;
@@ -115,6 +129,7 @@ export class SharedSprite {
         }
       }
       this.sendMessage("setup");
+      this.isReady = true;
     });
   }
 
