@@ -124,8 +124,7 @@ export class SharedSpriteManager {
   }
 
   _attachSprite(id) {
-    const r = ds.record.getRecord(id);
-    const s = new SharedSprite(this, id, r);
+    const s = new SharedSprite(this, id);
     this.#sprites.push(s);
   }
 
