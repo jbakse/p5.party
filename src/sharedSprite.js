@@ -1,8 +1,8 @@
 import { components } from "./components.js";
-import { isEmptyObject } from "./util.js";
+
 import { ds } from "./deepstream.js";
 
-export class SharedData {
+export class SharedRecord {
   isReady = false;
 
   #id;
@@ -31,6 +31,13 @@ export class SharedData {
         }
         return true;
       },
+    });
+
+    Object.defineProperty(this.#shared, "send", {
+      value: this.sendShared.bind(this),
+      writable: false,
+      enumerable: false,
+      configurable: false,
     });
 
     this.#record.subscribe("shared", (shared) => {
@@ -73,14 +80,15 @@ export class SharedData {
     this.#record.set(...args);
   }
 
-  send() {}
+  sendShared() {
+    console.log("send shared!!!");
+    this.set("shared", this.#shared);
+  }
 }
 
 export class SharedSprite {
   id;
   shared = {};
-  // #shared = {};
-  // #record;
   #components = [];
   #componentNames = [];
   #manager;
@@ -90,9 +98,10 @@ export class SharedSprite {
     this.#manager = manager;
     this.id = id;
 
-    this.#sharedData = new SharedData(id);
+    this.#sharedData = new SharedRecord(id);
     this.#sharedData.whenReady(() => {
       this.shared = this.#sharedData.getShared();
+
       const componentNames = this.#sharedData.get("components");
 
       if (Array.isArray(componentNames)) {
@@ -101,46 +110,12 @@ export class SharedSprite {
         for (const name of componentNames) {
           const c = new components[name]();
           c.sharedSprite = this;
-          c.shared = this.#sharedData.getShared();
+          c.shared = this.shared;
           this.#components.push(c);
         }
       }
       this.sendMessage("setup");
     });
-
-    // this.#record = ds.record.getRecord(id);
-    // this.#record.whenReady((r) => {
-    //   this.#shared = r.get("shared");
-
-    //   this.shared = new Proxy(this.#shared, {
-    //     // get: function (obj, prop) {
-    //     // console.log("someone got my", prop);
-    //     // return obj[prop];
-    //     // },
-    //     set: (obj, prop, value) => {
-    //       // console.log("set", obj, prop, value);
-    //       if (obj[prop] !== value) {
-    //         this.setData(prop, value);
-    //       }
-    //       obj[prop] = value;
-    //       return true;
-    //     },
-    //   });
-
-    //   const componentNames = r.get("components");
-
-    //   if (Array.isArray(componentNames)) {
-    //     this.#componentNames = componentNames;
-
-    //     for (const name of componentNames) {
-    //       const c = new components[name]();
-    //       c.sharedSprite = this;
-    //       c.shared = this.shared;
-    //       this.#components.push(c);
-    //     }
-    //   }
-    //   this.sendMessage("setup");
-    // });
   }
 
   containsPoint(x, y) {
@@ -151,28 +126,6 @@ export class SharedSprite {
       y < this.shared.y + this.shared.h
     );
   }
-
-  // getData() {
-  //   if (!this.#record.isReady) {
-  //     return false;
-  //   }
-
-  //   const data = this.#record.get("shared");
-
-  //   if (!data || isEmptyObject(data)) {
-  //     console.error("!data", this.id);
-  //     return false;
-  //   }
-  //   return data;
-  // }
-
-  // setData(path, value, cb) {
-  //   if (cb) {
-  //     this.#record.set("shared." + path, value, cb);
-  //   } else {
-  //     this.#record.set("shared." + path, value);
-  //   }
-  // }
 
   // sendMessage
   // similar to Unity's GameObject's SendMessage()

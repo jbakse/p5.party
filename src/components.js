@@ -60,9 +60,9 @@ components.label = class {
 };
 
 components.d6 = class {
-  // talk() {
-  //   console.log("talk", this.sharedSprite);
-  // }
+  talk() {
+    console.log("talk", this.sharedSprite);
+  }
 
   setup() {
     if (!this.shared.value) {
