@@ -64,7 +64,7 @@ x.remove debug_king
 
 
 
-.use actually unique id's for client ids
+x.use actually unique id's for client ids
 
 .handle removing owned sprites when owner leaves automatically?
 

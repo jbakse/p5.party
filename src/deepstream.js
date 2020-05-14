@@ -23,7 +23,8 @@ export async function init(
 ) {
   // ds = new DeepstreamClient("localhost:6020");
   ds = new DeepstreamClient(host);
-  const name = randomName();
+
+  const name = ds.getUid();
   await ds.login({ username: name });
   ds.clientName = name;
   ds.app = app;
