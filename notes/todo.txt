@@ -66,16 +66,15 @@ x.remove debug_king
 
 x.use actually unique id's for client ids
 
-.handle removing owned sprites when owner leaves automatically?
 
 
-
-
-
+.config auto publish or not on sprites/records
+.handle removing owned sprites/records when owner leaves automatically?
 .expose a SharedRecord class of some kind 
 
 
 
+change "id" to "name", lets make "name" be the full thing = "prefix/id" 
 
 .vue debugmode
 

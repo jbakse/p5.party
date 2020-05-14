@@ -91,6 +91,11 @@ export class SharedSpriteManager {
     return sprite_name;
   }
 
+  getSharedSprite(id) {
+    const sprite_name = `${ds.app}-${ds.room}-ss/${id}`;
+    return this.#sprites.find((e) => e.id === sprite_name);
+  }
+
   removeSharedSprite(id) {
     this.#sprite_list.removeEntry(id);
     ds.record.getRecord(id).delete();
@@ -112,7 +117,7 @@ export class SharedSpriteManager {
 
   draw() {
     this.#sprites.sort((a, b) => {
-      (b.getData().z || 0) - (a.getData().z || 0);
+      (b.shared.z || 0) - (a.shared.z || 0);
     });
 
     this.#sprites.forEach((s) => s.sendMessage("draw"));

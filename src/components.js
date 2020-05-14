@@ -94,6 +94,78 @@ components.d6 = class {
   }
 };
 
+components.ball = class {
+  setup() {
+    this.shared.x = this.shared.x || width * 0.5;
+    this.shared.y = this.shared.y || height * 0.5;
+    this.shared.deltaX = this.shared.deltaX || random(-5, 5);
+    this.shared.deltaY = this.shared.deltaY || random(-5, 5);
+  }
+
+  draw() {
+    this.update();
+  }
+
+  update() {
+    if (!host_checkbox.checked()) return;
+    this.shared.x += this.shared.deltaX;
+    this.shared.y += this.shared.deltaY;
+
+    if (this.shared.x < 0) {
+      this.shared.deltaX = abs(this.shared.deltaX);
+    }
+    if (this.shared.y < 0) {
+      this.shared.deltaY = abs(this.shared.deltaY);
+    }
+    if (this.shared.x + this.shared.w > width) {
+      this.shared.deltaX = -abs(this.shared.deltaX);
+    }
+    if (this.shared.y + this.shared.h > height) {
+      this.shared.deltaY = -abs(this.shared.deltaY);
+    }
+
+    let paddle = spriteManager.getSharedSprite("paddle");
+    if (
+      paddle &&
+      intersects(
+        this.shared.x,
+        this.shared.y,
+        this.shared.w,
+        this.shared.h,
+        paddle.shared.x,
+        paddle.shared.y,
+        paddle.shared.w,
+        paddle.shared.h
+      )
+    ) {
+      this.shared.deltaX = -this.shared.deltaX;
+      this.shared.deltaY = -this.shared.deltaY;
+    }
+  }
+};
+
+function intersects(minx1, miny1, w1, h1, minx2, miny2, w2, h2) {
+  const maxx1 = minx1 + w1;
+  const maxy1 = miny1 + h1;
+  const maxx2 = minx2 + w2;
+  const maxy2 = miny2 + h2;
+
+  return minx1 < maxx2 && miny1 < maxy2 && maxx1 > minx2 && maxy1 > miny2;
+}
+
+components.paddle = class {
+  draw() {
+    if (host_checkbox.checked()) {
+      if (keyIsPressed && key === "a") {
+        this.shared.y -= 5;
+      }
+      if (keyIsPressed && key === "z") {
+        this.shared.y += 5;
+      }
+    }
+  }
+};
+
 components.cursor = class {
   draw() {
     if (ds.clientName === this.shared.creator) {
