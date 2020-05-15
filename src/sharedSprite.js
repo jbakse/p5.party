@@ -40,7 +40,12 @@ export class SharedRecord {
         // console.log("set", obj, prop, value);
         if (obj[prop] !== value) {
           obj[prop] = value;
-          this.set("shared." + prop, value);
+
+          //@todo this check is hacked in for now, should have a better read? write? system
+          const shouldWrite = this.#record.get("creator") === ds.clientName;
+          if (shouldWrite) {
+            this.set("shared." + prop, value);
+          }
         }
         return true;
       },
@@ -54,8 +59,14 @@ export class SharedRecord {
     });
 
     this.#record.subscribe("shared", (shared) => {
+      //@todo this check is hacked in for now, should have a better read? write? system
+      const shouldRead = this.#record.get("creator") !== ds.clientName;
+      if (!shouldRead) {
+        return;
+      }
       // replace the CONTENTS of this.#shared
       // don't replace #shared itself as #sharedProxy has a reference to it
+
       for (const key in this.#shared) {
         delete this.#shared[key];
       }
@@ -102,24 +113,26 @@ export class SharedRecord {
 export class SharedSprite {
   id;
   shared = {};
+  creator;
+  componentNames = [];
   isReady = false;
   #components = [];
-  #componentNames = [];
   #manager;
-  #sharedData;
+  #record;
 
   constructor(manager, id) {
     this.#manager = manager;
     this.id = id;
 
-    this.#sharedData = new SharedRecord(id);
-    this.#sharedData.whenReady(() => {
-      this.shared = this.#sharedData.getShared();
+    this.#record = new SharedRecord(id);
+    this.#record.whenReady(() => {
+      this.shared = this.#record.getShared();
 
-      const componentNames = this.#sharedData.get("components");
+      const componentNames = this.#record.get("components");
+      this.creator = this.#record.get("creator");
 
       if (Array.isArray(componentNames)) {
-        this.#componentNames = componentNames;
+        this.componentNames = componentNames;
 
         for (const name of componentNames) {
           const c = new components[name]();

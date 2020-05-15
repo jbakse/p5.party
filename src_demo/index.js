@@ -6,9 +6,6 @@ const images = [];
 
 const spriteManager = new ss.SharedSpriteManager();
 
-let host_checkbox;
-/* exported preload */
-
 // eslint-disable-next-line no-unused-vars
 function preload() {
   images["images/king.png"] = loadImage("images/king.png");
@@ -85,19 +82,14 @@ function makeButtons() {
 
   const paddle = createButton("paddle");
   paddle.mousePressed(async () => {
-    let n = await spriteManager.addSharedSprite(
-      ["pixelImage", "paddle"],
-      {
-        x: 20,
-        y: 200,
-        w: 60,
-        h: 88,
-        z: 0,
-        src: "images/king.png",
-      },
-      "paddle"
-    );
-    console.log(n);
+    await spriteManager.addSharedSprite(["pixelImage", "paddle", "draggable"], {
+      x: 20,
+      y: 200,
+      w: 60,
+      h: 88,
+      z: 0,
+      src: "images/king.png",
+    });
   });
 
   const ttt = createButton("ttt");
@@ -131,6 +123,4 @@ function makeButtons() {
       snapTo: 16,
     });
   });
-
-  host_checkbox = createCheckbox("host", false);
 }

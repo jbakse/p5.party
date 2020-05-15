@@ -83,3 +83,5 @@ change "id" to "name", lets make "name" be the full thing = "prefix/id"
   .and change name of creaetSprite "factory" method that creates the record, make it clear.
 
 .can spriteManager.createSprite return an instance of the sprite?
+
+if you add a sprite multiple times with the same name, its components get attached multiple times

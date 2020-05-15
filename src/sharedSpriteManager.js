@@ -96,6 +96,10 @@ export class SharedSpriteManager {
     return this.#sprites.find((e) => e.id === sprite_name);
   }
 
+  getSprites(fn) {
+    return this.#sprites.filter(fn);
+  }
+
   removeSharedSprite(id) {
     this.#sprite_list.removeEntry(id);
     ds.record.getRecord(id).delete();

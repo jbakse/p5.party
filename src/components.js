@@ -4,7 +4,7 @@ import { ds } from "./deepstream.js";
 
 export const components = {};
 
-/* global images */
+/* global images spriteManager*/
 
 components.draggable = class {
   mousePressedInside(e) {
@@ -98,8 +98,8 @@ components.ball = class {
   setup() {
     this.shared.x = this.shared.x || width * 0.5;
     this.shared.y = this.shared.y || height * 0.5;
-    this.shared.deltaX = this.shared.deltaX || random(-5, 5);
-    this.shared.deltaY = this.shared.deltaY || random(-5, 5);
+    this.shared.deltaX = this.shared.deltaX || random(3, 5);
+    this.shared.deltaY = this.shared.deltaY || random(3, 5);
   }
 
   draw() {
@@ -107,7 +107,8 @@ components.ball = class {
   }
 
   update() {
-    if (!host_checkbox.checked()) return;
+    if (this.sharedSprite.creator !== ds.clientName) return;
+
     this.shared.x += this.shared.deltaX;
     this.shared.y += this.shared.deltaY;
 
@@ -125,21 +126,40 @@ components.ball = class {
     }
 
     let paddle = spriteManager.getSharedSprite("paddle");
-    if (
-      paddle &&
-      intersects(
-        this.shared.x,
-        this.shared.y,
-        this.shared.w,
-        this.shared.h,
-        paddle.shared.x,
-        paddle.shared.y,
-        paddle.shared.w,
-        paddle.shared.h
-      )
-    ) {
-      this.shared.deltaX = -this.shared.deltaX;
-      this.shared.deltaY = -this.shared.deltaY;
+
+    const paddles = spriteManager.getSprites((s) => {
+      return s.componentNames.includes("paddle");
+    });
+
+    for (paddle of paddles) {
+      if (
+        intersects(
+          this.shared.x,
+          this.shared.y,
+          this.shared.w,
+          this.shared.h,
+          paddle.shared.x,
+          paddle.shared.y,
+          paddle.shared.w,
+          paddle.shared.h
+        )
+      ) {
+        const diffX =
+          this.shared.x +
+          this.shared.w * 0.5 -
+          (paddle.shared.x + paddle.shared.w * 0.5);
+        let diffY =
+          this.shared.y +
+          this.shared.h * 0.5 -
+          (paddle.shared.y + paddle.shared.h * 0.5);
+        diffY *= paddle.shared.w / paddle.shared.h;
+
+        if (diffX > diffY) {
+          this.shared.deltaX = Math.abs(this.shared.deltaX) * Math.sign(diffX);
+        } else {
+          this.shared.deltaY = Math.abs(this.shared.deltaY) * Math.sign(diffY);
+        }
+      }
     }
   }
 };
@@ -155,13 +175,13 @@ function intersects(minx1, miny1, w1, h1, minx2, miny2, w2, h2) {
 
 components.paddle = class {
   draw() {
-    if (host_checkbox.checked()) {
-      if (keyIsPressed && key === "a") {
-        this.shared.y -= 5;
-      }
-      if (keyIsPressed && key === "z") {
-        this.shared.y += 5;
-      }
+    if (this.sharedSprite.creator !== ds.clientName) return;
+
+    if (keyIsPressed && key === "a") {
+      this.shared.y -= 5;
+    }
+    if (keyIsPressed && key === "z") {
+      this.shared.y += 5;
     }
   }
 };
