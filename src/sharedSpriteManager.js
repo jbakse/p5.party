@@ -44,6 +44,14 @@ export class SharedSpriteManager {
     canvas.addEventListener("click", (e) => {
       this.#sprites.forEach((s) => s.sendMessage("click", e));
       this.#sprites.forEach((s) => s.sendMessage("mouseClicked", e));
+
+      for (let i = this.#sprites.length - 1; i >= 0; i--) {
+        const s = this.#sprites[i];
+        if (s.containsPoint(mouseX, mouseY)) {
+          s.sendMessage("mouseClickedInside", e);
+          break;
+        }
+      }
     });
 
     canvas.addEventListener(
@@ -78,12 +86,14 @@ export class SharedSpriteManager {
     this.isReady = true;
   }
 
-  async addSharedSprite(components = [], shared, id) {
+  async addSharedSprite(config = {}, shared = {}, id) {
     const sprite_name = `${ds.app}-${ds.room}-ss/${id || ds.getUid()}`;
     const r = await ds.record.getRecord(sprite_name);
 
     shared = { x: 0, y: 0, w: 0, h: 0, z: 0, ...shared };
-    r.set({ creator: ds.clientName, components, shared });
+    config = { creator: ds.clientName, components: [], ...config, shared };
+
+    r.set(config);
     await r.whenReady();
 
     // wait till record is ready before adding to list
@@ -121,15 +131,19 @@ export class SharedSpriteManager {
 
   draw() {
     this.#sprites.sort((a, b) => {
-      (b.shared.z || 0) - (a.shared.z || 0);
+      return (a.shared.z || 0) - (b.shared.z || 0);
     });
 
     this.#sprites.forEach((s) => s.sendMessage("draw"));
   }
 
   _unload() {
-    console.log("unload", this);
     this.#sprites.forEach((s) => s.sendMessage("cleanUp"));
+    const ownedSprites = this.getSprites((s) => s.creator === ds.clientName);
+
+    for (const s of ownedSprites) {
+      this.removeSharedSprite(s.id);
+    }
   }
 
   _attachSprite(id) {

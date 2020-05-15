@@ -23,7 +23,10 @@ components.draggable = class {
   }
 
   mouseReleased(e) {
-    this.mouseDragged();
+    if (this.dragging) {
+      this.mouseDragged();
+      this.shared.send();
+    }
     this.dragging = false;
   }
 };
@@ -60,10 +63,6 @@ components.label = class {
 };
 
 components.d6 = class {
-  talk() {
-    console.log("talk", this.sharedSprite);
-  }
-
   setup() {
     if (!this.shared.value) {
       this.roll();
@@ -84,7 +83,7 @@ components.d6 = class {
     pop();
   }
 
-  mousePressedInside(e) {
+  mouseClickedInside(e) {
     this.roll();
   }
 
@@ -188,9 +187,10 @@ components.paddle = class {
 
 components.cursor = class {
   draw() {
-    if (ds.clientName === this.shared.creator) {
+    if (ds.clientName === this.sharedSprite.creator) {
       return;
     }
+
     push();
     tint(this.shared.color || "white");
     noSmooth();
@@ -205,9 +205,10 @@ components.cursor = class {
   }
 
   mouseMoved(e) {
-    if (ds.clientName !== this.shared.creator) return;
-    this.shared.x = roundTo(mouseX - this.offsetX, this.shared.snapTo || 1);
-    this.shared.y = roundTo(mouseY - this.offsetY, this.shared.snapTo || 1);
+    if (ds.clientName !== this.sharedSprite.creator) return;
+
+    this.shared.x = roundTo(mouseX, this.shared.snapTo || 1);
+    this.shared.y = roundTo(mouseY, this.shared.snapTo || 1);
   }
 
   mouseDragged(e) {

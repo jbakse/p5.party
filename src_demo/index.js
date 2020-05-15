@@ -27,15 +27,29 @@ async function setup() {
   await ss.init("ttt", "main");
   await spriteManager.init(canvas.canvas);
 
-  // spriteManager.addSharedSprite(["cursor"], {
-  //   x: 0,
-  //   y: 0,
-  //   w: 32,
-  //   h: 32,
-  //   z: 10000,
-  //   color: "red",
-  //   src: "images/cursor.png",
-  // });
+  spriteManager.addSharedSprite(
+    { components: ["cursor"], autoWrite: true, autoRead: true },
+    {
+      x: 0,
+      y: 0,
+      w: 32,
+      h: 32,
+      z: 10000,
+      color: ss.util.pick([
+        "red",
+        "green",
+        "white",
+        "purple",
+        "gray",
+        "blue",
+        "orange",
+        "yellow",
+        "indigo",
+        "violet",
+      ]),
+      src: "images/cursor.png",
+    }
+  );
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -68,13 +82,15 @@ function makeButtons() {
   const d6 = createButton("d6");
   d6.mousePressed(() => {
     spriteManager.addSharedSprite(
-      ["pixelImage", "draggable", "label", "d6", "ball"],
+      {
+        components: ["pixelImage", "draggable", "label", "d6"],
+      },
       {
         x: random(width - 32),
         y: random(height - 32),
         w: 32,
         h: 32,
-        z: 0,
+        z: Math.floor(random(10)),
         src: "images/die.png",
       }
     );
@@ -82,45 +98,72 @@ function makeButtons() {
 
   const paddle = createButton("paddle");
   paddle.mousePressed(async () => {
-    await spriteManager.addSharedSprite(["pixelImage", "paddle", "draggable"], {
-      x: 20,
-      y: 200,
-      w: 60,
-      h: 88,
-      z: 0,
-      src: "images/king.png",
-    });
+    await spriteManager.addSharedSprite(
+      { components: ["pixelImage", "paddle", "draggable"] },
+      {
+        x: 20,
+        y: 200,
+        w: 60,
+        h: 88,
+        z: 0,
+        src: "images/king.png",
+      }
+    );
+  });
+
+  const ball = createButton("ball");
+  ball.mousePressed(async () => {
+    await spriteManager.addSharedSprite(
+      { components: ["pixelImage", "ball"] },
+      {
+        x: 20,
+        y: 200,
+        w: 16,
+        h: 16,
+        z: 0,
+        src: "images/die.png",
+      }
+    );
   });
 
   const ttt = createButton("ttt");
   ttt.mousePressed(() => {
-    spriteManager.addSharedSprite(["pixelImage"], {
-      x: 16,
-      y: 16,
-      w: 256,
-      h: 80,
-      z: 0,
-      src: "images/train.png",
-    });
+    spriteManager.addSharedSprite(
+      { components: ["pixelImage"] },
+      {
+        x: 16,
+        y: 16,
+        w: 256,
+        h: 80,
+        z: 0,
+        src: "images/train.png",
+      }
+    );
 
-    spriteManager.addSharedSprite(["pixelImage", "draggable"], {
-      x: 64,
-      y: 48,
-      w: 16,
-      h: 16,
-      z: 0,
-      src: "images/green_1.png",
-      snapTo: 16,
-    });
+    spriteManager.addSharedSprite(
+      { components: ["pixelImage", "draggable"] },
+      {
+        x: 64,
+        y: 48,
+        w: 16,
+        h: 16,
+        z: 0,
+        src: "images/green_1.png",
+        snapTo: 16,
+      }
+    );
 
-    spriteManager.addSharedSprite(["pixelImage", "draggable"], {
-      x: 96,
-      y: 48,
-      w: 16,
-      h: 16,
-      z: 0,
-      src: "images/green_2.png",
-      snapTo: 16,
-    });
+    spriteManager.addSharedSprite(
+      { components: ["pixelImage", "draggable"] },
+      {
+        x: 96,
+        y: 48,
+        w: 16,
+        h: 16,
+        z: 0,
+        src: "images/green_2.png",
+        snapTo: 16,
+      }
+    );
   });
 }

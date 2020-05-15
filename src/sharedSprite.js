@@ -18,32 +18,36 @@ import { ds } from "./deepstream.js";
 export class SharedRecord {
   isReady = false;
 
-  #id;
+  id;
   #record;
   #shared = {};
   #sharedProxy = {};
 
+  #autoRead;
+  #autoWrite;
+
   constructor(id) {
-    this.#id = id;
+    this.id = id;
     this.#record = ds.record.getRecord(id);
     this.#record.whenReady(this._setupProxy.bind(this));
   }
 
   _setupProxy() {
+    this.#autoRead =
+      this.#record.get("autoRead") ||
+      this.#record.get("creator") !== ds.clientName;
+
+    this.#autoWrite =
+      this.#record.get("autoWrite") ||
+      this.#record.get("creator") === ds.clientName;
+
     this.#shared = this.#record.get("shared");
+
     this.#sharedProxy = new Proxy(this.#shared, {
-      // get: function (obj, prop) {
-      //   console.log("someone got my", prop);
-      //   return obj[prop];
-      // },
       set: (obj, prop, value) => {
-        // console.log("set", obj, prop, value);
         if (obj[prop] !== value) {
           obj[prop] = value;
-
-          //@todo this check is hacked in for now, should have a better read? write? system
-          const shouldWrite = this.#record.get("creator") === ds.clientName;
-          if (shouldWrite) {
+          if (this.#autoWrite) {
             this.set("shared." + prop, value);
           }
         }
@@ -59,11 +63,8 @@ export class SharedRecord {
     });
 
     this.#record.subscribe("shared", (shared) => {
-      //@todo this check is hacked in for now, should have a better read? write? system
-      const shouldRead = this.#record.get("creator") !== ds.clientName;
-      if (!shouldRead) {
-        return;
-      }
+      if (!this.#autoRead) return;
+
       // replace the CONTENTS of this.#shared
       // don't replace #shared itself as #sharedProxy has a reference to it
 
@@ -105,7 +106,7 @@ export class SharedRecord {
   }
 
   sendShared() {
-    console.log("send shared!!!");
+    // console.log("send shared!!!");
     this.set("shared", this.#shared);
   }
 }
