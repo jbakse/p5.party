@@ -4,7 +4,7 @@
   "description": "First pass at making a easy to use library for simple multiuser sketches.",
   "main": "index.js",
   "scripts": {
-    "start": "PORT=${PORT:-6020} deepstream start",
+    "serve": "PORT=${PORT:-6020} deepstream start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Justin Bakse",

@@ -12,6 +12,8 @@ import { ds } from "./deepstream.js";
  * Sprite Record Shape
  * creator: id
  * components: [name, name, ...]
+ * autoRead: true|false
+ * autoWrite: true|false
  * shared: {}
  */
 
