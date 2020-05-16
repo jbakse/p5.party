@@ -1,169 +1,74 @@
 // https://opengameart.org/content/a-platformer-in-the-forest
+/* global ss createButton */
+/* eslint-disable no-unused-vars */
 
-/* global ss */
-/* global createButton */
-const images = [];
+let shared;
 
-const spriteManager = new ss.SharedSpriteManager();
+async function setup() {
+  createCanvas(400, 400);
 
-// eslint-disable-next-line no-unused-vars
-function preload() {
-  images["images/king.png"] = loadImage("images/king.png");
-  images["images/die.png"] = loadImage("images/die.png");
-  images["images/green_1.png"] = loadImage("images/green_1.png");
-  images["images/green_2.png"] = loadImage("images/green_2.png");
-  images["images/train.png"] = loadImage("images/train.png");
-  images["images/cursor.png"] = loadImage("images/cursor.png");
+  // ss.init takes a app name and a room name
+  // for your version you'll want to replace "simple" with the name of your sketch
+  await ss.init("simple", "main");
+
+  // this loads a shared data store named "globals"
+  // the second parameter is an object that defines the initial state if
+  // the data store doesn't alreay exist
+  shared = await ss.GetShared("globals", { x: 0, y: 0 });
+
+  // check if the .history exists, if not start an empty []
+  if (!shared.history) shared.history = [];
+
+  // make a clear button
+  createButton("clear").mousePressed(() => {
+    shared.history = [];
+  });
 }
 
-// eslint-disable-next-line no-unused-vars
-async function setup() {
-  const canvas = createCanvas(400, 400);
+function draw() {
+  // wait for shared to load before actually drawing
+  if (!shared) return;
 
   background(50);
 
-  makeButtons();
+  // this next line uses the || trick to provide a default if `shared.color` doesn't exist
+  fill(shared.color || "red");
+  noStroke();
 
-  await ss.init("ttt", "main");
-  await spriteManager.init(canvas.canvas);
+  ellipse(shared.x, shared.y, 100, 100);
 
-  spriteManager.addSharedSprite(
-    { components: ["cursor"], autoWrite: true, autoRead: true },
-    {
-      x: 0,
-      y: 0,
-      w: 32,
-      h: 32,
-      z: 10000,
-      color: ss.util.pick([
-        "red",
-        "green",
-        "white",
-        "purple",
-        "gray",
-        "blue",
-        "orange",
-        "yellow",
-        "indigo",
-        "violet",
-      ]),
-      src: "images/cursor.png",
-    }
-  );
+  // loop through the stored points and draw them
+  for (point of shared.history) {
+    fill("gray");
+    ellipse(point.x, point.y, 20, 20);
+  }
 }
 
-// eslint-disable-next-line no-unused-vars
-function draw() {
-  if (!spriteManager.isReady) return;
-  background(0);
-  spriteManager.draw();
-}
-
-// eslint-disable-next-line no-unused-vars
 function mousePressed(e) {
-  spriteManager.broadcastMessage("talk");
+  // simple values like numbers and strings are easy
+  // just set them and ss will sync them
+  shared.x = mouseX;
+  shared.y = mouseY;
+
+  // more complicated data like arrays is more of a trouble
+  // ss doesn't notice that the contents shared.history is changed here
+  shared.history.push({ x: mouseX, y: mouseY });
+
+  // you can use the .send() method on shared to push all the data manually
+  // but this is slow because it pushes everything, even things that didn't change
+  // and we already pushed .x and .y above so they get sent twice
+  shared.send();
+
+  // the syncing works pretty well if you don't have multiple clients rapidly
+  // setting the value (like every frame on draw or mousemove)
+
+  // see note in random color about keeping data simple
+  shared.color = randomColor();
 }
 
-// eslint-disable-next-line no-unused-vars
-function mouseReleased(e) {}
-
-// eslint-disable-next-line no-unused-vars
-function mouseMoved(e) {}
-
-// eslint-disable-next-line no-unused-vars
-function mouseDragged(e) {}
-
-function makeButtons() {
-  const clear_button = createButton("clear");
-  clear_button.mousePressed(() => {
-    spriteManager.clear();
-  });
-
-  const d6 = createButton("d6");
-  d6.mousePressed(() => {
-    spriteManager.addSharedSprite(
-      {
-        components: ["pixelImage", "draggable", "label", "d6"],
-      },
-      {
-        x: random(width - 32),
-        y: random(height - 32),
-        w: 32,
-        h: 32,
-        z: Math.floor(random(10)),
-        src: "images/die.png",
-      }
-    );
-  });
-
-  const paddle = createButton("paddle");
-  paddle.mousePressed(async () => {
-    await spriteManager.addSharedSprite(
-      { components: ["pixelImage", "paddle", "draggable"] },
-      {
-        x: 20,
-        y: 200,
-        w: 60,
-        h: 88,
-        z: 0,
-        src: "images/king.png",
-      }
-    );
-  });
-
-  const ball = createButton("ball");
-  ball.mousePressed(async () => {
-    await spriteManager.addSharedSprite(
-      { components: ["pixelImage", "ball"] },
-      {
-        x: 20,
-        y: 200,
-        w: 16,
-        h: 16,
-        z: 0,
-        src: "images/die.png",
-      }
-    );
-  });
-
-  const ttt = createButton("ttt");
-  ttt.mousePressed(() => {
-    spriteManager.addSharedSprite(
-      { components: ["pixelImage"] },
-      {
-        x: 16,
-        y: 16,
-        w: 256,
-        h: 80,
-        z: 0,
-        src: "images/train.png",
-      }
-    );
-
-    spriteManager.addSharedSprite(
-      { components: ["pixelImage", "draggable"] },
-      {
-        x: 64,
-        y: 48,
-        w: 16,
-        h: 16,
-        z: 0,
-        src: "images/green_1.png",
-        snapTo: 16,
-      }
-    );
-
-    spriteManager.addSharedSprite(
-      { components: ["pixelImage", "draggable"] },
-      {
-        x: 96,
-        y: 48,
-        w: 16,
-        h: 16,
-        z: 0,
-        src: "images/green_2.png",
-        snapTo: 16,
-      }
-    );
-  });
+function randomColor() {
+  // you (probably) can't store anything fancy (like instances) in shared.
+  // i'm using p5's color's toString here to make a simple string to store
+  // fill can use the string just fine
+  return color(random(255), random(255), random(255)).toString();
 }

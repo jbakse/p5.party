@@ -6,6 +6,7 @@ module.exports = {
   },
   extends: ["eslint:recommended", "p5js"],
   globals: {
+    setup: "readonly",
     Atomics: "readonly",
     SharedArrayBuffer: "readonly",
   },

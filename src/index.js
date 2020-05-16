@@ -1,13 +1,12 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
+// import "core-js/stable";
+// import "regenerator-runtime/runtime";
 
 import { SharedSpriteManager } from "./sharedSpriteManager.js";
+import { GetShared } from "./sharedRecord.js";
 import { init } from "./deepstream.js";
-import * as util from "./util.js";
 
 window.ss = {
-  // SharedSprite,
   SharedSpriteManager,
+  GetShared,
   init,
-  util,
 };
