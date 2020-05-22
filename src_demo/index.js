@@ -2,10 +2,24 @@
 /* global ss createButton */
 /* eslint-disable no-unused-vars */
 
-let shared;
+/* global sharedConnect loadShared */
+
+console.log("demo index.js");
+
+let sharedGlobals;
+
+function preload() {
+  console.log("preload");
+  sharedConnect("simple", "main", "wss://deepstream-server-1.herokuapp.com");
+  sharedGlobals = loadShared("globals");
+  // shared = ss.GetShared2("simple", "main", "globals");
+}
 
 async function setup() {
+  console.log("setup");
+  console.log(sharedGlobals);
   createCanvas(400, 400);
+  return;
 
   // ss.init takes a app name and a room name
   // for your version you'll want to replace "simple" with the name of your sketch
@@ -26,6 +40,10 @@ async function setup() {
 }
 
 function draw() {
+  console.log("draw");
+  console.log(sharedGlobals);
+  noLoop();
+  return;
   // wait for shared to load before actually drawing
   if (!shared) return;
 

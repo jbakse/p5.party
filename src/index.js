@@ -8,5 +8,6 @@ import { init } from "./deepstream.js";
 window.ss = {
   SharedSpriteManager,
   GetShared,
+
   init,
 };

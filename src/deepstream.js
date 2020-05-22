@@ -1,5 +1,4 @@
 import { makeLogger } from "./logging.js";
-import { randomName } from "./util.js";
 
 /* globals DeepstreamClient */
 export let ds;

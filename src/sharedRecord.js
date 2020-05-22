@@ -15,7 +15,7 @@ import { ds } from "./deepstream.js";
  * shared: {}
  */
 
-export async function GetShared(name, shared) {
+export async function GetShared(name) {
   const recordName = `${ds.app}-${ds.room}-ss/${name}`;
 
   const exists = await ds.record.has(recordName);
@@ -26,7 +26,6 @@ export async function GetShared(name, shared) {
       creator: ds.clientName,
       autoRead: true,
       autoWrite: true,
-      shared,
     };
     r.set(config);
     await r.whenReady();
@@ -50,6 +49,7 @@ export class SharedRecord {
 
   constructor(id) {
     this.id = id;
+
     this.#record = ds.record.getRecord(id);
     this.#record.whenReady(this._setupProxy.bind(this));
   }
