@@ -1,8 +1,15 @@
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+
+// const onChange = require("on-change");
+// import { onChange } from "on-change";
+// console.log("onChange", onChange);
+
 import { makeLogger } from "./logging.js";
 
 /* globals DeepstreamClient, p5 */
 
-console.log("index_p5.js");
+console.log("index_p5.js!");
 
 const dsLog = makeLogger(
   "log",
@@ -22,6 +29,8 @@ let ds_room;
 
 p5.prototype.sharedConnect = function (sketch_name, room_name, host) {
   //   const ret = {};
+  // @todo self is not defined
+
   console.log("sharedConnect");
   ds_room = new RoomManager(sketch_name, room_name, host);
   ds_room.connect(() => {

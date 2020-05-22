@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "build": "webpack --config webpack.config.js",
+    "watch": "webpack --watch --config webpack.config.js",
     "serve": "PORT=${PORT:-6020} deepstream start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,6 +15,7 @@
     "@deepstream/client": "^5.0.8",
     "@deepstream/server": "^5.0.16",
     "core-js": "^3.6.5",
+    "on-change": "^2.0.1",
     "regenerator-runtime": "^0.13.5"
   },
   "devDependencies": {

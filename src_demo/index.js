@@ -63,6 +63,7 @@ function draw() {
 }
 
 function mousePressed(e) {
+  return;
   // simple values like numbers and strings are easy
   // just set them and ss will sync them
   shared.x = mouseX;
