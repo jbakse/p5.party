@@ -38,4 +38,17 @@ export async function init(
   ds.on("connectionStateChanged", (connectionState) =>
     dsLog("connectionStateChanged", connectionState)
   );
+
+  const result = await ds.presence.getAll();
+  ds.clientList = result;
+  console.log("everybody", ds.clientList, ds.clientName);
+
+  ds.presence.subscribe((name, login) => {
+    if (login) {
+      ds.clientList.push(name);
+    } else {
+      ds.clientList.splice(ds.clientList.indexOf(name), 1);
+    }
+    console.log("everybody update", ds.clientList, ds.clientName);
+  });
 }
