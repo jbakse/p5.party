@@ -56,6 +56,7 @@ function mouseReleased() {
 
 function touchEnded() {
   console.log("touch end");
+  mouseReleased();
   // mouseClicked();
 }
 
