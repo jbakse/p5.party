@@ -44,13 +44,19 @@ function setup() {
   noSmooth();
 }
 
-function mouseClicked() {
+function mouseReleased() {
+  console.log("mouseReleased");
   // find the grid location of the click
   let grid_x = floor(mouseX / col_width);
   let grid_y = floor(mouseY / col_width);
 
   // toggle the cell state
   shared.grid[grid_x][grid_y] = !shared.grid[grid_x][grid_y];
+}
+
+function touchEnded() {
+  console.log("touch end");
+  // mouseClicked();
 }
 
 function draw() {
