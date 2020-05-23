@@ -3,8 +3,9 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./src/index_p5.js",
   mode: "development",
+  entry: "./src/index_p5.js",
+  devtool: "inline-source-map",
   devServer: {
     contentBase: "./",
   },
