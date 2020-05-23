@@ -6,6 +6,7 @@
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --watch --config webpack.config.js",
+    "start": "webpack-dev-server --open --config webpack.config.js",
     "serve": "PORT=${PORT:-6020} deepstream start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -27,7 +28,8 @@
     "eslint": "^7.0.0",
     "eslint-config-p5js": "^1.0.1",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0"
   },
   "engines": {
     "node": "14.1.0"

@@ -5,6 +5,9 @@ const path = require("path");
 module.exports = {
   entry: "./src/index_p5.js",
   mode: "development",
+  devServer: {
+    contentBase: "./",
+  },
   module: {
     rules: [
       {
