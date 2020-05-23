@@ -5,12 +5,6 @@ import { makeLogger } from "./logging.js";
 
 /* globals DeepstreamClient, p5 */
 
-// const p5Log = makeLogger(
-//   "log",
-//   "p5",
-//   "background-color: #F88; color: #ffff00; padding: 2px 5px; border-radius: 2px"
-// );
-
 const dsLog = makeLogger(
   "log",
   "ds",
@@ -18,38 +12,38 @@ const dsLog = makeLogger(
 );
 
 const dsError = makeLogger(
-  "log",
-  "ds",
+  "error",
+  "error",
   "background-color: #ff0000; color: #ffffff; padding: 2px 5px; border-radius: 2px"
 );
 
 let ds_room;
 
-p5.prototype.sharedConnect = function (sketch_name, room_name, host) {
-  ds_room = new RoomManager(sketch_name, room_name, host);
-  //   ds_room.whenReady(() => {
-  // p5Log("sharedConnect ready");
-  //   });
+p5.prototype.connectToSharedRoom = function (host, sketch_name, room_name, cb) {
+  ds_room = new RoomManager(host, sketch_name, room_name);
+  cb && ds_room.whenReady(cb);
 };
 
-p5.prototype.loadShared = function (record_id) {
+p5.prototype.getSharedData = function (record_id, cb) {
+  if (!ds_room) return dsError("loadShared() called before sharedConnect()");
+
   const recordManager = new RecordManager(record_id, ds_room, () => {
-    // p5Log("loadShared ready");
     this._decrementPreload();
+    if (typeof cb === "function") cb();
   });
 
   return recordManager.getShared();
 };
 
-p5.prototype.registerPreloadMethod("loadShared", p5.prototype);
+p5.prototype.registerPreloadMethod("getSharedData", p5.prototype);
 
 class RecordManager {
   #id;
+  #roomManager;
   #name;
-  #record;
   #shared;
   #watchedShared;
-  #roomManager;
+  #record;
 
   constructor(id, roomManager, onReadyCB) {
     this.#id = id;
@@ -57,9 +51,7 @@ class RecordManager {
     this.#name = `${ds_room.getPrefix()}/${this.#id}`;
     this.#shared = {};
     this.#watchedShared = onChange(this.#shared, this._watchShared.bind(this));
-    this.#roomManager.whenReady(() => {
-      this._connect(onReadyCB);
-    });
+    this._connect(onReadyCB);
   }
 
   _watchShared(path, newValue, oldValue) {
@@ -69,15 +61,16 @@ class RecordManager {
   }
 
   async _connect(onReadyCB) {
+    await this.#roomManager.whenReady();
     this.#record = this.#roomManager.getClient().record.getRecord(this.#name);
-    this._subscribeShared();
+    this._subscribeToShared();
     await this.#record.whenReady();
-    dsLog("RecordManager record ready");
+    dsLog("RecordManager: Record ready.");
     dsLog(this.#record.get());
     if (typeof onReadyCB === "function") onReadyCB();
   }
 
-  _subscribeShared() {
+  _subscribeToShared() {
     this.#record.subscribe("shared", (shared) => {
       // replace the CONTENTS of this.#shared
       // don't replace #shared itself as #watchedShared has a reference to it
@@ -96,17 +89,17 @@ class RecordManager {
 }
 
 class RoomManager {
+  #host;
   #app;
   #room;
-  #host;
   #deepstreamClient;
   #clientName;
   #isReady = false;
 
   constructor(
+    host = "wss://deepstream-server-1.herokuapp.com",
     app = "default",
-    room = "default",
-    host = "wss://deepstream-server-1.herokuapp.com"
+    room = "default"
   ) {
     this.#app = app;
     this.#room = room;
@@ -117,13 +110,17 @@ class RoomManager {
   }
 
   whenReady(cb) {
-    if (!(typeof cb === "function")) {
-      dsError("RoomManager.whenReady() expects a callback");
+    if (this.#isReady) {
+      if (typeof cb === "function") cb();
+      return Promise.resolve();
     }
-    if (this.#isReady) return cb();
-    this.#deepstreamClient.on("__ready", cb);
+    if (typeof cb === "function") this.#deepstreamClient.once("__ready", cb);
+    return new Promise((resolve) => {
+      this.#deepstreamClient.once("__ready", resolve);
+    });
   }
 
+  // @todo should I expose a getRecord instead? better encapsulated that way?
   getClient() {
     return this.#deepstreamClient;
   }
@@ -142,6 +139,7 @@ class RoomManager {
     );
 
     await this.#deepstreamClient.login({ username: this.#clientName });
+
     dsLog("RoomManager login complete", this.#clientName);
     this.#isReady = true;
     this.#deepstreamClient.emit("__ready");

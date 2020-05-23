@@ -1,37 +1,46 @@
 // https://opengameart.org/content/a-platformer-in-the-forest
 
 /* eslint-disable no-unused-vars */
-/* global sharedConnect loadShared */
+/* global connectToSharedRoom getSharedData */
 
 let shared;
 
 function preload() {
-  console.log("preload");
-  sharedConnect("simple", "main", "wss://deepstream-server-1.herokuapp.com");
-  shared = loadShared("globals");
+  connectToSharedRoom(
+    "wss://deepstream-server-1.herokuapp.com",
+    "simple",
+    "main"
+  );
+  shared = getSharedData("globals");
 }
 
 async function setup() {
-  console.log("setup");
-
   createCanvas(400, 400);
 
-  console.log(shared);
+  // set defaults on shared data
   shared.x = shared.x || 0;
   shared.y = shared.y || 0;
-  console.log(shared);
+  shared.clickHistory = shared.clickHistory || [];
 }
 
 function draw() {
   background(50);
-  fill(200);
   noStroke();
+
+  // read shared data
+  fill("red");
   ellipse(shared.x, shared.y, 100, 100);
+
+  fill("blue");
+  for (const p of shared.clickHistory) {
+    ellipse(p.x, p.y, 20, 20);
+  }
 }
 
 function mousePressed(e) {
-  console.log("mousePressed");
-  console.log(shared);
+  // write shared data
   shared.x = mouseX;
   shared.y = mouseY;
+  shared.clickHistory.push({ x: mouseX, y: mouseY });
+  console.log(shared);
 }
