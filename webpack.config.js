@@ -7,7 +7,9 @@ module.exports = {
   entry: "./src/index_p5.js",
   devtool: "inline-source-map",
   devServer: {
+    publicPath: "/dist/",
     contentBase: "./",
+    writeToDisk: true,
   },
   module: {
     rules: [

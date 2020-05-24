@@ -24,7 +24,7 @@ async function setup() {
 }
 
 function draw() {
-  background(50);
+  background(0);
   noStroke();
 
   // read shared data
