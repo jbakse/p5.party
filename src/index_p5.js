@@ -95,6 +95,7 @@ class RoomManager {
   #deepstreamClient;
   #clientName;
   #isReady = false;
+  #roomData;
 
   constructor(
     host = "wss://deepstream-server-1.herokuapp.com",
@@ -143,5 +144,51 @@ class RoomManager {
     dsLog("RoomManager login complete", this.#clientName);
     this.#isReady = true;
     this.#deepstreamClient.emit("__ready");
+
+    this.#roomData = this.#deepstreamClient.record.getRecord(
+      this.getPrefix() + "/" + "_room_data"
+    );
+
+    await this.#roomData.whenReady();
+
+    if (!this.#roomData.get("participants")) {
+      this.#roomData.set("participants", {});
+    }
+
+    if (!this.#roomData.get(`participants.${this.#clientName}`)) {
+      this.#roomData.set(`participants.${this.#clientName}`, {});
+    }
+
+    window.addEventListener("beforeunload", () => {
+      console.log("unload");
+      this.#roomData.set(`participants.${this.#clientName}`, undefined);
+    });
+
+    // this.#deepstreamClient.presence.subscribe((username, isLoggedIn) => {
+    //   if (isLoggedIn === false) {
+    //     console.log(username, "logged out");
+    //     if (this.#roomData.get(`participants.${username}`)) {
+    //       this.#roomData.set(`participants.${username}`, undefined);
+    //     }
+    //   }
+    // });
+
+    this.#roomData.subscribe("participants", (data) => {
+      console.log("participants changed");
+      console.log(data);
+    });
+
+    await this._cleanParticipants();
+  }
+
+  async _cleanParticipants() {
+    const connectedNames = await this.#deepstreamClient.presence.getAll();
+    connectedNames.push(this.#clientName);
+    const participants = this.#roomData.get("participants");
+    for (const key in participants) {
+      if (!connectedNames.includes(key)) {
+        this.#roomData.set(`participants.${key}`, undefined);
+      }
+    }
   }
 }

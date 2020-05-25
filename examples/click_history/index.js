@@ -31,7 +31,7 @@ function draw() {
   fill("red");
   ellipse(shared.x, shared.y, 100, 100);
 
-  fill("blue");
+  fill("#6666ff");
   for (const p of shared.clickHistory) {
     ellipse(p.x, p.y, 20, 20);
   }
@@ -42,5 +42,4 @@ function mousePressed(e) {
   shared.x = mouseX;
   shared.y = mouseY;
   shared.clickHistory.push({ x: mouseX, y: mouseY });
-  console.log(shared);
 }
