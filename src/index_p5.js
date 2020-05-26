@@ -151,14 +151,24 @@ class RoomManager {
 
     await this.#roomData.whenReady();
 
+    // create participants list if it doesn't exist
     if (!this.#roomData.get("participants")) {
       this.#roomData.set("participants", {});
     }
 
+    // subscribe to changes
+    this.#roomData.subscribe("participants", (data) => {
+      console.log("participants changed");
+      console.log(data);
+      this._chooseHost();
+    });
+
+    // add self to participant list
     if (!this.#roomData.get(`participants.${this.#clientName}`)) {
       this.#roomData.set(`participants.${this.#clientName}`, {});
     }
 
+    // remove self from participant list
     window.addEventListener("beforeunload", () => {
       console.log("unload");
       this.#roomData.set(`participants.${this.#clientName}`, undefined);
@@ -173,12 +183,35 @@ class RoomManager {
     //   }
     // });
 
-    this.#roomData.subscribe("participants", (data) => {
-      console.log("participants changed");
-      console.log(data);
-    });
-
     await this._cleanParticipants();
+  }
+  async _chooseHost() {
+    const participants = this.#roomData.get(`participants`);
+    if (participants.length === 0) {
+      return dsError(
+        "Something went wrong. There are no participants in this room."
+      );
+    }
+    console.log("chooseHost");
+
+    let hostsFound = 0;
+    for (const name in participants) {
+      const p = participants[name];
+      if (p.isHost === true) {
+        console.log("Found host: ", name);
+        hostsFound++;
+      }
+    }
+
+    if (hostsFound === 0) {
+      const newHostName = Object.keys(participants)[0];
+      console.log("I'm SETTING THE HOST", newHostName);
+      this.#roomData.set(`participants.${newHostName}.isHost`, true);
+    }
+
+    if (hostsFound > 1) {
+      return dsError(`Something went wrong. Found ${hostsFound} hosts!`);
+    }
   }
 
   async _cleanParticipants() {

@@ -8,7 +8,7 @@ let shared;
 function preload() {
   connectToSharedRoom(
     "wss://deepstream-server-1.herokuapp.com",
-    "simple",
+    "click_history",
     "main"
   );
   shared = getSharedData("globals");

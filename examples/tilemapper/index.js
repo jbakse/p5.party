@@ -14,7 +14,7 @@ let shared;
 function preload() {
   connectToSharedRoom(
     "wss://deepstream-server-1.herokuapp.com",
-    "simple",
+    "tilemapper",
     "main"
   );
   shared = getSharedData("globals");
