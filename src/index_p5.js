@@ -11,6 +11,12 @@ const dsLog = makeLogger(
   "background-color: #88F; color: #00ffff; padding: 2px 5px; border-radius: 2px"
 );
 
+const dsWarn = makeLogger(
+  "log",
+  "warn",
+  "background-color: #FF0; color: #000; padding: 2px 5px; border-radius: 2px"
+);
+
 const dsError = makeLogger(
   "error",
   "error",
@@ -130,6 +136,20 @@ class RoomManager {
     return `${this.#app}-${this.#room}`;
   }
 
+  // displayParticipants() {
+  //   const names = Object.keys(this.#roomData.get("participants"));
+  //   let output = "";
+  //   for (const name of names) {
+  //     const shortName = name.substr(-4);
+  //     const isHost = this.#roomData.get(`participants.${name}.isHost`)
+  //       ? "(H)"
+  //       : "";
+  //     const isMe = this.#clientName === name ? "(M)" : "";
+  //     output += `${shortName}${isHost}${isMe} `;
+  //   }
+  //   console.log(output);
+  // }
+
   async _connect() {
     this.#deepstreamClient.on("error", (error, event, topic) =>
       dsError("error", error, event, topic)
@@ -156,43 +176,47 @@ class RoomManager {
       this.#roomData.set("participants", {});
     }
 
-    // subscribe to changes
-    this.#roomData.subscribe("participants", (data) => {
-      console.log("participants changed");
-      console.log(data);
-      this._chooseHost();
-    });
-
     // add self to participant list
     if (!this.#roomData.get(`participants.${this.#clientName}`)) {
       this.#roomData.set(`participants.${this.#clientName}`, {});
     }
 
-    // remove self from participant list
-    window.addEventListener("beforeunload", () => {
-      console.log("unload");
+    // handle leaving
+    window.addEventListener("beforeunload", async () => {
       this.#roomData.set(`participants.${this.#clientName}`, undefined);
+      await this._chooseHost();
     });
 
-    // this.#deepstreamClient.presence.subscribe((username, isLoggedIn) => {
-    //   if (isLoggedIn === false) {
-    //     console.log(username, "logged out");
-    //     if (this.#roomData.get(`participants.${username}`)) {
-    //       this.#roomData.set(`participants.${username}`, undefined);
-    //     }
-    //   }
-    // });
+    this.#deepstreamClient.presence.subscribe(async (username, isLoggedIn) => {
+      if (isLoggedIn) return;
 
-    await this._cleanParticipants();
+      // participant should have removed self from room before logging out
+      // if they didn't, remove them
+      if (await this._participantInRoom(username)) {
+        dsWarn(`Participant ${username} left unexpectedly`);
+        this.#roomData.set(`participants.${username}`, undefined);
+        await this._chooseHost();
+      }
+    });
+
+    await this._removeDisconnectedPartipants();
+    await this._chooseHost();
   }
-  async _chooseHost() {
+
+  async _participantInRoom(username) {
+    await this.#roomData.whenReady();
     const participants = this.#roomData.get(`participants`);
-    if (participants.length === 0) {
-      return dsError(
-        "Something went wrong. There are no participants in this room."
+    return Object.keys(participants).includes(username);
+  }
+
+  async _chooseHost() {
+    await this.#roomData.whenReady();
+    const participants = this.#roomData.get(`participants`);
+    if (Object.keys(participants).length === 0) {
+      return dsWarn(
+        "There are no participants in this room. Hopefully this is the last particpant to leave."
       );
     }
-    console.log("chooseHost");
 
     let hostsFound = 0;
     for (const name in participants) {
@@ -204,8 +228,7 @@ class RoomManager {
     }
 
     if (hostsFound === 0) {
-      const newHostName = Object.keys(participants)[0];
-      console.log("I'm SETTING THE HOST", newHostName);
+      const newHostName = Object.keys(participants).sort()[0];
       this.#roomData.set(`participants.${newHostName}.isHost`, true);
     }
 
@@ -214,7 +237,7 @@ class RoomManager {
     }
   }
 
-  async _cleanParticipants() {
+  async _removeDisconnectedPartipants() {
     const connectedNames = await this.#deepstreamClient.presence.getAll();
     connectedNames.push(this.#clientName);
     const participants = this.#roomData.get("participants");

@@ -10,7 +10,7 @@ module.exports = {
     publicPath: "/dist/",
     contentBase: "./",
     watchContentBase: true,
-    writeToDisk: true,
+    // writeToDisk: true,
   },
   module: {
     rules: [
