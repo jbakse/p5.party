@@ -31,7 +31,10 @@ p5.prototype.connectToSharedRoom = function (host, sketch_name, room_name, cb) {
 };
 
 p5.prototype.getSharedData = function (record_id, cb) {
-  if (!ds_room) return dsError("loadShared() called before sharedConnect()");
+  if (!ds_room) {
+    dsError("getSharedData() called before connectToSharedRoom()");
+    return undefined;
+  }
 
   const recordManager = new RecordManager(record_id, ds_room, () => {
     this._decrementPreload();
@@ -39,6 +42,14 @@ p5.prototype.getSharedData = function (record_id, cb) {
   });
 
   return recordManager.getShared();
+};
+
+p5.prototype.isHost = function () {
+  if (!ds_room) {
+    dsError("isHost() called before connectToSharedRoom()");
+    return undefined;
+  }
+  return ds_room.isHost();
 };
 
 p5.prototype.registerPreloadMethod("getSharedData", p5.prototype);
@@ -71,6 +82,19 @@ class RecordManager {
     this.#record = this.#roomManager.getClient().record.getRecord(this.#name);
     this._subscribeToShared();
     await this.#record.whenReady();
+    // this.#record.setMergeStrategy(
+    //   (record, remoteData, remoteVersion, callback, cb) => {
+    //     console.log(
+    //       "merge strat envoked",
+    //       record,
+    //       remoteData,
+    //       remoteVersion,
+    //       callback,
+    //       cb
+    //     );
+    //     cb(null, remoteData);
+    //   }
+    // );
     dsLog("RecordManager: Record ready.");
     dsLog(this.#record.get());
     if (typeof onReadyCB === "function") onReadyCB();
@@ -112,6 +136,7 @@ class RoomManager {
     this.#room = room;
     this.#host = host;
     this.#deepstreamClient = new DeepstreamClient(this.#host);
+    console.log("ds", DeepstreamClient);
     this.#clientName = this.#deepstreamClient.getUid();
     this._connect();
   }
@@ -149,6 +174,10 @@ class RoomManager {
   //   }
   //   console.log(output);
   // }
+
+  isHost() {
+    return this.#roomData.get(`participants.${this.#clientName}.isHost`);
+  }
 
   async _connect() {
     this.#deepstreamClient.on("error", (error, event, topic) =>
@@ -219,10 +248,11 @@ class RoomManager {
     }
 
     let hostsFound = 0;
+    // @todo funcitonal version for counting matches?
     for (const name in participants) {
       const p = participants[name];
       if (p.isHost === true) {
-        console.log("Found host: ", name);
+        // console.log("Found host: ", name);
         hostsFound++;
       }
     }
