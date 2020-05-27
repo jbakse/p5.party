@@ -1,6 +1,6 @@
 {
   "name": "deepstream_test",
-  "version": "0.0.1",
+  "version": "0.0.0-alpha",
   "description": "First pass at making a easy to use library for simple multiuser sketches.",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "start": "webpack-dev-server --open --config webpack.config.js",
     "serve": "PORT=${PORT:-6020} deepstream start",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "quickpack": "zip quickpack.zip -r dist -r examples index.html"
+    "quickpack": "npm run build && zip quickpack.zip -r dist -r examples index.html"
   },
   "author": "Justin Bakse",
   "license": "UNLICENCED",
