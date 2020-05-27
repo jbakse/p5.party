@@ -17,52 +17,37 @@ function preload() {
 async function setup() {
   createCanvas(400, 400);
   noStroke();
-
   // set defaults on shared data
-  shared.ball = shared.ball || {
-    x: width * 0.5,
-    y: 0,
-    dX: 0,
-    dY: 0,
-  };
-
-  shared.click = shared.click || {
-    x: width * 0.5,
-    y: height * 0.5,
-  };
+  shared.clicks = shared.clicks || [];
+  shared.startTime = shared.startTime || new Date();
+  console.log("start as host?", isHost());
 }
 
 function draw() {
   background(0);
   noStroke();
-
-  // read shared data
+  // reset the history every 10 seconds
+  // we don't want every participant doing this
+  // so we can ask the host to handle it
   if (isHost()) {
+    const elapsed = new Date() - new Date(shared.startTime);
+    if (elapsed > 10000) {
+      shared.startTime = new Date();
+      shared.clicks = [];
+    }
+
     fill(255);
     text("Hosting!", 10, 20);
-
-    shared.ball.x += shared.ball.dX;
-    shared.ball.y += shared.ball.dY;
-    shared.ball.dY += 0.4;
-    if (shared.ball.y > height + 50) {
-      shared.ball = {
-        x: width * 0.5,
-        y: -50,
-        dX: 0,
-        dY: 0,
-      };
-    }
+    text(elapsed / 1000, 10, 40);
   }
 
-  fill("white");
-  ellipse(shared.ball.x, shared.ball.y, 40, 40);
-
   fill("red");
-  ellipse(shared.click.x, shared.click.y, 40, 40);
+  for (const p of shared.clicks) {
+    ellipse(p.x, p.y, 20, 20);
+  }
 }
 
 function mousePressed(e) {
   // write shared data
-  shared.click.x = mouseX;
-  shared.click.y = mouseY;
+  shared.clicks.push({ x: mouseX, y: mouseY });
 }

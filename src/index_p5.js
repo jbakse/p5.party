@@ -5,6 +5,26 @@ import { makeLogger } from "./logging.js";
 
 /* globals DeepstreamClient, p5 */
 
+const REMOTE_WINS = (
+  localValue,
+  localVersion,
+  remoteValue,
+  remoteVersion,
+  callback
+) => {
+  callback(null, remoteValue);
+};
+
+const LOCAL_WINS = (
+  localValue,
+  localVersion,
+  remoteValue,
+  remoteVersion,
+  callback
+) => {
+  callback(null, localValue);
+};
+
 const dsLog = makeLogger(
   "log",
   "ds",
@@ -82,19 +102,8 @@ class RecordManager {
     this.#record = this.#roomManager.getClient().record.getRecord(this.#name);
     this._subscribeToShared();
     await this.#record.whenReady();
-    // this.#record.setMergeStrategy(
-    //   (record, remoteData, remoteVersion, callback, cb) => {
-    //     console.log(
-    //       "merge strat envoked",
-    //       record,
-    //       remoteData,
-    //       remoteVersion,
-    //       callback,
-    //       cb
-    //     );
-    //     cb(null, remoteData);
-    //   }
-    // );
+
+    // this.#record.setMergeStrategy(REMOTE_WINS);
     dsLog("RecordManager: Record ready.");
     dsLog(this.#record.get());
     if (typeof onReadyCB === "function") onReadyCB();
@@ -136,7 +145,7 @@ class RoomManager {
     this.#room = room;
     this.#host = host;
     this.#deepstreamClient = new DeepstreamClient(this.#host);
-    console.log("ds", DeepstreamClient);
+
     this.#clientName = this.#deepstreamClient.getUid();
     this._connect();
   }
