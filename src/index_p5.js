@@ -170,22 +170,22 @@ class RoomManager {
     return `${this.#app}-${this.#room}`;
   }
 
-  // displayParticipants() {
-  //   const names = Object.keys(this.#roomData.get("participants"));
-  //   let output = "";
-  //   for (const name of names) {
-  //     const shortName = name.substr(-4);
-  //     const isHost = this.#roomData.get(`participants.${name}.isHost`)
-  //       ? "(H)"
-  //       : "";
-  //     const isMe = this.#clientName === name ? "(M)" : "";
-  //     output += `${shortName}${isHost}${isMe} `;
-  //   }
-  //   console.log(output);
-  // }
+  displayParticipants() {
+    const names = Object.keys(this.#roomData.get("participants"));
+    let output = "";
+    for (const name of names) {
+      const shortName = name.substr(-4);
+      const isHost = this.#roomData.get(`participants.${name}.isHost`)
+        ? "(H)"
+        : "";
+      const isMe = this.#clientName === name ? "(M)" : "";
+      output += `${shortName}${isHost}${isMe} `;
+    }
+    console.log(output);
+  }
 
   isHost() {
-    return this.#roomData.get(`participants.${this.#clientName}.isHost`);
+    return !!this.#roomData.get(`participants.${this.#clientName}.isHost`);
   }
 
   async _connect() {
@@ -239,6 +239,10 @@ class RoomManager {
 
     await this._removeDisconnectedPartipants();
     await this._chooseHost();
+
+    await this.#roomData.whenReady();
+
+    setInterval(this.displayParticipants.bind(this), 1000);
   }
 
   async _participantInRoom(username) {
