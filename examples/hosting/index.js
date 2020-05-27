@@ -14,7 +14,7 @@ function preload() {
   shared = getSharedData("globals");
 }
 
-async function setup() {
+function setup() {
   createCanvas(400, 400);
   noStroke();
   // set defaults on shared data

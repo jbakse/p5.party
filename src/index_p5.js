@@ -5,26 +5,6 @@ import { makeLogger } from "./logging.js";
 
 /* globals DeepstreamClient, p5 */
 
-const REMOTE_WINS = (
-  localValue,
-  localVersion,
-  remoteValue,
-  remoteVersion,
-  callback
-) => {
-  callback(null, remoteValue);
-};
-
-const LOCAL_WINS = (
-  localValue,
-  localVersion,
-  remoteValue,
-  remoteVersion,
-  callback
-) => {
-  callback(null, localValue);
-};
-
 const dsLog = makeLogger(
   "log",
   "ds",
@@ -171,8 +151,16 @@ class RoomManager {
   }
 
   displayParticipants() {
-    const names = Object.keys(this.#roomData.get("participants"));
-    let output = "";
+    let el = document.getElementById("_sharedParticipants");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "_sharedParticipants";
+      el.style.fontFamily = "monospace";
+      document.body.appendChild(el);
+    }
+
+    const names = Object.keys(this.#roomData.get("participants")).sort();
+    let output = "Ps: ";
     for (const name of names) {
       const shortName = name.substr(-4);
       const isHost = this.#roomData.get(`participants.${name}.isHost`)
@@ -181,7 +169,14 @@ class RoomManager {
       const isMe = this.#clientName === name ? "(M)" : "";
       output += `${shortName}${isHost}${isMe} `;
     }
-    console.log(output);
+    // console.log(output);
+    el.textContent = output;
+  }
+
+  async _getAllClientsAndMe() {
+    const clients = await this.#deepstreamClient.presence.getAll();
+    clients.push(this.#clientName);
+    return clients;
   }
 
   isHost() {
@@ -223,16 +218,19 @@ class RoomManager {
     window.addEventListener("beforeunload", async () => {
       this.#roomData.set(`participants.${this.#clientName}`, undefined);
       await this._chooseHost();
+      this.#deepstreamClient.close();
     });
 
     this.#deepstreamClient.presence.subscribe(async (username, isLoggedIn) => {
+      console.log(`${username} ${isLoggedIn ? "arrived" : "left"}`);
       if (isLoggedIn) return;
 
       // participant should have removed self from room before logging out
       // if they didn't, remove them
       if (await this._participantInRoom(username)) {
         dsWarn(`Participant ${username} left unexpectedly`);
-        this.#roomData.set(`participants.${username}`, undefined);
+        //this.#roomData.set(`participants.${username}`, undefined);
+        this.#roomData.set(`participants.${username}.isHost`, false);
         await this._chooseHost();
       }
     });
@@ -242,7 +240,7 @@ class RoomManager {
 
     await this.#roomData.whenReady();
 
-    setInterval(this.displayParticipants.bind(this), 1000);
+    setInterval(this.displayParticipants.bind(this), 100);
   }
 
   async _participantInRoom(username) {
@@ -260,18 +258,26 @@ class RoomManager {
       );
     }
 
+    // count hosts
     let hostsFound = 0;
-    // @todo funcitonal version for counting matches?
     for (const name in participants) {
-      const p = participants[name];
-      if (p.isHost === true) {
-        // console.log("Found host: ", name);
-        hostsFound++;
-      }
+      if (participants[name].isHost === true) hostsFound++;
     }
 
     if (hostsFound === 0) {
-      const newHostName = Object.keys(participants).sort()[0];
+      dsLog("Found 0 hosts!");
+      // roomData/participants contains clients that are in the room
+      // but some may be (temporarily) disconnected and shouldn't be made host
+      // so choose host from intersection of inRoom and onLine
+      const inRoom = Object.keys(participants);
+      const onLine = await this._getAllClientsAndMe();
+      // console.log("inRoom", inRoom);
+      // console.log("onLine", onLine);
+      let intersection = inRoom.filter((user) => onLine.includes(user));
+      // console.log("intersection", onLine);
+      const newHostName = intersection.sort()[0];
+      // @todo, maybe only set host if this client the new host
+      dsLog("Setting new host:", newHostName);
       this.#roomData.set(`participants.${newHostName}.isHost`, true);
     }
 

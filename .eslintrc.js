@@ -16,6 +16,7 @@ module.exports = {
     // sourceType: "module",
   },
   rules: {
+    "require-await": "error",
     "no-unused-vars": [
       "error",
       {
