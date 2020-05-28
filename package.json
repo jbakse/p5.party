@@ -1,5 +1,5 @@
 {
-  "name": "deepstream_test",
+  "name": "@jbakse/together",
   "version": "0.0.0-alpha",
   "description": "First pass at making a easy to use library for simple multiuser sketches.",
   "private": true,
