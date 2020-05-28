@@ -25,7 +25,7 @@
     "start": "webpack-dev-server --open --config webpack.config.js",
     "serve": "PORT=${PORT:-6020} deepstream start",
     "test": "echo \"No test specified\" && exit 0",
-    "prepublish": "npm run build",
+    "prepublish": "npm run build && npm run quickpack",
     "release": "np",
     "quickpack": "npm run build && zip quickpack.zip -r dist -r examples index.html"
   },
