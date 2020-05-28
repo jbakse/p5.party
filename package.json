@@ -2,8 +2,14 @@
   "name": "@jbakse/together",
   "version": "0.0.6",
   "author": "Justin Bakse",
-  "license": "UNLICENCED",
-  "description": "First pass at making a easy to use library for simple multiuser sketches.",
+  "license": "MIT",
+  "description": "Pre-release! An easy to use library for simple multi-user sketches with p5.js.",
+  "keywords": [
+    "p5",
+    "multiuser",
+    "multiplayer",
+    "library"
+  ],
   "publishConfig": {
     "access": "public"
   },
