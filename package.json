@@ -1,6 +1,6 @@
 {
   "name": "@jbakse/together",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Justin Bakse",
   "license": "UNLICENCED",
   "description": "First pass at making a easy to use library for simple multiuser sketches.",
