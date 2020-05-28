@@ -1,8 +1,7 @@
 {
   "name": "@jbakse/together",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "First pass at making a easy to use library for simple multiuser sketches.",
-  
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --watch --config webpack.config.js",
