@@ -70,7 +70,7 @@ Contributions are what make the open source community such an amazing place to b
 
 ## License
 
-This project is still pre-release, and as yet unlicensed.
+Distributed under the MIT License. See `license` for more information.
 
 ## Acknowledgements
 
