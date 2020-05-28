@@ -1,4 +1,4 @@
-import "core-js/stable";
+// import "core-js/stable";
 import "regenerator-runtime/runtime";
 import * as onChange from "on-change";
 import { makeLogger } from "./logging.js";

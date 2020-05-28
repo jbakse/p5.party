@@ -1,6 +1,7 @@
 /* eslint-env node */
 
 const path = require("path");
+// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = {
   mode: "development",
@@ -32,4 +33,6 @@ module.exports = {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
   },
+
+  // plugins: [new BundleAnalyzerPlugin()],
 };
