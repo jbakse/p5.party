@@ -1,17 +1,28 @@
 {
   "name": "@jbakse/together",
   "version": "0.0.3",
+  "author": "Justin Bakse",
+  "license": "UNLICENCED",
   "description": "First pass at making a easy to use library for simple multiuser sketches.",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": "14.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jbakse/deepstream_test.git"
+  },
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --watch --config webpack.config.js",
     "start": "webpack-dev-server --open --config webpack.config.js",
     "serve": "PORT=${PORT:-6020} deepstream start",
     "test": "echo \"No test specified\" && exit 0",
+    "release": "np",
     "quickpack": "npm run build && zip quickpack.zip -r dist -r examples index.html"
   },
-  "author": "Justin Bakse",
-  "license": "UNLICENCED",
   "dependencies": {
     "@deepstream/client": "^5.0.8",
     "@deepstream/server": "^5.0.16",
@@ -31,8 +42,5 @@
     "webpack-bundle-analyzer": "^3.8.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.11.0"
-  },
-  "engines": {
-    "node": "14.1.0"
   }
 }
