@@ -1,4 +1,12 @@
+# common ignores
 node_modules
+
+# build files
 dist
 quickpack.zip
+
+# build meta files
 stats.json
+
+# system files
+.DS_Store
