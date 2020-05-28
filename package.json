@@ -8,7 +8,7 @@
     "watch": "webpack --watch --config webpack.config.js",
     "start": "webpack-dev-server --open --config webpack.config.js",
     "serve": "PORT=${PORT:-6020} deepstream start",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"No test specified\" && exit 0",
     "quickpack": "npm run build && zip quickpack.zip -r dist -r examples index.html"
   },
   "author": "Justin Bakse",
