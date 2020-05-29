@@ -1,9 +1,8 @@
-// https://opengameart.org/content/a-platformer-in-the-forest
-
+//
 /* eslint-disable no-unused-vars */
-/* global connectToSharedRoom getSharedData isHost */
+/* global connectToSharedRoom getSharedData isHost createCheckbox */
 
-let shared;
+let shared, host;
 
 function preload() {
   connectToSharedRoom(
@@ -11,18 +10,20 @@ function preload() {
     "arcade",
     "main"
   );
-  shared = getSharedData("globals");
+  shared = getSharedData("shared");
+  host = getSharedData("host");
 }
 
 let run;
-async function setup() {
+function setup() {
   createCanvas(400, 400);
   noStroke();
 
   run = createCheckbox("run");
+  run.checked(true);
 
   // set defaults on shared data
-  shared.ball = shared.ball || {
+  host.ball = host.ball || {
     x: width * 0.5,
     y: 0,
     dX: 0,
@@ -33,6 +34,8 @@ async function setup() {
     x: width * 0.5,
     y: height * 0.5,
   };
+
+  frameRate(60);
 }
 
 function draw() {
@@ -45,23 +48,47 @@ function draw() {
   }
   // read shared data
   if (run.checked() && isHost()) {
-    shared.ball.x += shared.ball.dX;
-    shared.ball.y += shared.ball.dY;
-    shared.ball.dY += 0.4;
-    if (shared.ball.y > height + 50) {
-      shared.ball = {
+    // apply momentum
+    host.ball.x += host.ball.dX;
+    host.ball.y += host.ball.dY;
+
+    // apply gravity
+    host.ball.dY += 0.6;
+
+    // respawn
+    if (host.ball.y > height + 50) {
+      host.ball = {
         x: width * 0.5,
         y: -50,
         dX: 0,
         dY: 0,
       };
     }
+
+    // handle collisions
+    if (dist(host.ball.x, host.ball.y, shared.click.x, shared.click.y) < 40) {
+      // move out of penetration
+      const n = createVector(
+        host.ball.x - shared.click.x,
+        host.ball.y - shared.click.y
+      );
+      n.normalize();
+      host.ball.x = shared.click.x + n.x * 40;
+      host.ball.y = shared.click.y + n.y * 40;
+
+      // bounce ball
+      const d = createVector(host.ball.dX, host.ball.dY);
+      d.reflect(n.copy());
+      host.ball.dX = d.x * 0.5;
+      host.ball.dY = d.y * 0.5;
+    }
   }
 
+  // draw
   fill("white");
-  ellipse(shared.ball.x, shared.ball.y, 40, 40);
+  ellipse(host.ball.x, host.ball.y, 40, 40);
 
-  fill("red");
+  fill("green");
   ellipse(shared.click.x, shared.click.y, 40, 40);
 }
 
