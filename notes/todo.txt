@@ -1,87 +1,21 @@
-x.Reorg as library/module
+# Style / Naming
 
-x.Should shared spritelisten to the canvas events directly?
-  x.This would let all the events handlers be private
+clean old files
 
-x.get rid of private member access! javascript doesn't enforce this, but we shouldn't do it!
-    x.move to "#" instead of "_"
+change "id" to "name", lets make "name" be the full thing = "prefix/id"
 
-x.mouseClicked + all other mouse events
+# Features
 
-x.attach/detach lifecyle events
-    x.attach (needs to be after components are connected)
-        x.called "setup"
-    x.detach
+config auto publish or not on records
 
+config record publish debounce
 
+debug view?
+room view?
+show room records
+show room participants
+using vue?
 
-
-x.todo organize record
-  .record
-    .creator
-    .shared
-      .x
-      .y
-      .w
-      .h
-      .z
-
-
-x.add broadcast event function on sharedSpriteManager.js
-
-
-x.init sequence
-    x.todo, shouldn't rely on globals for ds, spriteManager
-    x.add an "appName" and "roomName" to the DS connection, and use names to prefix
-
-x.make it so you don't have to forward all the events from p5 handlers (install listeners from sprite manager)
-
-x.use "#" for privates
-
-x.remove debug_king
-
-
-
-
-
-
-.rework data in components
-    x.rename "data" to "shared" in game object?
-    x.load shared onto the components
-    x.auto send changes (proxy!, ~just check?~)
-    .w/ debounce in frames
-    .add a send() command to send manually (instead of auto or to push an immediate in addition to auto)
-        .(currentlsy "set" consider name)
-    .add function to cause immediate sync-write of all pending (debounced) writes
-    .allow to configure sync-write frequency
-        
-
-  .worry about deep assignments on that proxy (its not seen!)
-        https://github.com/ElliotNB/observable-slim
-        https://stackoverflow.com/questions/41299642/how-to-use-javascript-proxy-for-nested-objects
-        https://github.com/sindresorhus/on-change
-
-
-
-
-x.use actually unique id's for client ids
-
-
-
-.config auto publish or not on sprites/records
-.handle removing owned sprites/records when owner leaves automatically?
-.expose a SharedRecord class of some kind 
-
-
-
-change "id" to "name", lets make "name" be the full thing = "prefix/id" 
-
-.vue debugmode
-
-
-.add sharedSpriteManager.getSprite(name)
-  .and change name of creaetSprite "factory" method that creates the record, make it clear.
-
-.can spriteManager.createSprite return an instance of the sprite?
-
-if you add a sprite multiple times with the same name, its components get attached multiple times
+dashboard view?
+show rooms, records, participants
+using vue?
