@@ -26,9 +26,10 @@
     "url": "https://github.com/jbakse/deepstream_test.git"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "watch": "webpack --watch --config webpack.config.js",
-    "start": "webpack-dev-server --open --config webpack.config.js",
+    "build": "webpack --config webpack.prod.js",
+    "profile": "webpack --config webpack.profile.js",
+    "watch": "webpack --watch --config webpack.dev.js",
+    "start": "webpack-dev-server --open --config webpack.dev.js",
     "serve": "PORT=${PORT:-6020} deepstream start",
     "test": "echo \"No test specified\" && exit 0",
     "prepublish": "npm run build && npm run quickpack",
@@ -40,7 +41,8 @@
     "@deepstream/server": "^5.0.16",
     "core-js": "^3.6.5",
     "on-change": "^2.0.1",
-    "regenerator-runtime": "^0.13.5"
+    "regenerator-runtime": "^0.13.5",
+    "webpack-merge": "^4.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",

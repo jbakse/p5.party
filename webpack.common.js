@@ -1,18 +1,16 @@
 /* eslint-env node */
 
 const path = require("path");
-// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = {
-  mode: "development",
   entry: "./src/index_p5.js",
-  devtool: "inline-source-map",
+
   devServer: {
     publicPath: "/dist/",
     contentBase: "./",
     watchContentBase: true,
-    // writeToDisk: true,
   },
+
   module: {
     rules: [
       {
@@ -33,6 +31,4 @@ module.exports = {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
   },
-
-  // plugins: [new BundleAnalyzerPlugin()],
 };

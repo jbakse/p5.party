@@ -15,7 +15,7 @@
 
 # Style / Naming
 
-- clean/remove old files
+.- clean/remove old files
 - change "id" to "name", lets make "name" be the full thing = "prefix/id"
 
 # Requests
