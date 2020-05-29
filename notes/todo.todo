@@ -1,0 +1,35 @@
+# Style / Naming
+
+- clean/remove old files
+- change "id" to "name", lets make "name" be the full thing = "prefix/id"
+
+# Requests
+- add way to clear shared object
+- freindly warning if user tries to read/write shared
+
+# Features
+
+- config auto publish or not on records
+- config record publish debounce
+
+# Bugs
+
+- change hooks: npm install is running prepublish, and prepublish doesn't work on pc
+
+# Branch - Participants
+
+- expose participant count
+- expose participant list
+- expose a record of info for each participant
+
+# Branch - Info
+- using vue?
+
+- debug view?
+
+- room view?
+	- show room records
+	- show room participants
+
+- dashboard view?
+	- show apps, rooms, records, participants
