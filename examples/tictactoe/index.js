@@ -1,13 +1,15 @@
+// Multi Player Tic Tac Toe
+
 /* eslint-disable no-unused-vars */
 /* global connectToSharedRoom getSharedData */
 /* global createButton createSelect */
 
 let shared;
 
-let teamColors;
-let team;
+let teamColors; // colors used to draw tokens
+let selectedTeam; // team choosen from the dropdown
 
-const gridSize = 130;
+const gridSize = 150;
 
 function preload() {
   connectToSharedRoom(
@@ -19,7 +21,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(450, 450);
   teamColors = [color(250, 0), color(60, 98, 181), color(255, 220, 82)];
 
   // init shared
@@ -28,26 +30,24 @@ function setup() {
 
   // make a select menu
   const teamDropDownMenu = createSelect();
-  teamDropDownMenu.position(70, 440);
   teamDropDownMenu.option("Choose a Team");
   teamDropDownMenu.disable("Choose a Team");
   teamDropDownMenu.option("Blue");
   teamDropDownMenu.option("Yellow");
   teamDropDownMenu.option("Observer");
 
-  // If an option is chosen, assign it a value
+  // When an option is chosen, assign it to selectedTeam
   teamDropDownMenu.changed(() => {
-    team = teamDropDownMenu.value();
+    selectedTeam = teamDropDownMenu.value();
   });
 
-  // make a clear button
+  // make the clear button
   const clearButton = createButton("clear").mousePressed(() => {
-    if (team != "Observer") {
+    if (selectedTeam != "Observer") {
       shared.currentTurn = "Blue";
       shared.boardState = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     }
   });
-  clearButton.position(10, 430);
 }
 
 function draw() {
@@ -56,31 +56,41 @@ function draw() {
   rectMode(CORNER);
 
   // draw board
+  push();
+  fill(250);
+  stroke(255, 0, 0);
+  strokeWeight(20);
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
-      fill(250);
-      rect(i * 140, j * 140, 120, 120);
+      rect(i * gridSize, j * gridSize, gridSize, gridSize);
     }
   }
+  pop();
 
   // draw pieces
+  push();
   for (let i = 0; i < 9; i++) {
-    fill(teamColors[shared.boardState[i]]);
-
     const grid_x = i % 3;
     const grid_y = Math.floor(i / 3);
-
-    ellipse(grid_x * 133 + 67, grid_y * 133 + 65, 50, 50);
+    fill(teamColors[shared.boardState[i]]);
+    ellipse(
+      grid_x * gridSize + 0.5 * gridSize,
+      grid_y * gridSize + 0.5 * gridSize,
+      50,
+      50
+    );
   }
+  pop();
 
   // display current turn
+  push();
   fill(230);
   rect(5, 5, 110, 20, 5);
-
   fill(0);
   textSize(12);
   textFont("Avenir");
   text(shared.currentTurn + " team's turn!", 10, 18);
+  pop();
 
   declareOutcome();
 }
@@ -88,20 +98,20 @@ function draw() {
 function mousePressed(e) {
   const x = Math.floor(mouseX / gridSize);
   const y = Math.floor(mouseY / gridSize);
-
+  console.log(x);
   const index = y * 3 + x;
 
   // Changes state based on which team's turn it is
   if (shared.boardState[index] === 0) {
-    if (team === shared.currentTurn) {
+    if (selectedTeam === shared.currentTurn) {
       //ternary operator
-      let stateNum = team === "Blue" ? 1 : 2;
+      let stateNum = selectedTeam === "Blue" ? 1 : 2;
       shared.boardState[index] = (shared.boardState[index] + stateNum) % 3;
     }
   }
 
   // Change turn on click in grid
-  if (team === shared.currentTurn && index <= 9) {
+  if (selectedTeam === shared.currentTurn && index <= 9) {
     if (shared.currentTurn === "Blue") {
       shared.currentTurn = "Yellow";
     } else {

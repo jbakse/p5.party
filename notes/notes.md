@@ -18,3 +18,19 @@ possible fixes
 - can we have a client readd _themselves_ to room on autoreconnect
 - don't remove participants on unexpected leave?
 - remove them, but after time delay?
+
+
+# Updating a local clone of a fork with upstream changes
+
+If you haven't add the upstream branch
+
+```
+ git remote add upstream https://github.com/jbakse/deepstream_test.git
+```
+
+Make sure you are on the local master branch.
+
+```
+git fetch upstream
+git merge upstream/master
+```
