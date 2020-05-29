@@ -29,5 +29,6 @@ Make sure you are on the local master branch.
 
 ```
 git fetch upstream
+git branch -a
 git merge upstream/master
 ```

@@ -1,3 +1,18 @@
+# Tooling 
+
+- webpack-dev-server isn't livereloading static assets
+	it used to
+	ad did, oddly, when i moved them to /public
+	why did this stop working?
+
+- build deepstream client into package
+	- how big is ds client? 190kB
+
+- do we really need the regenerator runtime?
+	- can we webpack without it, targeting only recent browsers?
+
+- make build smaller, its way too big!
+
 # Style / Naming
 
 - clean/remove old files
@@ -6,6 +21,23 @@
 # Requests
 - add way to clear shared object
 - freindly warning if user tries to read/write shared
+
+# Questions
+- Can I make more than one shared data?
+	- Yes.
+	- and it avoids conflicts
+
+- What can be shared?
+	- Basic data like strings and numbers
+	- Arrays and Data Objects
+	- Nesting is okay
+	- Constructed Objects don't work, but sometimes you can "serialize" them
+	```
+	shared.color = color(random(255), random(255), random(255)).toString();
+	...
+	fill(shared.color);
+	```
+
 
 # Features
 
