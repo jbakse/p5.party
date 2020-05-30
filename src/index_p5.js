@@ -2,8 +2,9 @@
 import "regenerator-runtime/runtime";
 import * as onChange from "on-change";
 import { makeLogger } from "./logging.js";
+import { DeepstreamClient } from "@deepstream/client";
 
-/* globals DeepstreamClient, p5 */
+/* globals p5 */
 
 const dsLog = makeLogger(
   "log",

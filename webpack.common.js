@@ -6,12 +6,6 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 module.exports = {
   entry: "./src/index_p5.js",
 
-  devServer: {
-    publicPath: "/dist/",
-    contentBase: "./",
-    watchContentBase: true,
-  },
-
   module: {
     rules: [
       {
@@ -27,7 +21,9 @@ module.exports = {
       },
     ],
   },
+
   plugins: [new CleanWebpackPlugin()],
+
   output: {
     filename: "together.js",
     path: path.resolve(__dirname, "dist"),
