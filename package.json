@@ -26,15 +26,17 @@
     "url": "https://github.com/jbakse/deepstream_test.git"
   },
   "scripts": {
+    "prebuild": "rm -f quickpack.zip",
     "build": "webpack --config webpack.prod.js",
     "profile": "webpack --config webpack.profile.js",
     "watch": "webpack --watch --config webpack.dev.js",
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "serve": "PORT=${PORT:-6020} deepstream start",
     "test": "echo \"No test specified\" && exit 0",
+    "netlify": "npm run build && cp -r dist public",
     "prepublishOnly": "npm run build && npm run quickpack",
     "release": "np",
-    "quickpack": "npm run build && zip quickpack.zip -r dist -r examples index.html"
+    "quickpack": "npm run build && zip quickpack.zip -r dist -r public/examples public/index.html"
   },
   "dependencies": {
     "@deepstream/client": "^5.0.8",

@@ -26,35 +26,47 @@ const dsError = makeLogger(
 
 let ds_room;
 
-p5.prototype.connectToSharedRoom = function (host, sketch_name, room_name, cb) {
-  ds_room = new RoomManager(host, sketch_name, room_name);
-  cb && ds_room.whenReady(cb);
-};
+if (typeof p5 !== "undefined") {
+  init();
+} else {
+  dsError("Together requies p5");
+}
 
-p5.prototype.getSharedData = function (record_id, cb) {
-  if (!ds_room) {
-    dsError("getSharedData() called before connectToSharedRoom()");
-    return undefined;
-  }
+function init() {
+  p5.prototype.connectToSharedRoom = function (
+    host,
+    sketch_name,
+    room_name,
+    cb
+  ) {
+    ds_room = new RoomManager(host, sketch_name, room_name);
+    cb && ds_room.whenReady(cb);
+  };
 
-  const recordManager = new RecordManager(record_id, ds_room, () => {
-    this._decrementPreload();
-    if (typeof cb === "function") cb();
-  });
+  p5.prototype.getSharedData = function (record_id, cb) {
+    if (!ds_room) {
+      dsError("getSharedData() called before connectToSharedRoom()");
+      return undefined;
+    }
 
-  return recordManager.getShared();
-};
+    const recordManager = new RecordManager(record_id, ds_room, () => {
+      this._decrementPreload();
+      if (typeof cb === "function") cb();
+    });
 
-p5.prototype.isHost = function () {
-  if (!ds_room) {
-    dsError("isHost() called before connectToSharedRoom()");
-    return undefined;
-  }
-  return ds_room.isHost();
-};
+    return recordManager.getShared();
+  };
 
-p5.prototype.registerPreloadMethod("getSharedData", p5.prototype);
+  p5.prototype.isHost = function () {
+    if (!ds_room) {
+      dsError("isHost() called before connectToSharedRoom()");
+      return undefined;
+    }
+    return ds_room.isHost();
+  };
 
+  p5.prototype.registerPreloadMethod("getSharedData", p5.prototype);
+}
 class RecordManager {
   #id;
   #roomManager;
