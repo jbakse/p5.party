@@ -13,6 +13,10 @@
 
 - make build smaller, its way too big!
 
+- consider providing min and unmin versions
+	https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
+	- compare to other p5 libraries
+
 # Style / Naming
 
 +- clean/remove old files
