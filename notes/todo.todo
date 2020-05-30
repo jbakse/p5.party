@@ -5,13 +5,13 @@
 	ad did, oddly, when i moved them to /public
 	why did this stop working?
 
-- build deepstream client into package
+.- build deepstream client into package
 	- how big is ds client? 190kB
 
 - do we really need the regenerator runtime?
 	- can we webpack without it, targeting only recent browsers?
 
-- make build smaller, its way too big!
+.- make build smaller, its way too big!
 
 - consider providing min and unmin versions
 	https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
