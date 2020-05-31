@@ -48,6 +48,9 @@
 	- ?remove _markMissing
 	- ?if not, then new host in _chooseHost should mark missing on server
 
+# Questions
+- how the hell is the onChange proxy handling array insert/remove?
+
 # Style / Naming
 
 +- clean/remove old files

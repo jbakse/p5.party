@@ -53,6 +53,7 @@ export class Client {
     // @todo getAllClients() could get network heavy if a lot of people
     // were on at once. we could request getAll once and then update our own
     // list with a subscription
+    // or a little slower, but more reliable maybe, subscribe to changes and refetch all then
     const clients = await this.#deepstreamClient.presence.getAll();
     clients.push(this.#name);
     return clients;

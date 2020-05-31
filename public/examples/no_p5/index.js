@@ -16,12 +16,12 @@ async function init() {
   room.join();
   room.clearMissing();
 
-  window.addEventListener("click", async () => {
+  window.addEventListener("click", () => {
     console.log("click");
     // room.leave();
   });
   window.addEventListener("beforeunload", () => {
-    room.leave();
+    // room.leave();
     client.close();
   });
 }
