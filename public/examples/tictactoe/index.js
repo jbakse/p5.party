@@ -24,11 +24,11 @@ function setup() {
   createCanvas(450, 450);
   teamColors = [color(250, 0), color(60, 98, 181), color(255, 220, 82)];
 
-  // init shared
+  // Init shared
   shared.boardState = shared.boardState || [0, 0, 0, 0, 0, 0, 0, 0, 0];
   shared.currentTurn = shared.currentTurn || "Blue";
 
-  // make a select menu
+  // Make a select menu
   const teamDropDownMenu = createSelect();
   teamDropDownMenu.option("Choose a Team");
   teamDropDownMenu.disable("Choose a Team");
@@ -41,7 +41,7 @@ function setup() {
     selectedTeam = teamDropDownMenu.value();
   });
 
-  // make the clear button
+  // Make the clear button
   const clearButton = createButton("clear").mousePressed(() => {
     if (selectedTeam != "Observer") {
       shared.currentTurn = "Blue";
@@ -55,7 +55,7 @@ function draw() {
   noStroke();
   rectMode(CORNER);
 
-  // draw board
+  // Draw board
   push();
   fill(250);
   stroke(255, 0, 0);
@@ -67,7 +67,7 @@ function draw() {
   }
   pop();
 
-  // draw pieces
+  // Draw pieces
   push();
   for (let i = 0; i < 9; i++) {
     const grid_x = i % 3;
@@ -82,7 +82,7 @@ function draw() {
   }
   pop();
 
-  // display current turn
+  // Display current turn
   push();
   fill(230);
   rect(5, 5, 110, 20, 5);
@@ -101,7 +101,7 @@ function mousePressed(e) {
   console.log(x);
   const index = y * 3 + x;
 
-  // Changes state based on which team's turn it is
+  // Change state according to selectedTeam
   if (shared.boardState[index] === 0) {
     if (selectedTeam === shared.currentTurn) {
       //ternary operator
@@ -110,7 +110,7 @@ function mousePressed(e) {
     }
   }
 
-  // Change turn on click in grid
+  // Change turn
   if (selectedTeam === shared.currentTurn && index <= 9) {
     if (shared.currentTurn === "Blue") {
       shared.currentTurn = "Yellow";
@@ -123,6 +123,7 @@ function mousePressed(e) {
 
 // Check for wins or draws
 function declareOutcome() {
+  push();
   stroke(50);
   strokeWeight(10);
 
@@ -201,6 +202,7 @@ function declareOutcome() {
       shared.boardState[8] != 0 &&
       shared.boardState[9] != 0
     ) {
+      push();
       fill(255);
       stroke(0, 200);
       strokeWeight(5);
@@ -210,6 +212,8 @@ function declareOutcome() {
       noStroke();
       textSize(45);
       text("DRAW", 130, 215);
+      pop();
     }
   }
+  pop();
 }
