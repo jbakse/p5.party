@@ -1,21 +1,52 @@
 # Tooling 
 
-- webpack-dev-server isn't livereloading static assets
-	it used to
-	ad did, oddly, when i moved them to /public
-	why did this stop working?
+.- webpack-dev-server isn't livereloading static assets
+	webpack-dev-server doesn't livereload unless page includes bundle	
 
 .- build deepstream client into package
 	- how big is ds client? 190kB
 
-- do we really need the regenerator runtime?
+.- do we really need the regenerator runtime?
 	- can we webpack without it, targeting only recent browsers?
+	- just a few k, lets not worry abou tit
 
 .- make build smaller, its way too big!
 
 - consider providing min and unmin versions
 	https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
 	- compare to other p5 libraries
+
+# Refactoring
+- Record Manager 
+	- shouldn't take RoomManager
+		- take "connection" + full name of record as one param
+		- Could take "connection" + prefix / id as two params
+		- Could take a deep stream record. 
+		This would make it more of a "manager" less of a "record"
+
+- Room
+	- when to clear?
+	currently "missing" participants are kept around on the server
+	this allows them to come back when ds quick drops and reconnects them
+	this could also allow connections to survive reload (if we cashed the random id in browser)
+	or even longer absenses
+		- ? add clearMissing()
+		- ? add clear()
+		- ? add born timestamp
+		- ? add touch timestamp
+		- ? internally call clearMissing(age)
+	
+	- currently .isMissing is only read for the debug view
+		- ? should clearMissing() and chooseHost() use .isMissing instead?
+			- basically, yes if the code is cleaner that way
+
+	- even if participants properly call room.leave()
+
+	.- probably better to keep a record for each participant and then keep aparticpants in a ds list
+
+	- ?change participants {} to [] 
+	- ?remove _markMissing
+	- ?if not, then new host in _chooseHost should mark missing on server
 
 # Style / Naming
 

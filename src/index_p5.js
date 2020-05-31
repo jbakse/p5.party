@@ -1,11 +1,15 @@
 import "regenerator-runtime/runtime";
-import { RecordManager } from "./RecordManager";
+import { Client } from "./Client";
+import { Room } from "./Room";
 import { RoomManager } from "./RoomManager";
+import { SharedRecordManager } from "./SharedRecordManager";
 import * as log from "./log";
+
+window.together = { Client, SharedRecordManager, Room };
 
 /* globals p5 */
 
-export let ds_room;
+let ds_room;
 
 if (typeof p5 !== "undefined") {
   init();
@@ -20,9 +24,12 @@ function init() {
     room_name,
     cb
   ) {
+    // this._decrementPreload();
     ds_room = new RoomManager(host, sketch_name, room_name);
     cb && ds_room.whenReady(cb);
+    ds_room.whenReady(() => this._decrementPreload());
   };
+  p5.prototype.registerPreloadMethod("connectToSharedRoom", p5.prototype);
 
   p5.prototype.getSharedData = function (record_id, cb) {
     if (!ds_room) {
@@ -30,13 +37,14 @@ function init() {
       return undefined;
     }
 
-    const recordManager = new RecordManager(record_id, ds_room, () => {
+    const recordManager = new SharedRecordManager(record_id, ds_room, () => {
       this._decrementPreload();
       if (typeof cb === "function") cb();
     });
 
     return recordManager.getShared();
   };
+  p5.prototype.registerPreloadMethod("getSharedData", p5.prototype);
 
   p5.prototype.isHost = function () {
     if (!ds_room) {
@@ -45,6 +53,4 @@ function init() {
     }
     return ds_room.isHost();
   };
-
-  p5.prototype.registerPreloadMethod("getSharedData", p5.prototype);
 }

@@ -2,13 +2,14 @@ import { DeepstreamClient } from "@deepstream/client";
 import * as log from "./log";
 
 export class RoomManager {
-  #host;
   #app;
   #room;
+  #host;
   #deepstreamClient;
   #clientName;
-  #isReady = false;
+  #isReady;
   #roomData;
+
   constructor(
     host = "wss://deepstream-server-1.herokuapp.com",
     app = "default",
@@ -19,6 +20,7 @@ export class RoomManager {
     this.#host = host;
     this.#deepstreamClient = new DeepstreamClient(this.#host);
     this.#clientName = this.#deepstreamClient.getUid();
+    this.#isReady = false;
     this._connect();
   }
   whenReady(cb) {
@@ -97,7 +99,7 @@ export class RoomManager {
       this.#deepstreamClient.close();
     });
     this.#deepstreamClient.presence.subscribe(async (username, isLoggedIn) => {
-      console.log.log(`${username} ${isLoggedIn ? "arrived" : "left"}`);
+      log.debug(`${username} ${isLoggedIn ? "arrived" : "left"}`);
       if (isLoggedIn) return;
       // participant should have removed self from room before logging out
       // if they didn't, remove them
