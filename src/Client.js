@@ -2,6 +2,8 @@ import { DeepstreamClient } from "@deepstream/client";
 import { createEmitter } from "./emitter";
 import * as log from "./log";
 
+/* !global DeepstreamClient */
+
 export class Client {
   #host;
   #name;

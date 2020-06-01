@@ -42,7 +42,7 @@
     "quickpack": "npm run build && zip quickpack.zip -r dist -r public/examples public/index.html"
   },
   "dependencies": {
-    "@deepstream/client": "^5.0.8",
+    "@deepstream/client": "^5.1.0",
     "@deepstream/server": "^5.0.16",
     "core-js": "^3.6.5",
     "on-change": "^2.0.1",

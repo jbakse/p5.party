@@ -1,4 +1,5 @@
 # Tooling 
+was it because i'm webpacking instead of htmlling in the deepstream
 
 .- webpack-dev-server isn't livereloading static assets
 	webpack-dev-server doesn't livereload unless page includes bundle	
