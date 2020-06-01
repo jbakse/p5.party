@@ -18,6 +18,9 @@
     "dist"
   ],
   "main": "src/index.js",
+  "sideEffects": [
+    "./src/index.p5.js"
+  ],
   "engines": {
     "node": "14.1.0"
   },
