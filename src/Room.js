@@ -1,4 +1,5 @@
 import { createEmitter } from "./emitter";
+import { Record } from "./Record";
 import * as log from "./log";
 
 export class Room {
@@ -62,6 +63,10 @@ export class Room {
     }
   }
 
+  getRecord(id) {
+    return new Record(this.#client, `${this.#appName}-${this.#roomName}/${id}`);
+  }
+
   // add this client to the room
   join() {
     const name = this.#client.name();
@@ -81,6 +86,10 @@ export class Room {
   // check if this client is in the room
   contains(username) {
     return this.#participants.includes(username);
+  }
+
+  getHostName() {
+    return this.#record.get(`host`);
   }
 
   async removeDisconnectedClients() {

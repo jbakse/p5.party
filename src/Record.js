@@ -35,8 +35,8 @@ export class Record {
     if (!this.#record.get("shared")) this.#record.set("shared", {});
 
     // report
-    log.log("RecordManager: Record ready.");
-    log.log(this.#record.get());
+    log.debug("RecordManager: Record ready.");
+    log.debug(this.#record.get());
 
     // ready
     this.#isReady = true;
@@ -57,11 +57,9 @@ export class Record {
   _onClientChangedData(path, newValue, oldValue) {
     // on-change alerts us when the value actually changes
     // so we don't need to test if newValue and oldValue are different
-
     this.#record.set("shared." + path, newValue);
   }
   _onServerChangedData(data) {
-    // log.warn("server changed");
     // replace the CONTENTS of this.#shared
     // don't replace #shared itself as #watchedShared has a reference to it
     for (const key in this.#shared) {

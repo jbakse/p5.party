@@ -17,14 +17,11 @@ export class Client {
       log.error("error", error, event, topic)
     );
     this.#deepstreamClient.on("connectionStateChanged", (connectionState) =>
-      log.log("connectionStateChanged", connectionState)
+      log.debug("connectionStateChanged", connectionState)
     );
     this.#isReady = false;
     this.#emitter = createEmitter();
     this.#deepstreamClient.login({ username: this.#name }, () => {
-      console.log("endpoint");
-
-      console.log(this.#deepstreamClient.services.connection.endpoint);
       this.#isReady = true;
       this.#emitter.emit("ready");
     });

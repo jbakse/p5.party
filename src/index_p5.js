@@ -1,22 +1,19 @@
 import "regenerator-runtime/runtime";
+
+import * as log from "./log";
+
 import { Client } from "./Client";
 import { Room } from "./Room";
 import { Record } from "./Record";
-import { RoomManager } from "./RoomManager";
-import { SharedRecordManager } from "./SharedRecordManager";
-import * as log from "./log";
 
-window.together = { Client, SharedRecordManager, Room, Record };
+// @todo remove this export
+window.together = { Client, Room, Record };
 
 /* globals p5 */
 
-let ds_room;
+let __client, __room;
 
-if (typeof p5 !== "undefined") {
-  init();
-} else {
-  log.error("Together requies p5");
-}
+window.p5 ? init() : log.error("Together requires p5");
 
 function init() {
   p5.prototype.connectToSharedRoom = function (
@@ -25,33 +22,49 @@ function init() {
     room_name,
     cb
   ) {
-    // this._decrementPreload();
-    ds_room = new RoomManager(host, sketch_name, room_name);
-    cb && ds_room.whenReady(cb);
-    ds_room.whenReady(() => this._decrementPreload());
+    connect(host, sketch_name, room_name).then(() => {
+      // log.warn("connectToSharedRoom done!");
+      cb && cb();
+      this._decrementPreload();
+    });
   };
+
+  async function connect(host, sketch_name, room_name) {
+    __client = new Client(host);
+    __room = new Room(__client, sketch_name, room_name);
+    await __client.whenReady();
+    await __room.whenReady();
+    __room.join();
+    __room.removeDisconnectedClients();
+  }
+
   p5.prototype.registerPreloadMethod("connectToSharedRoom", p5.prototype);
 
   p5.prototype.getSharedData = function (record_id, cb) {
-    if (!ds_room) {
+    if (!__room) {
       log.error("getSharedData() called before connectToSharedRoom()");
       return undefined;
     }
 
-    const recordManager = new SharedRecordManager(record_id, ds_room, () => {
+    const record = __room.getRecord(record_id);
+
+    record.whenReady(() => {
+      // log.warn("getSharedData done!", record_id);
+      cb && cb();
       this._decrementPreload();
-      if (typeof cb === "function") cb();
     });
 
-    return recordManager.getShared();
+    return record.getShared();
   };
+
   p5.prototype.registerPreloadMethod("getSharedData", p5.prototype);
 
   p5.prototype.isHost = function () {
-    if (!ds_room) {
+    if (!__room) {
       log.error("isHost() called before connectToSharedRoom()");
       return undefined;
     }
-    return ds_room.isHost();
+
+    return __room.getHostName() === __client.name();
   };
 }
