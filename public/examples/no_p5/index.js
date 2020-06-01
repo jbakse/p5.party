@@ -14,14 +14,14 @@ async function init() {
 
   console.log("Join Room");
   room.join();
-  room.clearMissing();
+  room.removeDisconnectedClients();
 
   window.addEventListener("click", () => {
     console.log("click");
     // room.leave();
   });
   window.addEventListener("beforeunload", () => {
-    // room.leave();
+    room.leave();
     client.close();
   });
 }
