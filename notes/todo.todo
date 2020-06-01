@@ -63,11 +63,21 @@
 	- Keep track of records being created in lists so they can be cleaned up
 	or, maybe don't, and just assume that the whole thing gets blown away every night?
 
+	- ?Do a deep nested update of .shared (or whole record) so that shortcut references will still work?
+
 # Questions
 	- how the hell is the onChange proxy handling array insert/remove (splice)?
 		a: onChange sees this as replacing the array with the new array, sends the entire contents of the array
 		a: this creates a lot of data on the wire but...
 		a: since it doesn't look like DS has a way to splice an array, this doesn't make things any worse at least
+
+
+# Tips
+	- Don't store references to properties or nested properties of "shared".
+	shared = {a: cats, b: dogs}; shortcut_a = shared.a; 
+	... update from server overwrites contents of shared
+	console.log(shortcut_a);
+	// shortcut_a now points to old value of a not updated value found at shared.a
 
 # Style / Naming
 
