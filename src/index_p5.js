@@ -1,11 +1,12 @@
 import "regenerator-runtime/runtime";
 import { Client } from "./Client";
 import { Room } from "./Room";
+import { Record } from "./Record";
 import { RoomManager } from "./RoomManager";
 import { SharedRecordManager } from "./SharedRecordManager";
 import * as log from "./log";
 
-window.together = { Client, SharedRecordManager, Room };
+window.together = { Client, SharedRecordManager, Room, Record };
 
 /* globals p5 */
 

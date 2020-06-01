@@ -16,6 +16,30 @@ async function init() {
   room.join();
   room.removeDisconnectedClients();
 
+  const record = new together.Record(client, "nop5-main/test");
+  await record.whenReady();
+  console.log("Record Ready");
+  const shared = record.getData("shared");
+  shared.text = shared.text || "Hello!";
+
+  const input = document.querySelector("input");
+
+  input.onkeyup = function () {
+    console.log("shared.text = ", input.value);
+    shared.text = input.value;
+  };
+  // @todo, this isn't working
+  // i'm afriad it has to do with how the wathcing works on deeply nested properties
+  // i might not have seen it before because i was't going more than first level deep
+  // but now i always am because I'm watching root istead of shared
+  // look into it
+  setInterval(() => {
+    console.log("i", shared.text);
+    if (input.value != shared.text) {
+      input.value = shared.text;
+    }
+  }, 1000);
+
   window.addEventListener("click", () => {
     console.log("click");
     // room.leave();

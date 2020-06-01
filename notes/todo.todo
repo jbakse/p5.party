@@ -17,12 +17,18 @@
 	- compare to other p5 libraries
 
 # Refactoring
-- Record Manager 
-	- shouldn't take RoomManager
-		- take "connection" + full name of record as one param
-		- Could take "connection" + prefix / id as two params
-		- Could take a deep stream record. 
-		This would make it more of a "manager" less of a "record"
+
+- Record 
+	- constructor(client, name)
+
+		- no callback to constructor, follow whenReady idiom from Room and Client
+		- take full name of record rather than ID, consumers can create full name
+			- maybe make a factory method on room that returns a record by id and tracks it in a list
+
+	- check this out, in order to make record support sharing any property of the record (not just .shared)
+		- 1) watch the whole record instead of shared
+		- 2) return the part of the whole record you want to expose, or that is requested
+		- 3) done!
 
 - Client
 	- improve network usage for getAllClients
