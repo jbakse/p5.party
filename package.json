@@ -1,6 +1,6 @@
 {
   "name": "@jbakse/together",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "author": "Justin Bakse",
   "license": "MIT",
   "description": "Pre-release! An easy to use library for simple multi-user sketches with p5.js.",
