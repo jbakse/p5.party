@@ -16,34 +16,27 @@ async function init() {
   room.join();
   room.removeDisconnectedClients();
 
+  console.log("Create Record");
   const record = new together.Record(client, "nop5-main/test");
   await record.whenReady();
   console.log("Record Ready");
-  const shared = record.getData("shared");
+
+  const shared = record.getShared();
   shared.text = shared.text || "Hello!";
 
+  // sync input field
+  // it would be better to do this when the data changes
+  // but right now together.js doesn't expose the subscription events
+  // so we poll here instead.
   const input = document.querySelector("input");
-
-  input.onkeyup = function () {
-    console.log("shared.text = ", input.value);
+  input.oninput = function () {
     shared.text = input.value;
   };
-  // @todo, this isn't working
-  // i'm afriad it has to do with how the wathcing works on deeply nested properties
-  // i might not have seen it before because i was't going more than first level deep
-  // but now i always am because I'm watching root istead of shared
-  // look into it
   setInterval(() => {
-    console.log("i", shared.text);
-    if (input.value != shared.text) {
-      input.value = shared.text;
-    }
-  }, 1000);
+    if (input.value != shared.text) input.value = shared.text;
+  }, 100);
 
-  window.addEventListener("click", () => {
-    console.log("click");
-    // room.leave();
-  });
+  // clean up on exit
   window.addEventListener("beforeunload", () => {
     room.leave();
     client.close();
