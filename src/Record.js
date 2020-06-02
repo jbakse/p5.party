@@ -2,6 +2,16 @@ import * as log from "./log";
 import * as onChange from "on-change";
 import { createEmitter } from "./emitter";
 
+const customMergeStrategy = (
+  localValue,
+  localVersion,
+  remoteValue,
+  remoteVersion,
+  callback
+) => {
+  log.warn("Merge");
+  callback(null, remoteValue);
+};
 export class Record {
   #client;
   #name;
@@ -29,8 +39,11 @@ export class Record {
 
     // subscribe to record
     this.#record = this.#client.getRecord(this.#name);
+    // this.#record.setMergeStrategy(customMergeStrategy);
+
     this.#record.subscribe("shared", this._onServerChangedData.bind(this));
     await this.#record.whenReady();
+    // this.#record.delete(); // emergency clear it
 
     if (!this.#record.get("shared")) this.#record.set("shared", {});
 
