@@ -1,5 +1,4 @@
 # Tooling 
-was it because i'm webpacking instead of htmlling in the deepstream
 
 .- webpack-dev-server isn't livereloading static assets
 	webpack-dev-server doesn't livereload unless page includes bundle	
@@ -17,54 +16,30 @@ was it because i'm webpacking instead of htmlling in the deepstream
 	https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
 	- compare to other p5 libraries
 
-# Refactoring
+# Improve
 
 - Record 
-	- constructor(client, name)
-
-		- no callback to constructor, follow whenReady idiom from Room and Client
-		- take full name of record rather than ID, consumers can create full name
-			- maybe make a factory method on room that returns a record by id and tracks it in a list
-
+	- Keep track of records being created in lists so they can be cleaned up
+		or, maybe don't, and just assume that the whole thing gets blown away every night?
 	- check this out, in order to make record support sharing any property of the record (not just .shared)
+		-- Doesn't work because of the `shortcut reference` problem
 		- 1) watch the whole record instead of shared
 		- 2) return the part of the whole record you want to expose, or that is requested
 		- 3) done!
+	- ?Do a deep nested update of .shared (or whole record) so that shortcut references will still work?
+		-- would solve the `shortcut reference` problem
 
 - Client
 	- improve network usage for getAllClients
-	- consider cacheing random id in _session_ storage so reloads can reconnect
+	- consider cacheing random id in _session_ storage so reloads can reconnect as same client
 	- also, while possibly this same library could be used for long term server persistance, for now limit the scope to session-longevity multiplayer
 
 - Room
-	- when to clear?
-	currently "missing" participants are kept around on the server
-	this allows them to come back when ds quick drops and reconnects them
-	this could also allow connections to survive reload (if we cashed the random id in browser)
-	or even longer absenses
-		- ? add clearMissing()
-		- ? add clear()
-		- ? add born timestamp
-		- ? add touch timestamp
-		- ? internally call clearMissing(age)
 	
-	.- currently .isMissing is only read for the debug view
-		- ? should clearMissing() and chooseHost() use .isMissing instead?
-			- basically, yes if the code is cleaner that way
-
-	.- even if participants properly call room.leave()
-
-	.- probably better to keep a record for each participant and then keep aparticpants in a ds list
-
-	.- ?change participants {} to [] 
-	.- ?remove _markMissing
-	.- ?if not, then new host in _chooseHost should mark missing on server
 
 # Functionality
-	- Keep track of records being created in lists so they can be cleaned up
-	or, maybe don't, and just assume that the whole thing gets blown away every night?
+	
 
-	- ?Do a deep nested update of .shared (or whole record) so that shortcut references will still work?
 
 # Questions
 	- how the hell is the onChange proxy handling array insert/remove (splice)?
@@ -74,7 +49,7 @@ was it because i'm webpacking instead of htmlling in the deepstream
 
 
 # Tips
-	- Don't store references to properties or nested properties of "shared".
+	- Don't store shortcut references to properties or nested properties of "shared".
 	shared = {a: cats, b: dogs}; shortcut_a = shared.a; 
 	... update from server overwrites contents of shared
 	console.log(shortcut_a);
@@ -82,12 +57,12 @@ was it because i'm webpacking instead of htmlling in the deepstream
 
 # Style / Naming
 
-+- clean/remove old files
-- change "id" to "name", lets make "name" be the full thing = "prefix/id"
 
 # Requests
-- add way to clear shared object
-- freindly warning if user tries to read/write shared
+- add way to clear the .shared object
+- freindly warning if user tries to read/write shared itself
+	don't know how to print a warning for this, how can i know if something is reassigned?
+	
 
 # Questions
 - Can I make more than one shared data?
