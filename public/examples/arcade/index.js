@@ -92,6 +92,15 @@ function draw() {
   ellipse(shared.click.x, shared.click.y, 40, 40);
 }
 
+function keyPressed(e) {
+  console.log("keypress");
+  host.ball = {
+    x: width * 0.5,
+    y: -50,
+    dX: 0,
+    dY: 0,
+  };
+}
 function mousePressed(e) {
   // write shared data
   shared.click.x = mouseX;

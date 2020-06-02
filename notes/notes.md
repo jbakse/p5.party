@@ -1,5 +1,11 @@
 # Sites Referenced
 
+https://gist.github.com/tracker1/59f2c13044315f88bee9
+
+https://medium.com/@bluepnume/javascript-tree-shaking-like-a-pro-7bf96e139eb7
+
+https://github.com/ai/nanoevents
+
 https://deepstream.io/
 
 Setting Up Deepstream on Heroku
@@ -32,3 +38,26 @@ git fetch upstream
 git branch -a
 git merge upstream/master
 ```
+
+# Invalid State Transition
+
+So, pretty sure this is the issue.
+
+Client A: updates record frequenctly 60hz
+Client B: updates same record once (merge conflict detected resolved)
+Client B: updates same reocrd twice quickly (merge conflicts are detected and they both try to resolve. First one resolves marks state READY via MERGED, then second one resolves tries to mark READY via MERGED but already ready.
+
+state-machine.js:36 Invalid state transition.
+Details: {"transition":"MERGED","state":"READY"}
+History:
+From - to LOADING_OFFLINE via -
+From LOADING_OFFLINE to SUBSCRIBING via 23
+From SUBSCRIBING to READY via 4
+From READY to MERGING via INVALID_VERSION
+From MERGING to READY via MERGED
+From READY to MERGING via INVALID_VERSION
+From MERGING to READY via MERGED
+From READY to MERGING via INVALID_VERSION
+From MERGING to READY via MERGED
+From READY to MERGING via INVALID_VERSION
+From MERGING to READY via MERGED

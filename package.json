@@ -1,6 +1,6 @@
 {
   "name": "@jbakse/together",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "author": "Justin Bakse",
   "license": "MIT",
   "description": "Pre-release! An easy to use library for simple multi-user sketches with p5.js.",
@@ -18,6 +18,9 @@
     "dist"
   ],
   "main": "src/index.js",
+  "sideEffects": [
+    "./src/index.p5.js"
+  ],
   "engines": {
     "node": "14.1.0"
   },
@@ -39,8 +42,8 @@
     "quickpack": "npm run build && zip quickpack.zip -r dist -r public/examples public/index.html"
   },
   "dependencies": {
-    "@deepstream/client": "^5.0.8",
-    "@deepstream/server": "^5.0.16",
+    "@deepstream/client": "^5.1.0",
+    "@deepstream/server": "^5.1.1",
     "core-js": "^3.6.5",
     "on-change": "^2.0.1",
     "regenerator-runtime": "^0.13.5",

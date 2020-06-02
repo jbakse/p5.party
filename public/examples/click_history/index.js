@@ -38,6 +38,10 @@ function draw() {
   }
 }
 
+function keyPressed() {
+  shared.clickHistory = [];
+}
+
 function mousePressed(e) {
   // write shared data
   shared.x = mouseX;
