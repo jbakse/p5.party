@@ -14,6 +14,7 @@ const gridSize = 150;
 function preload() {
   connectToSharedRoom(
     "wss://deepstream-server-1.herokuapp.com",
+    // "ws://localhost:6020",
     "tic-tac-toe",
     "main"
   );
