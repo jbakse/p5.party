@@ -125,7 +125,7 @@ function mousePressed(e) {
 // Check for wins or draws
 function declareOutcome() {
   push();
-  stroke(50);
+  stroke(30);
   strokeWeight(10);
 
   if (
@@ -133,7 +133,7 @@ function declareOutcome() {
     shared.boardState[1] === shared.boardState[2] &&
     shared.boardState[2] != 0
   ) {
-    line(25, 65, 375, 65);
+    line(40, 75, 410, 75);
   }
 
   if (
@@ -141,7 +141,7 @@ function declareOutcome() {
     shared.boardState[4] === shared.boardState[5] &&
     shared.boardState[5] != 0
   ) {
-    line(25, 197, 375, 197);
+    line(40, 225, 410, 225);
   }
 
   if (
@@ -149,7 +149,7 @@ function declareOutcome() {
     shared.boardState[7] === shared.boardState[8] &&
     shared.boardState[8] != 0
   ) {
-    line(25, 333, 375, 333);
+    line(40, 375, 410, 375);
   }
 
   if (
@@ -157,7 +157,7 @@ function declareOutcome() {
     shared.boardState[3] === shared.boardState[6] &&
     shared.boardState[6] != 0
   ) {
-    line(65, 25, 65, 375);
+    line(75, 40, 75, 410);
   }
 
   if (
@@ -165,7 +165,7 @@ function declareOutcome() {
     shared.boardState[4] === shared.boardState[7] &&
     shared.boardState[7] != 0
   ) {
-    line(200, 25, 200, 375);
+    line(225, 40, 225, 410);
   }
 
   if (
@@ -173,7 +173,7 @@ function declareOutcome() {
     shared.boardState[5] === shared.boardState[8] &&
     shared.boardState[8] != 0
   ) {
-    line(333, 25, 333, 375);
+    line(375, 40, 375, 410);
   }
 
   if (
@@ -181,7 +181,7 @@ function declareOutcome() {
     shared.boardState[4] === shared.boardState[8] &&
     shared.boardState[8] != 0
   ) {
-    line(35, 35, 365, 365);
+    line(40, 40, 410, 410);
   }
 
   if (
@@ -189,7 +189,7 @@ function declareOutcome() {
     shared.boardState[4] === shared.boardState[6] &&
     shared.boardState[6] != 0
   ) {
-    line(35, 365, 365, 35);
+    line(40, 410, 410, 40);
   } else {
     if (
       shared.boardState[0] != 0 &&
@@ -207,12 +207,12 @@ function declareOutcome() {
       fill(255);
       stroke(0, 200);
       strokeWeight(5);
-      rect(100, 150, 200, 100);
+      rect(125, 175, 200, 100);
 
       fill(50);
       noStroke();
       textSize(45);
-      text("DRAW", 130, 215);
+      text("DRAW", 155, 240);
       pop();
     }
   }
