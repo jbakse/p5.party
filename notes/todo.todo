@@ -40,12 +40,16 @@
 	- also, while possibly this same library could be used for long term server persistance, for now limit the scope to session-longevity multiplayer
 
 - Room
+	- move debug view to client?
+	- add ping to debug view
 	
 
 # Functionality
 	
 
-
+# Examples
+	- show isHost in setup to setup the room
+	
 # Questions
 	- how the hell is the onChange proxy handling array insert/remove (splice)?
 		a: onChange sees this as replacing the array with the new array, sends the entire contents of the array

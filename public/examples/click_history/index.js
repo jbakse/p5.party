@@ -1,5 +1,3 @@
-// https://opengameart.org/content/a-platformer-in-the-forest
-
 /* eslint-disable no-unused-vars */
 /* global partyConnect partyGetShared */
 
@@ -39,6 +37,7 @@ function draw() {
 }
 
 function keyPressed() {
+  // write shared data
   if (key === " ") shared.clickHistory = [];
 }
 
