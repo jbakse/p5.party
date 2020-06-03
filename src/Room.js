@@ -140,11 +140,10 @@ export class Room {
 
   async _displayParticipants() {
     // create element if needed
-    let el = document.getElementById("_sharedParticipants");
+    let el = document.getElementById("party-debug");
     if (!el) {
       el = document.createElement("div");
-      el.id = "_sharedParticipants";
-      el.style.fontFamily = "monospace";
+      el.id = "party-debug";
       document.body.appendChild(el);
     }
 
@@ -152,17 +151,20 @@ export class Room {
     const onlineClients = await this.#client.getAllClients();
 
     // generate output
-    let output = `${this.#appName}-${this.#roomName}: `;
+    let output = "";
+    output += '<div class="label">p5.party debug</div>';
+    output += `<div class="app">${this.#appName}</div>`;
+    output += `<div class="room">${this.#roomName}</div>`;
 
     for (const name of this.#participants) {
       const shortName = name.substr(-4);
-      const isHost = this.#record.get(`host`) === name ? "H" : "";
-      const isMissing = !onlineClients.includes(name) ? "!" : "";
-      const isMe = this.#client.name() === name ? "M" : "";
+      const host = this.#record.get(`host`) === name ? "host" : "";
+      const missing = !onlineClients.includes(name) ? "missing" : "";
+      const me = this.#client.name() === name ? "me" : "";
 
-      output += `${shortName}:${isHost}${isMe}${isMissing} `;
+      output += `<div class="participant ${host} ${me} ${missing}">${shortName}</div>`;
     }
 
-    el.textContent = output;
+    el.innerHTML = output;
   }
 }
