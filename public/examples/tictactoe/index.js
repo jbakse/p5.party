@@ -99,23 +99,24 @@ function draw() {
 function mousePressed(e) {
   const x = Math.floor(mouseX / gridSize);
   const y = Math.floor(mouseY / gridSize);
-  console.log(x);
   const index = y * 3 + x;
+  console.log(x, y, index);
 
-  if (selectedTeam === shared.currentTurn) {
-    // Change state according to selectedTeam
-    if (shared.boardState[index] === 0) {
-      //ternary operator
-      let stateNum = selectedTeam === "Blue" ? 1 : 2;
-      shared.boardState[index] = (shared.boardState[index] + stateNum) % 3;
-    }
-
-    // Change turn
-    if (index <= 9) {
-      if (shared.currentTurn === "Blue") {
-        shared.currentTurn = "Yellow";
-      } else {
-        shared.currentTurn = "Blue";
+  //Change turn and state
+  if (mouseX <= 450 && mouseY <= 450) {
+    // TEMPORARY FIX
+    if (selectedTeam === shared.currentTurn) {
+      if (shared.boardState[index] === 0) {
+        if (index < 9) {
+          if (shared.currentTurn === "Blue") {
+            shared.currentTurn = "Yellow";
+          } else {
+            shared.currentTurn = "Blue";
+          }
+          //ternary operator changes state
+          let stateNum = selectedTeam === "Blue" ? 1 : 2;
+          shared.boardState[index] = (shared.boardState[index] + stateNum) % 3;
+        }
       }
     }
   }
