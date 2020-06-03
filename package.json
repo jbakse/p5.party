@@ -1,5 +1,5 @@
 {
-  "name": "@jbakse/together",
+  "name": "p5.party",
   "version": "0.1.0",
   "author": "Justin Bakse",
   "license": "MIT",
@@ -17,7 +17,7 @@
     "src",
     "dist"
   ],
-  "main": "src/index.js",
+  "main": "src/index_p5.js",
   "sideEffects": [
     "./src/index.p5.js"
   ],
@@ -29,7 +29,7 @@
     "url": "https://github.com/jbakse/deepstream_test.git"
   },
   "scripts": {
-    "prebuild": "rm -f quickpack.zip",
+    "prebuild": "rm -f p5.party.zip",
     "build": "webpack --config webpack.prod.js",
     "profile": "webpack --config webpack.profile.js",
     "watch": "webpack --watch --config webpack.dev.js",
@@ -37,9 +37,9 @@
     "serve": "PORT=${PORT:-6020} deepstream start",
     "test": "echo \"No test specified\" && exit 0",
     "netlify": "npm run build && cp -r dist public",
-    "prepublishOnly": "npm run build && npm run quickpack",
+    "prepublishOnly": "npm run build && npm run pack",
     "release": "np",
-    "quickpack": "npm run build && zip quickpack.zip -r dist -r public/examples public/index.html"
+    "pack": "npm run build && zip p5.party.zip -r dist -r public/examples public/index.html"
   },
   "dependencies": {
     "@deepstream/client": "^5.1.0",

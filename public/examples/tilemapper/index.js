@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-/* global connectToSharedRoom getSharedData createCheckbox */
+/* global partyConnect partyGetShared createCheckbox */
 
 let grid_cols = 12;
 let grid_rows = 8;
@@ -12,12 +12,8 @@ let overlay_checkbox, road_checkbox;
 let shared;
 
 function preload() {
-  connectToSharedRoom(
-    "wss://deepstream-server-1.herokuapp.com",
-    "tilemapper",
-    "main"
-  );
-  shared = getSharedData("globals");
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "tilemapper", "main");
+  shared = partyGetShared("globals");
 
   road_set = loadImage("./road.png");
 }

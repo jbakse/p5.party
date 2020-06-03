@@ -1,7 +1,7 @@
 // Multi Player Tic Tac Toe
 
 /* eslint-disable no-unused-vars */
-/* global connectToSharedRoom getSharedData */
+/* global partyConnect partyGetShared */
 /* global createButton createSelect */
 
 let shared;
@@ -12,13 +12,13 @@ let selectedTeam; // team choosen from the dropdown
 const gridSize = 150;
 
 function preload() {
-  connectToSharedRoom(
+  partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
     // "ws://localhost:6020",
     "tic-tac-toe",
     "main"
   );
-  shared = getSharedData("globals");
+  shared = partyGetShared("globals");
 }
 
 function setup() {

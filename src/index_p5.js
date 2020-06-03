@@ -7,23 +7,18 @@ import { Room } from "./Room";
 import { Record } from "./Record";
 
 // @todo remove this export
-window.together = { Client, Room, Record };
+window.party = { Client, Room, Record };
 
 /* globals p5 */
 
 let __client, __room;
 
-window.p5 ? init() : log.error("Together requires p5");
+window.p5 ? init() : log.error("p5.party requires p5");
 
 function init() {
-  p5.prototype.connectToSharedRoom = function (
-    host,
-    sketch_name,
-    room_name,
-    cb
-  ) {
+  p5.prototype.partyConnect = function (host, sketch_name, room_name, cb) {
     connect(host, sketch_name, room_name).then(() => {
-      // log.warn("connectToSharedRoom done!");
+      // log.warn("partyConnect done!");
       cb && cb();
       this._decrementPreload();
     });
@@ -38,18 +33,18 @@ function init() {
     __room.removeDisconnectedClients();
   }
 
-  p5.prototype.registerPreloadMethod("connectToSharedRoom", p5.prototype);
+  p5.prototype.registerPreloadMethod("partyConnect", p5.prototype);
 
-  p5.prototype.getSharedData = function (record_id, cb) {
+  p5.prototype.partyGetShared = function (record_id, cb) {
     if (!__room) {
-      log.error("getSharedData() called before connectToSharedRoom()");
+      log.error("partyGetShared() called before partyConnect()");
       return undefined;
     }
 
     const record = __room.getRecord(record_id);
 
     record.whenReady(() => {
-      // log.warn("getSharedData done!", record_id);
+      // log.warn("partyGetShared done!", record_id);
       cb && cb();
       this._decrementPreload();
     });
@@ -57,11 +52,11 @@ function init() {
     return record.getShared();
   };
 
-  p5.prototype.registerPreloadMethod("getSharedData", p5.prototype);
+  p5.prototype.registerPreloadMethod("partyGetShared", p5.prototype);
 
-  p5.prototype.isHost = function () {
+  p5.prototype.isPartyHost = function () {
     if (!__room) {
-      log.error("isHost() called before connectToSharedRoom()");
+      log.error("isPartyHost() called before partyConnect()");
       return undefined;
     }
 

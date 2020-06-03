@@ -25,7 +25,7 @@ module.exports = {
   plugins: [new CleanWebpackPlugin()],
 
   output: {
-    filename: "together.js",
+    filename: "p5.party.js",
     path: path.resolve(__dirname, "dist"),
   },
 };

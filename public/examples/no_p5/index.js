@@ -1,14 +1,14 @@
-/* globals together */
-console.log("Together", together);
+/* globals party */
+console.log("Party", party);
 
 async function init() {
   console.log("Create Connection Manager");
-  const client = new together.Client("wss://deepstream-server-1.herokuapp.com");
+  const client = new party.Client("wss://deepstream-server-1.herokuapp.com");
   await client.whenReady();
   console.log("Connection Ready");
 
   console.log("Create Room");
-  const room = new together.Room(client, "nop5", "main");
+  const room = new party.Room(client, "nop5", "main");
   await room.whenReady();
   console.log("Room Ready");
 
@@ -17,7 +17,7 @@ async function init() {
   room.removeDisconnectedClients();
 
   console.log("Create Record");
-  const record = new together.Record(client, "nop5-main/test");
+  const record = new party.Record(client, "nop5-main/test");
   await record.whenReady();
   console.log("Record Ready");
 
@@ -26,7 +26,7 @@ async function init() {
 
   // sync input field
   // it would be better to do this when the data changes
-  // but right now together.js doesn't expose the subscription events
+  // but right now p5.party.js doesn't expose the subscription events
   // so we poll here instead.
   const input = document.querySelector("input");
   input.oninput = function () {

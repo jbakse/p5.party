@@ -3,7 +3,7 @@ node_modules
 
 # build files
 dist
-quickpack.zip
+p5.party.zip
 
 # build meta files
 stats.json

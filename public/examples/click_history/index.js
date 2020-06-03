@@ -1,17 +1,17 @@
 // https://opengameart.org/content/a-platformer-in-the-forest
 
 /* eslint-disable no-unused-vars */
-/* global connectToSharedRoom getSharedData */
+/* global partyConnect partyGetShared */
 
 let shared;
 
 function preload() {
-  connectToSharedRoom(
+  partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
     "click_history",
     "main"
   );
-  shared = getSharedData("globals");
+  shared = partyGetShared("globals");
 }
 
 function setup() {
@@ -39,7 +39,7 @@ function draw() {
 }
 
 function keyPressed() {
-  shared.clickHistory = [];
+  if (key === " ") shared.clickHistory = [];
 }
 
 function mousePressed(e) {

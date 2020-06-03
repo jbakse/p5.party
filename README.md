@@ -21,9 +21,9 @@
   </p>
 </p> -->
 
-## About Together
+## About p5.party!
 
-Together is a simple library for sharing data between users. Use it with [p5.js](https://p5js.org/) to make real-time, multi-user sketches, apps, and games.
+p5.party is a simple library for sharing data between users. Use it with [p5.js](https://p5js.org/) to make real-time, multi-user sketches, apps, and games.
 
 ### Features:
 
