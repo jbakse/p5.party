@@ -1,13 +1,13 @@
 // https://opengameart.org/content/a-platformer-in-the-forest
 
 /* eslint-disable no-unused-vars */
-/* global partyConnect partyGetShared isPartyHost */
+/* global partyConnect partyLoadShared partyIsHost */
 
 let shared;
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "hosting", "main");
-  shared = partyGetShared("globals");
+  shared = partyLoadShared("globals");
 }
 
 function setup() {
@@ -16,7 +16,7 @@ function setup() {
   // set defaults on shared data
   shared.clicks = shared.clicks || [];
   shared.startTime = shared.startTime || new Date();
-  console.log("start as host?", isPartyHost());
+  console.log("start as host?", partyIsHost());
 }
 
 function draw() {
@@ -25,7 +25,7 @@ function draw() {
   // reset the history every 10 seconds
   // we don't want every participant doing this
   // so we can ask the host to handle it
-  if (isPartyHost()) {
+  if (partyIsHost()) {
     const elapsed = new Date() - new Date(shared.startTime);
     if (elapsed > 10000) {
       shared.startTime = new Date();

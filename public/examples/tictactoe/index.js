@@ -1,7 +1,7 @@
 // Multi Player Tic Tac Toe
 
 /* eslint-disable no-unused-vars */
-/* global partyConnect partyGetShared */
+/* global partyConnect partyLoadShared */
 /* global createButton createSelect */
 
 let shared;
@@ -18,7 +18,7 @@ function preload() {
     "tic-tac-toe",
     "main"
   );
-  shared = partyGetShared("globals");
+  shared = partyLoadShared("globals");
 }
 
 function setup() {

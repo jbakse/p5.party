@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-/* global partyConnect partyGetShared createCheckbox */
+/* global partyConnect partyLoadShared createCheckbox */
 
 let grid_cols = 12;
 let grid_rows = 8;
@@ -13,7 +13,7 @@ let shared;
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "tilemapper", "main");
-  shared = partyGetShared("globals");
+  shared = partyLoadShared("globals");
 
   road_set = loadImage("./road.png");
 }
