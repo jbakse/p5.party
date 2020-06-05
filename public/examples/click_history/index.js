@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-/* global partyConnect partyGetShared */
+/* global partyConnect partyLoadShared */
 
 let shared;
 
@@ -9,7 +9,7 @@ function preload() {
     "click_history",
     "main"
   );
-  shared = partyGetShared("globals");
+  shared = partyLoadShared("globals");
 }
 
 function setup() {

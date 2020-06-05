@@ -1,13 +1,13 @@
 //
 /* eslint-disable no-unused-vars */
-/* global partyConnect partyGetShared isPartyHost createCheckbox */
+/* global partyConnect partyLoadShared partyIsHost createCheckbox */
 
 let shared, host;
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "arcade", "main");
-  shared = partyGetShared("shared");
-  host = partyGetShared("host");
+  shared = partyLoadShared("shared");
+  host = partyLoadShared("host");
 }
 
 let run;
@@ -38,12 +38,12 @@ function draw() {
   background(0);
   noStroke();
 
-  if (isPartyHost()) {
+  if (partyIsHost()) {
     fill(255);
     text("Hosting!", 10, 20);
   }
   // read shared data
-  if (run.checked() && isPartyHost()) {
+  if (run.checked() && partyIsHost()) {
     // apply momentum
     host.ball.x += host.ball.dX;
     host.ball.y += host.ball.dY;

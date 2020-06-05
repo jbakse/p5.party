@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-/* global partyConnect partyGetShared */
+/* global partyConnect partyLoadShared */
 
 let shared;
 function preload() {
@@ -8,7 +8,7 @@ function preload() {
     "hello_party",
     "main"
   );
-  shared = partyGetShared("shared");
+  shared = partyLoadShared("shared");
 }
 
 function setup() {
@@ -22,7 +22,7 @@ function setup() {
 }
 
 function mousePressed(e) {
-  // write shared data
+  // write shared dataa
   shared.x = mouseX;
   shared.y = mouseY;
 }

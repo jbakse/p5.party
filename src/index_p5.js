@@ -35,16 +35,16 @@ function init() {
 
   p5.prototype.registerPreloadMethod("partyConnect", p5.prototype);
 
-  p5.prototype.partyGetShared = function (record_id, cb) {
+  p5.prototype.partyLoadShared = function (record_id, cb) {
     if (!__room) {
-      log.error("partyGetShared() called before partyConnect()");
+      log.error("partyLoadShared() called before partyConnect()");
       return undefined;
     }
 
     const record = __room.getRecord(record_id);
 
     record.whenReady(() => {
-      // log.warn("partyGetShared done!", record_id);
+      // log.warn("partyLoadShared done!", record_id);
       cb && cb();
       this._decrementPreload();
     });
@@ -52,11 +52,11 @@ function init() {
     return record.getShared();
   };
 
-  p5.prototype.registerPreloadMethod("partyGetShared", p5.prototype);
+  p5.prototype.registerPreloadMethod("partyLoadShared", p5.prototype);
 
-  p5.prototype.isPartyHost = function () {
+  p5.prototype.partyIsHost = function () {
     if (!__room) {
-      log.error("isPartyHost() called before partyConnect()");
+      log.error("partyIsHost() called before partyConnect()");
       return undefined;
     }
 

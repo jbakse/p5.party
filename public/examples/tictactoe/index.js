@@ -1,7 +1,7 @@
 // Multi Player Tic Tac Toe
 
 /* eslint-disable no-unused-vars */
-/* global partyConnect partyGetShared */
+/* global partyConnect partyLoadShared */
 /* global createButton createSelect */
 
 let shared;
@@ -18,7 +18,7 @@ function preload() {
     "tic-tac-toe",
     "main"
   );
-  shared = partyGetShared("globals");
+  shared = partyLoadShared("globals");
 }
 
 function setup() {
@@ -93,128 +93,155 @@ function draw() {
   text(shared.currentTurn + " team's turn!", 10, 18);
   pop();
 
-  declareOutcome();
+  showOutcome();
 }
 
 function mousePressed(e) {
   const x = Math.floor(mouseX / gridSize);
   const y = Math.floor(mouseY / gridSize);
-  console.log(x);
   const index = y * 3 + x;
+  console.log(x, y, index);
 
-  // Change state according to selectedTeam
-  if (shared.boardState[index] === 0) {
+  //Change turn and state
+  if (mouseX <= 450 && mouseY <= 450) {
+    // TEMPORARY FIX
     if (selectedTeam === shared.currentTurn) {
-      //ternary operator
-      let stateNum = selectedTeam === "Blue" ? 1 : 2;
-      shared.boardState[index] = (shared.boardState[index] + stateNum) % 3;
-    }
-  }
-
-  // Change turn
-  if (selectedTeam === shared.currentTurn && index <= 9) {
-    if (shared.currentTurn === "Blue") {
-      shared.currentTurn = "Yellow";
-    } else {
-      shared.currentTurn = "Blue";
+      if (shared.boardState[index] === 0) {
+        if (index < 9) {
+          if (shared.currentTurn === "Blue") {
+            shared.currentTurn = "Yellow";
+          } else {
+            shared.currentTurn = "Blue";
+          }
+          //ternary operator changes state
+          let stateNum = selectedTeam === "Blue" ? 1 : 2;
+          shared.boardState[index] = (shared.boardState[index] + stateNum) % 3;
+        }
+      }
     }
   }
   console.log(shared.boardState);
 }
 
-// Check for wins or draws
-function declareOutcome() {
+function checkForWin() {
+  for (let i = 1; i < 3; i++) {
+    if (arguments[i] === 0 || arguments[i] !== arguments[i - 1]) return false;
+  }
+  return true;
+}
+
+function showOutcome() {
   push();
   stroke(30);
   strokeWeight(10);
+  let gameIsWon = false;
 
   if (
-    shared.boardState[0] === shared.boardState[1] &&
-    shared.boardState[1] === shared.boardState[2] &&
-    shared.boardState[2] != 0
+    checkForWin(
+      shared.boardState[0],
+      shared.boardState[1],
+      shared.boardState[2]
+    )
   ) {
     line(40, 75, 410, 75);
+    gameIsWon = true;
   }
 
   if (
-    shared.boardState[3] === shared.boardState[4] &&
-    shared.boardState[4] === shared.boardState[5] &&
-    shared.boardState[5] != 0
+    checkForWin(
+      shared.boardState[3],
+      shared.boardState[4],
+      shared.boardState[5]
+    )
   ) {
     line(40, 225, 410, 225);
+    gameIsWon = true;
   }
 
   if (
-    shared.boardState[6] === shared.boardState[7] &&
-    shared.boardState[7] === shared.boardState[8] &&
-    shared.boardState[8] != 0
+    checkForWin(
+      shared.boardState[6],
+      shared.boardState[7],
+      shared.boardState[8]
+    )
   ) {
     line(40, 375, 410, 375);
+    gameIsWon = true;
   }
 
   if (
-    shared.boardState[0] === shared.boardState[3] &&
-    shared.boardState[3] === shared.boardState[6] &&
-    shared.boardState[6] != 0
+    checkForWin(
+      shared.boardState[0],
+      shared.boardState[3],
+      shared.boardState[6]
+    )
   ) {
     line(75, 40, 75, 410);
+    gameIsWon = true;
   }
 
   if (
-    shared.boardState[1] === shared.boardState[4] &&
-    shared.boardState[4] === shared.boardState[7] &&
-    shared.boardState[7] != 0
+    checkForWin(
+      shared.boardState[1],
+      shared.boardState[4],
+      shared.boardState[7]
+    )
   ) {
     line(225, 40, 225, 410);
+    gameIsWon = true;
   }
 
   if (
-    shared.boardState[2] === shared.boardState[5] &&
-    shared.boardState[5] === shared.boardState[8] &&
-    shared.boardState[8] != 0
+    checkForWin(
+      shared.boardState[2],
+      shared.boardState[5],
+      shared.boardState[8]
+    )
   ) {
     line(375, 40, 375, 410);
+    gameIsWon = true;
   }
 
   if (
-    shared.boardState[0] === shared.boardState[4] &&
-    shared.boardState[4] === shared.boardState[8] &&
-    shared.boardState[8] != 0
+    checkForWin(
+      shared.boardState[0],
+      shared.boardState[4],
+      shared.boardState[8]
+    )
   ) {
     line(40, 40, 410, 410);
+    gameIsWon = true;
   }
 
   if (
-    shared.boardState[2] === shared.boardState[4] &&
-    shared.boardState[4] === shared.boardState[6] &&
-    shared.boardState[6] != 0
+    checkForWin(
+      shared.boardState[2],
+      shared.boardState[4],
+      shared.boardState[6]
+    )
   ) {
     line(40, 410, 410, 40);
-  } else {
-    if (
-      shared.boardState[0] != 0 &&
-      shared.boardState[1] != 0 &&
-      shared.boardState[2] != 0 &&
-      shared.boardState[3] != 0 &&
-      shared.boardState[4] != 0 &&
-      shared.boardState[5] != 0 &&
-      shared.boardState[6] != 0 &&
-      shared.boardState[7] != 0 &&
-      shared.boardState[8] != 0 &&
-      shared.boardState[9] != 0
-    ) {
-      push();
-      fill(255);
-      stroke(0, 200);
-      strokeWeight(5);
-      rect(125, 175, 200, 100);
+    gameIsWon = true;
+  }
 
-      fill(50);
-      noStroke();
-      textSize(45);
-      text("DRAW", 155, 240);
-      pop();
-    }
+  if (shared.boardState.every(checkIfFull) && gameIsWon == false) {
+    push();
+    fill(255);
+    stroke(0, 200);
+    strokeWeight(5);
+    rect(125, 175, 200, 100);
+
+    fill(50);
+    noStroke();
+    textSize(45);
+    text("DRAW", 155, 240);
+    pop();
+  } else {
+    return false;
   }
   pop();
+}
+
+function checkIfFull(state) {
+  return state != 0;
 }
