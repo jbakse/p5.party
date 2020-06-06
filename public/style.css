@@ -1,0 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&family=Roboto+Slab:wght@500&family=Roboto:wght@300&display=fallback");
+html {
+  font-family: "Josefin Sans", sans-serif;
+  font-weight: 300;
+  font-size: 24px;
+  line-height: 36px;
+}
+
+body {
+  background-color: white;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 400;
+}
+
+a,
+a:visited {
+  color: #006666;
+  text-decoration: none;
+  border-bottom: 1px dotted #006666;
+}

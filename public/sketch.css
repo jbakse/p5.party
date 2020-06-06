@@ -1,0 +1,8 @@
+body {
+  margin: 0;
+}
+
+canvas {
+  display: block;
+  user-select: none;
+}

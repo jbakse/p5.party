@@ -20,7 +20,7 @@ function setup() {
 }
 
 function draw() {
-  background(0);
+  background("#006666");
   noStroke();
   // reset the history every 10 seconds
   // we don't want every participant doing this
@@ -33,11 +33,13 @@ function draw() {
     }
 
     fill(255);
-    text("Hosting!", 10, 20);
-    text(elapsed / 1000, 10, 40);
+    textSize(24);
+    textFont("Courier New");
+    text("Hosting!", 10, 40);
+    text(elapsed / 1000, 10, 80);
   }
 
-  fill("red");
+  fill("#ffff00");
   for (const p of shared.clicks) {
     ellipse(p.x, p.y, 20, 20);
   }

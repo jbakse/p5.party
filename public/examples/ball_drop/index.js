@@ -35,12 +35,14 @@ function setup() {
 }
 
 function draw() {
-  background(0);
+  background("#660066");
   noStroke();
 
   if (partyIsHost()) {
     fill(255);
-    text("Hosting!", 10, 20);
+    textSize(20);
+    textFont("Courier New");
+    text("Hosting!", 10, 30);
   }
   // read shared data
   if (run.checked() && partyIsHost()) {
@@ -84,7 +86,7 @@ function draw() {
   fill("white");
   ellipse(host.ball.x, host.ball.y, 40, 40);
 
-  fill("green");
+  fill("#66ff66");
   ellipse(shared.click.x, shared.click.y, 40, 40);
 }
 

@@ -22,8 +22,8 @@ function setup() {
   createCanvas(grid_cols * col_width, grid_rows * row_height);
 
   // create the ui
-  road_checkbox = createCheckbox("Draw Road", true);
-  overlay_checkbox = createCheckbox("Draw Grid Overlay", false);
+  road_checkbox = createCheckbox("Show Road", true);
+  overlay_checkbox = createCheckbox("Show Active Cells", false);
 
   // generate a 2D array to hold the state of each grid cell
   if (!shared.grid) {
@@ -78,8 +78,8 @@ function drawMap() {
 
         // draw the overlay
         if (overlay_checkbox.checked()) {
-          blendMode(MULTIPLY);
-          fill(255, 0, 0);
+          blendMode(LIGHTEST);
+          fill("red");
           noStroke();
           let x = col * col_width;
           let y = row * row_height;
