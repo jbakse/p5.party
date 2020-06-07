@@ -17,6 +17,10 @@ window.p5 ? init() : log.error("p5.party requires p5");
 
 function init() {
   p5.prototype.partyConnect = function (host, sketch_name, room_name, cb) {
+    if (__client) {
+      log.warn("You should only call partyConnect() one time");
+      return;
+    }
     connect(host, sketch_name, room_name).then(() => {
       // log.warn("partyConnect done!");
       cb && cb();
@@ -45,7 +49,7 @@ function init() {
 
     record.whenReady(() => {
       // log.warn("partyLoadShared done!", record_id);
-      cb && cb();
+      cb && cb(record.getShared());
       this._decrementPreload();
     });
 

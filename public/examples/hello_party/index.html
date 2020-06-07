@@ -45,7 +45,8 @@
     </style>
   </head>
   <body>
-    <!-- <script src="https://cdn.deepstream.io/js/client/latest/ds.min.js"></script> -->
+    <div id="p5"></div>
+    <div id="source"></div>
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.min.js"
@@ -55,6 +56,15 @@
 
     <script src="/dist/p5.party.js"></script>
 
-    <script src="index.js" defer></script>
+    <script src="index.js"></script>
+
+    <script>
+      fetch("./index.js")
+        .then((r) => r.text())
+        .then((t) => {
+          const div = document.getElementById("source");
+          div.innerHTML = `<pre><code>${t}</code></pre>`;
+        });
+    </script>
   </body>
 </html>

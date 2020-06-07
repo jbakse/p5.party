@@ -12,7 +12,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(400, 400).parent("p5");
   noStroke();
   fill("#3333cc");
 
