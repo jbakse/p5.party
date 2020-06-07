@@ -58,9 +58,12 @@ function setup() {
   let height=400;
   let width=400;
 
-  chatBox=document.getElementById('chatBox');
+  chatBox=document.createElement('DIV');
+  chatBox.id="chatBox";
   chatBox.style.height=(height - 60)+"px";
   chatBox.style.width=width+"px";
+  document.body.appendChild(chatBox);  
+
 
   //textbox that contains writing message
   messageInput = document.createElement("INPUT");
