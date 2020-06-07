@@ -14,7 +14,6 @@ function preload() {
 function setup() {
   createCanvas(400, 400).parent("p5");
   noStroke();
-  fill("#3333cc");
 
   // set defaults on shared data
   shared.x = shared.x || 0;
@@ -29,7 +28,7 @@ function mousePressed(e) {
 
 function draw() {
   background("#ffcccc");
-
+  fill("#000066");
   // read shared data
   ellipse(shared.x, shared.y, 100, 100);
 }

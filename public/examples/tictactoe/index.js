@@ -1,20 +1,25 @@
-// Multi Player Tic Tac Toe
+// Tic Tac Toe
+//
+// Multi-player Tic Tac Toe game created as an example for p5.party
+//
+// Written by Isabel Anguera
 
 /* eslint-disable no-unused-vars */
 /* global partyConnect partyLoadShared */
 /* global createButton createSelect */
 
-let shared;
-
+let shared; // p5.party shared object
 let teamColors; // colors used to draw tokens
 let selectedTeam; // team choosen from the dropdown
 
 const gridSize = 150;
 
+let blueTeamColor;
+let yellowTeamColor;
+
 function preload() {
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
-    // "ws://localhost:6020",
     "tic-tac-toe",
     "main"
   );
@@ -22,10 +27,14 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(450, 450);
-  teamColors = [color(250, 0), color(60, 98, 181), color(255, 220, 82)];
+  createCanvas(gridSize * 3, gridSize * 3);
+
+  blueTeamColor = color(60, 98, 181);
+  yellowTeamColor = color(255, 220, 82);
 
   // Init shared
+  // boardState describes what is each cell of the board
+  // 0 - empty, 1 - blue token, 2 - yellow token
   shared.boardState = shared.boardState || [0, 0, 0, 0, 0, 0, 0, 0, 0];
   shared.currentTurn = shared.currentTurn || "Blue";
 
@@ -52,14 +61,13 @@ function setup() {
 }
 
 function draw() {
-  background(255, 0, 0);
+  background("red");
   noStroke();
-  rectMode(CORNER);
 
   // Draw board
   push();
-  fill(250);
-  stroke(255, 0, 0);
+  fill("white");
+  stroke("red");
   strokeWeight(20);
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
@@ -68,66 +76,66 @@ function draw() {
   }
   pop();
 
-  // Draw pieces
+  // Draw tokens
   push();
   for (let i = 0; i < 9; i++) {
-    const grid_x = i % 3;
-    const grid_y = Math.floor(i / 3);
-    fill(teamColors[shared.boardState[i]]);
+    const grid_col = i % 3;
+    const grid_row = Math.floor(i / 3);
+
+    if (shared.boardState[i] === 0) continue;
+    if (shared.boardState[i] === 1) fill(blueTeamColor);
+    if (shared.boardState[i] === 2) fill(yellowTeamColor);
+
     ellipse(
-      grid_x * gridSize + 0.5 * gridSize,
-      grid_y * gridSize + 0.5 * gridSize,
-      50,
-      50
+      grid_col * gridSize + 0.5 * gridSize,
+      grid_row * gridSize + 0.5 * gridSize,
+      gridSize / 3,
+      gridSize / 3
     );
   }
   pop();
 
   // Display current turn
-  push();
-  fill(230);
-  rect(5, 5, 110, 20, 5);
-  fill(0);
-  textSize(12);
-  textFont("Avenir");
-  text(shared.currentTurn + " team's turn!", 10, 18);
-  pop();
+  if (shared.currentTurn !== "nobody") {
+    push();
+    fill(230);
+    rect(5, 5, 110, 20, 5);
+    fill(0);
+    textSize(12);
+    textFont("Avenir");
+    text(shared.currentTurn + " team's turn!", 10, 18);
+    pop();
+  }
 
   showOutcome();
 }
 
-function mousePressed(e) {
-  const x = Math.floor(mouseX / gridSize);
-  const y = Math.floor(mouseY / gridSize);
-  const index = y * 3 + x;
-  console.log(x, y, index);
+function mousePressed() {
+  if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) return;
+  if (selectedTeam !== shared.currentTurn) return;
 
-  //Change turn and state
-  if (mouseX <= 450 && mouseY <= 450) {
-    // TEMPORARY FIX
-    if (selectedTeam === shared.currentTurn) {
-      if (shared.boardState[index] === 0) {
-        if (index < 9) {
-          if (shared.currentTurn === "Blue") {
-            shared.currentTurn = "Yellow";
-          } else {
-            shared.currentTurn = "Blue";
-          }
-          //ternary operator changes state
-          let stateNum = selectedTeam === "Blue" ? 1 : 2;
-          shared.boardState[index] = (shared.boardState[index] + stateNum) % 3;
-        }
-      }
-    }
+  const col = Math.floor(mouseX / gridSize);
+  const row = Math.floor(mouseY / gridSize);
+  const index = row * 3 + col;
+
+  // return if cell already marked
+  if (shared.boardState[index] > 0) return;
+
+  shared.boardState[index] = selectedTeam === "Blue" ? 1 : 2;
+
+  if (shared.currentTurn === "Blue") {
+    shared.currentTurn = "Yellow";
+  } else {
+    shared.currentTurn = "Blue";
   }
-  console.log(shared.boardState);
 }
 
-function checkForWin() {
-  for (let i = 1; i < 3; i++) {
-    if (arguments[i] === 0 || arguments[i] !== arguments[i - 1]) return false;
-  }
-  return true;
+function checkCombo(a, b, c) {
+  return (
+    shared.boardState[a] > 0 &&
+    shared.boardState[a] === shared.boardState[b] &&
+    shared.boardState[b] === shared.boardState[c]
+  );
 }
 
 function showOutcome() {
@@ -136,95 +144,59 @@ function showOutcome() {
   strokeWeight(10);
   let gameIsWon = false;
 
-  if (
-    checkForWin(
-      shared.boardState[0],
-      shared.boardState[1],
-      shared.boardState[2]
-    )
-  ) {
+  // top row
+  if (checkCombo(0, 1, 2)) {
     line(40, 75, 410, 75);
     gameIsWon = true;
   }
 
-  if (
-    checkForWin(
-      shared.boardState[3],
-      shared.boardState[4],
-      shared.boardState[5]
-    )
-  ) {
+  // middle row
+  if (checkCombo(3, 4, 5)) {
     line(40, 225, 410, 225);
     gameIsWon = true;
   }
 
-  if (
-    checkForWin(
-      shared.boardState[6],
-      shared.boardState[7],
-      shared.boardState[8]
-    )
-  ) {
+  // bottom row
+  if (checkCombo(6, 7, 8)) {
     line(40, 375, 410, 375);
     gameIsWon = true;
   }
 
-  if (
-    checkForWin(
-      shared.boardState[0],
-      shared.boardState[3],
-      shared.boardState[6]
-    )
-  ) {
+  // left column
+  if (checkCombo(0, 3, 6)) {
     line(75, 40, 75, 410);
     gameIsWon = true;
   }
 
-  if (
-    checkForWin(
-      shared.boardState[1],
-      shared.boardState[4],
-      shared.boardState[7]
-    )
-  ) {
+  // middle column
+  if (checkCombo(1, 4, 7)) {
     line(225, 40, 225, 410);
     gameIsWon = true;
   }
 
-  if (
-    checkForWin(
-      shared.boardState[2],
-      shared.boardState[5],
-      shared.boardState[8]
-    )
-  ) {
+  // right column
+  if (checkCombo(2, 5, 8)) {
     line(375, 40, 375, 410);
     gameIsWon = true;
   }
 
-  if (
-    checkForWin(
-      shared.boardState[0],
-      shared.boardState[4],
-      shared.boardState[8]
-    )
-  ) {
+  // diagonal \
+  if (checkCombo(0, 4, 8)) {
     line(40, 40, 410, 410);
     gameIsWon = true;
   }
 
-  if (
-    checkForWin(
-      shared.boardState[2],
-      shared.boardState[4],
-      shared.boardState[6]
-    )
-  ) {
+  // diagonal /
+  if (checkCombo(2, 4, 6)) {
     line(40, 410, 410, 40);
     gameIsWon = true;
   }
 
-  if (shared.boardState.every(checkIfFull) && gameIsWon == false) {
+  // show "draw" message
+  if (
+    gameIsWon === false &&
+    shared.boardState.every((cellState) => cellState > 0)
+  ) {
     push();
     fill(255);
     stroke(0, 200);
@@ -236,12 +208,7 @@ function showOutcome() {
     textSize(45);
     text("DRAW", 155, 240);
     pop();
-  } else {
-    return false;
   }
   pop();
-}
-
-function checkIfFull(state) {
-  return state != 0;
+  if (gameIsWon) shared.currentTurn = "nobody";
 }

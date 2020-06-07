@@ -1,0 +1,31 @@
+#party-debug {
+  font-family: monospace;
+  background-color: #ffcccc;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+#party-debug div {
+  padding: 10px;
+}
+#party-debug .app {
+  background-color: #ffffcc;
+}
+#party-debug .room {
+  background-color: #ccffcc;
+}
+#party-debug .participant {
+  background-color: #ccccff;
+}
+#party-debug .host::after {
+  content: " « host";
+}
+#party-debug .me::after {
+  content: " « me";
+}
+#party-debug .host.me::after {
+  content: " « host+me";
+}
+#party-debug .missing {
+  color: rgba(0, 0, 0, 0.3);
+}

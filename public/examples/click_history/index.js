@@ -14,6 +14,7 @@ function preload() {
 
 function setup() {
   createCanvas(400, 400);
+  noStroke();
 
   // set defaults on shared data
   shared.x = shared.x || 0;
@@ -23,14 +24,13 @@ function setup() {
 }
 
 function draw() {
-  background(0);
-  noStroke();
+  background("#ffcccc");
 
   // read shared data
   fill(shared.color);
   ellipse(shared.x, shared.y, 100, 100);
 
-  fill("#6666ff");
+  fill("#000066");
   for (const p of shared.clickHistory) {
     ellipse(p.x, p.y, 20, 20);
   }
