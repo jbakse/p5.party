@@ -8,27 +8,16 @@ let chatHistory;
 let yourName;
 
 function preload() {
-<<<<<<< HEAD
   partyConnect(
-=======
-  connectToSharedRoom(
->>>>>>> 3aac958b33d87410d8dec71271aaa960f62225ea
     "wss://deepstream-server-1.herokuapp.com",
     "chat_log",
     "main"
   );
-<<<<<<< HEAD
   shared = partyLoadShared("globals");
   host = partyLoadShared("host");
 }
 
 function setup() {
-=======
-  shared = getSharedData("globals");
-}
-
-async function setup() {
->>>>>>> 3aac958b33d87410d8dec71271aaa960f62225ea
   let canvas=createCanvas(400, 400);
   chatBox=document.getElementById('chatBox');
   chatBox.style.height=(height - 60)+"px";
@@ -63,31 +52,20 @@ async function setup() {
   createButton("clear").mousePressed(() => {
     shared.log=yourName+' has cleared the log. Blame them!';
   });
-<<<<<<< HEAD
   
 }
 
 
-=======
-}
-
->>>>>>> 3aac958b33d87410d8dec71271aaa960f62225ea
 function draw() {
   if (!shared) return;
   if (shared.log!=chatHistory) {
     chatBox.innerHTML=shared.log;
     chatBox.scrollTop=chatBox.scrollHeight;
     chatHistory=shared.log;
-<<<<<<< HEAD
   }
 }
 
 
-=======
-  } 
-}
-
->>>>>>> 3aac958b33d87410d8dec71271aaa960f62225ea
 function sendMessageToLog() {
   shared.log=chatBox.innerHTML+'\n'+yourName+': “'+messageInput.value()+'”';
   messageInput.value('');
