@@ -9,6 +9,8 @@
 		-- shows the script as text
 		-- loads the readme
 
+---- why is p5.party.js 2mb again?!
+
 .- webpack-dev-server isn't livereloading static assets
 	webpack-dev-server doesn't livereload unless page includes bundle	
 
