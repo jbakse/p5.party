@@ -15,7 +15,7 @@ async function init() {
   console.log("Connection Ready");
 
   console.log("Create Room");
-  const room = new party.Room(client, "nop5", "main");
+  const room = new party.Room(client, "chat_log_nop5", "main");
   await room.whenReady();
   console.log("Room Ready");
 
@@ -24,24 +24,11 @@ async function init() {
   room.removeDisconnectedClients();
 
   console.log("Create Record");
-  const record = new party.Record(client, "nop5-main/test");
+  const record = new party.Record(client, "chat_log_nop5-main/test");
   await record.whenReady();
   console.log("Record Ready");
 
   shared = record.getShared();
-  shared.text = shared.text || "Hello!";
-
-  // sync input field
-  // it would be better to do this when the data changes
-  // but right now p5.party.js doesn't expose the subscription events
-  // so we poll here instead.
-  // const input = document.querySelector("input");
-  // input.oninput = function () {
-  //   shared.text = input.value;
-  // };
-  // setInterval(() => {
-  //   if (input.value != shared.text) input.value = shared.text;
-  // }, 100);
 
   // clean up on exit
   window.addEventListener("beforeunload", () => {
