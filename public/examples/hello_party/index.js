@@ -12,7 +12,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(400, 400).parent("p5");
+  createCanvas(400, 400);
   noStroke();
 
   // set defaults on shared data

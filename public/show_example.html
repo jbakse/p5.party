@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>p5.party Example</title>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"
+      integrity="sha256-/2C3CAfmuTGkUqK2mVrhkTacBscoR1caE0u2QZZ3Uh8="
+      crossorigin="anonymous"
+    ></script>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.1.0/marked.min.js"
+      integrity="sha256-POA+Q3FC8tyo/jZhQrw40H5mKcWAABdxNeUQ/uhIm4U="
+      crossorigin="anonymous"
+    ></script>
+
+    <link rel="stylesheet" href="/highlight.css" />
+    <link rel="stylesheet" href="examples/sketch.css" />
+    <link rel="stylesheet" href="/party_debug.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      body {
+        /* display: flex; */
+        flex-direction: column;
+      }
+      #readme,
+      #source {
+        order: 1000;
+      }
+      #readme {
+        padding: 10px;
+      }
+      #readme code {
+        font-family: "Courier New", Courier, monospace;
+        background: #eeeeee;
+        border-radius: 6px;
+        padding: 2px 6px;
+      }
+      #readme blockquote {
+        margin: 0;
+        background: #ccffcc;
+        padding: 15px;
+        border-radius: 6px;
+      }
+      #readme blockquote p {
+        margin: 0;
+      }
+      #readme h1 {
+        font-size: 1em;
+        margin-bottom: 0.5em;
+      }
+      iframe {
+        width: 100%;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe src="" frameborder="0" id="p5" height="400"></iframe>
+    <div id="readme"></div>
+    <div id="source"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.min.js"></script>
+    <script src="/dist/p5.party.js"></script>
+    <script>
+      const example_name = window.location.search.substr(1);
+
+      // fill iframe
+      const iframe = document.getElementById("p5");
+      iframe.src = `/examples/${example_name}/index.html`;
+      iframe.addEventListener("load", () => {
+        setInterval(() => {
+          iframe.height =
+            Math.max(
+              400,
+              iframe.contentWindow.document.body.scrollHeight + 30
+            ) + "px";
+        }, 100);
+      });
+
+      // run example
+      // const script = document.createElement("script");
+      // script.src = `/examples/${example_name}/index.js`;
+      // document.body.appendChild(script);
+
+      // show example readme
+      fetch(`/examples/${example_name}/README.md`)
+        .then(function (response) {
+          if (!response.ok) {
+            throw Error(response.statusText);
+          }
+          return response;
+        })
+        .then((r) => r.text())
+        .then((t) => {
+          const div = document.getElementById("readme");
+          div.innerHTML = marked(t);
+        })
+        .catch((e) => {});
+
+      // show example source
+      fetch(`/examples/${example_name}/index.js`)
+        .then((r) => r.text())
+        .then((t) => {
+          const div = document.getElementById("source");
+          div.innerHTML = `<pre><code class="lang-javascript">${t}</code></pre>`;
+          hljs.initHighlighting();
+        });
+    </script>
+  </body>
+</html>

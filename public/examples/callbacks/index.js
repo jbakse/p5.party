@@ -39,7 +39,7 @@ function mousePressed(e) {
 
 function draw() {
   if (!shared) {
-    background("#660000");
+    background("#666600");
     return;
   }
 
