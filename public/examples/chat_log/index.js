@@ -1,18 +1,9 @@
-<<<<<<< HEAD
-//
-/* eslint-disable no-unused-vars */
-/* global partyConnect partyLoadShared partyIsHost createCheckbox */
-
-
-let shared, host;
-=======
 // https://opengameart.org/content/a-platformer-in-the-forest
 
 /* eslint-disable no-unused-vars */
 /* global connectToSharedRoom getSharedData */
 
 let shared;
->>>>>>> 3aac958b33d87410d8dec71271aaa960f62225ea
 let chatHistory;
 let yourName;
 
