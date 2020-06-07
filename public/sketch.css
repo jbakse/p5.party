@@ -6,3 +6,7 @@ canvas {
   display: block;
   user-select: none;
 }
+
+#readme {
+  margin: 0.5em;
+}

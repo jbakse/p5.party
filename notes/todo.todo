@@ -1,5 +1,14 @@
 # Tooling 
 
+-- I've got hello_party looking good, but need to consider
+	-- how quickpack packs examples without packing all of public
+	-- and examples currently link out resources in public
+	-- examples/ should be self contained
+	-- can build a little viewer page in public that takes a path to an example
+		-- runs the script
+		-- shows the script as text
+		-- loads the readme
+
 .- webpack-dev-server isn't livereloading static assets
 	webpack-dev-server doesn't livereload unless page includes bundle	
 

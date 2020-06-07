@@ -1,5 +1,7 @@
 #party-debug {
   font-family: monospace;
+  font-size: 12px;
+
   background-color: #ffcccc;
   position: absolute;
   right: 0;
