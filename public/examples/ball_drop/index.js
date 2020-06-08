@@ -20,7 +20,7 @@ function setup() {
 
   // set defaults on shared data
   host.ball = host.ball || {
-    x: width * 0.5,
+    x: width * 0.51,
     y: 0,
     dX: 0,
     dY: 0,

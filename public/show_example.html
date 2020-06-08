@@ -66,49 +66,59 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.min.js"></script>
     <script src="/dist/p5.party.js"></script>
     <script>
-      const example_name = window.location.search.substr(1);
-
-      // fill iframe
-      const iframe = document.getElementById("p5");
-      iframe.src = `/examples/${example_name}/index.html`;
-      iframe.addEventListener("load", () => {
-        setInterval(() => {
-          iframe.height =
-            Math.max(
-              400,
-              iframe.contentWindow.document.body.scrollHeight + 30
-            ) + "px";
-        }, 100);
-      });
-
-      // run example
-      // const script = document.createElement("script");
-      // script.src = `/examples/${example_name}/index.js`;
-      // document.body.appendChild(script);
-
-      // show example readme
-      fetch(`/examples/${example_name}/README.md`)
-        .then(function (response) {
-          if (!response.ok) {
-            throw Error(response.statusText);
-          }
-          return response;
-        })
-        .then((r) => r.text())
-        .then((t) => {
-          const div = document.getElementById("readme");
-          div.innerHTML = marked(t);
-        })
-        .catch((e) => {});
-
-      // show example source
-      fetch(`/examples/${example_name}/index.js`)
-        .then((r) => r.text())
-        .then((t) => {
-          const div = document.getElementById("source");
-          div.innerHTML = `<pre><code class="lang-javascript">${t}</code></pre>`;
-          hljs.initHighlighting();
+      function show() {
+        const example_name = window.location.search.substr(1);
+        if (!example_name) return;
+        // fill iframe
+        const iframe = document.getElementById("p5");
+        iframe.src = `/examples/${example_name}/index.html`;
+        iframe.addEventListener("load", () => {
+          setInterval(() => {
+            iframe.height =
+              Math.max(
+                400,
+                iframe.contentWindow.document.body.scrollHeight + 30
+              ) + "px";
+          }, 100);
         });
+
+        // run example
+        // const script = document.createElement("script");
+        // script.src = `/examples/${example_name}/index.js`;
+        // document.body.appendChild(script);
+
+        // show example readme
+        fetch(`/examples/${example_name}/README.md`)
+          .then(function (response) {
+            if (!response.ok) {
+              throw Error(response.statusText);
+            }
+            return response;
+          })
+          .then((r) => r.text())
+          .then((t) => {
+            const div = document.getElementById("readme");
+            div.innerHTML = marked(t);
+          })
+          .catch((e) => {});
+
+        // show example source
+        fetch(`/examples/${example_name}/index.js`)
+          .then(function (response) {
+            if (!response.ok) {
+              throw Error(response.statusText);
+            }
+            return response;
+          })
+          .then((r) => r.text())
+          .then((t) => {
+            const div = document.getElementById("source");
+            div.innerHTML = `<pre><code class="lang-javascript">${t}</code></pre>`;
+            hljs.initHighlighting();
+          })
+          .catch((e) => {});
+      }
+      show();
     </script>
   </body>
 </html>
