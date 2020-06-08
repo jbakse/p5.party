@@ -28,7 +28,7 @@ function setup() {
   messageInput.size(width-50,20);
   messageInput.position(20, height-10);
 
-  //name of the user runnign this instance
+  //name of the user running this instance
   yourName=nameGenerator();
 
   //button for sending messsages
@@ -55,7 +55,6 @@ function setup() {
   
 }
 
-
 function draw() {
   if (!shared) return;
   if (shared.log!=chatHistory) {
@@ -65,12 +64,10 @@ function draw() {
   }
 }
 
-
 function sendMessageToLog() {
   shared.log=chatBox.innerHTML+'\n'+yourName+': “'+messageInput.value()+'”';
   messageInput.value('');
 }
-
 
 function nameGenerator() {
   return random(animalNames);

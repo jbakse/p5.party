@@ -7,7 +7,6 @@ let chatHistory;
 let yourName;
 let shared;
 
-
 async function init() {
   console.log("Create Connection Manager");
   const client = new party.Client("wss://deepstream-server-1.herokuapp.com");
@@ -28,15 +27,16 @@ async function init() {
   await record.whenReady();
   console.log("Record Ready");
 
-  shared = record.getShared();
-
   // clean up on exit
   window.addEventListener("beforeunload", () => {
     room.leave();
     client.close();
   });
+
+  shared = record.getShared();
+
   setup();
-  setInterval(draw, 100);
+  setInterval(update, 100);
 }
 init();
 
@@ -51,21 +51,17 @@ function setup() {
   chatBox.style.width=width+"px";
   document.body.appendChild(chatBox);  
 
-
   //textbox that contains writing message
   messageInput = document.createElement("INPUT");
   document.body.appendChild(messageInput);  
-  // messageInput.size(width-50,20);
-  // messageInput.position(20, height-10);
 
-  //name of the user runnign this instance
+  //name of the user running this instance
   yourName=nameGenerator();
 
   //button for sending messsages
   sendButton = document.createElement("BUTTON");
   sendButton.innerHTML="SEND";
-  // sendButton.position(messageInput.x + messageInput.width, messageInput.y-12);
-  // sendButton.size(AUTO,24);
+
   sendButton.onclick=sendMessageToLog;
   sendButton.onkeypress=addEventListener('keyup', function event(e){
     if (e.key==="Enter"){
@@ -88,8 +84,7 @@ function setup() {
   document.body.appendChild(clearButton);
 }
 
-
-function draw() {
+function update() {
   if (!shared) return;
   if (shared.log!=chatHistory) {
     chatBox.innerHTML=shared.log;
@@ -98,12 +93,10 @@ function draw() {
   }
 }
 
-
 function sendMessageToLog() {
   shared.log=chatBox.innerHTML+'\n'+yourName+': “'+messageInput.value+'”';
   messageInput.value='';
 }
-
 
 function nameGenerator() {
   return random(animalNames);
