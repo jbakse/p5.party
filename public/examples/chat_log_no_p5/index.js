@@ -29,6 +29,7 @@ async function init() {
 
   // clean up on exit
   window.addEventListener("beforeunload", () => {
+    shared.log=shared.log+'\n'+yourName+' has left the chat';
     room.leave();
     client.close();
   });
@@ -46,6 +47,7 @@ function setup() {
   let width=400;
 
   chatBox=document.createElement('DIV');
+  chatBox.style.cssText="background-color: Snow; overflow: auto; white-space: pre; padding: 20px;"
   chatBox.id="chatBox";
   chatBox.style.height=(height - 60)+"px";
   chatBox.style.width=width+"px";
@@ -53,6 +55,8 @@ function setup() {
 
   //textbox that contains writing message
   messageInput = document.createElement("INPUT");
+  messageInput.style.width=(width-50)+"px";
+
   document.body.appendChild(messageInput);  
 
   //name of the user running this instance
