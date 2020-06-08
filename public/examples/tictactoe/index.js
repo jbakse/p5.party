@@ -13,6 +13,7 @@ let teamColors; // colors used to draw tokens
 let selectedTeam; // team choosen from the dropdown
 
 const gridSize = 150;
+const boardExtension = 50;
 
 let blueTeamColor;
 let yellowTeamColor;
@@ -27,7 +28,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(gridSize * 3, gridSize * 3);
+  createCanvas(10 + gridSize * 3, gridSize * 3 + boardExtension);
 
   blueTeamColor = color(60, 98, 181);
   yellowTeamColor = color(255, 220, 82);
@@ -68,10 +69,10 @@ function draw() {
   push();
   fill("white");
   stroke("red");
-  strokeWeight(20);
+  strokeWeight(10);
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
-      rect(i * gridSize, j * gridSize, gridSize, gridSize);
+      rect(5 + i * gridSize, 5 + j * gridSize, gridSize, gridSize);
     }
   }
   pop();
@@ -98,12 +99,10 @@ function draw() {
   // Display current turn
   if (shared.currentTurn !== "nobody") {
     push();
-    fill(230);
-    rect(5, 5, 110, 20, 5);
-    fill(0);
-    textSize(12);
-    textFont("Avenir");
-    text(shared.currentTurn + " team's turn!", 10, 18);
+    fill("white");
+    textSize(22);
+    textFont("Gill Sans");
+    text(shared.currentTurn + " team's turn!", 12, 482);
     pop();
   }
 
@@ -198,16 +197,14 @@ function showOutcome() {
     shared.boardState.every((cellState) => cellState > 0)
   ) {
     push();
-    fill(255);
-    stroke(0, 200);
-    strokeWeight(5);
-    rect(125, 175, 200, 100);
-
-    fill(50);
+    fill("white");
     noStroke();
-    textSize(45);
-    text("DRAW", 155, 240);
+    textSize(22);
+    textFont("Gill Sans");
+    text("Tie Game!", 182, 482);
     pop();
+
+    shared.currentTurn = "nobody";
   }
   pop();
   if (gameIsWon) shared.currentTurn = "nobody";
