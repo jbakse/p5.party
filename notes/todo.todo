@@ -1,5 +1,7 @@
 # Tooling 
 
+-- add a webpage endpoint to the server
+
 -- I've got hello_party looking good, but need to consider
 	-- how quickpack packs examples without packing all of public
 	-- and examples currently link out resources in public
