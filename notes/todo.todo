@@ -4,6 +4,8 @@
 	: won't fix
 	: this is not important enough for the time/complexity required
 
+-- build party debug css in.
+
 -- I've got hello_party looking good, but need to consider
 	-- how quickpack packs examples without packing all of public
 	-- and examples currently link out resources in public
