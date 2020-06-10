@@ -13,7 +13,6 @@ let teamColors; // colors used to draw tokens
 let selectedTeam; // team choosen from the dropdown
 
 const gridSize = 150;
-const boardExtension = 50;
 
 let blueTeamColor;
 let yellowTeamColor;
@@ -28,6 +27,7 @@ function preload() {
 }
 
 function setup() {
+  const boardExtension = 50;
   createCanvas(10 + gridSize * 3, gridSize * 3 + boardExtension);
 
   blueTeamColor = color(60, 98, 181);
