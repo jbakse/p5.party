@@ -11,14 +11,19 @@
 	.-add a way to clear a record quickly	or, maybe don't, and just assume that the whole thing gets blown away every night?
 
 - Client
-	- improve network usage for getAllClients
+	.- improve network usage for getAllClients
 	- consider cacheing random id in _session_ storage so reloads can reconnect as same client
 	- also, while possibly this same library could be used for long term server persistance, for now limit the scope to session-longevity multiplayer
 
 - Room
-	- move debug view to client?
-	- make debug view opt in, and allow to set frequency of polling
-		- better yet, remove need to poll?
+	.- move debug view to client?
+		- no, its data is room specific
+
+	- make debug view opt in
+		.- and allow to set frequency of polling
+		.- better yet, remove need to poll?
+		.- debug view no longer trigggers network activity
+		
 	- add ping to debug view
 	
 
@@ -35,7 +40,7 @@
 
 
 # Requests
-- add way to clear the .shared object
+.- add way to clear the .shared object
 - add a way to clear all the shared records in a room
 
 

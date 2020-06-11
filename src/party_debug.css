@@ -14,7 +14,7 @@
   background-color: #ffffcc;
 }
 #party-debug .room {
-  background-color: #ccffcc;
+  background-color: #ffffcc;
 }
 #party-debug .participant {
   background-color: #ccccff;
@@ -30,4 +30,11 @@
 }
 #party-debug .missing {
   color: rgba(0, 0, 0, 0.3);
+}
+
+#party-debug .label {
+  background-color: #ccffcc;
+}
+#party-debug .record {
+  background-color: #ccffff;
 }
