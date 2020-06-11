@@ -29,7 +29,7 @@ function setup() {
   messageInput.position(20, height-10);
 
   //button for sending messsages
-  sendButton = createButton('send');
+  sendButton = createButton('SEND');
   sendButton.position(messageInput.x + messageInput.width, messageInput.y-12);
   sendButton.size(AUTO,24);
   sendButton.mousePressed(sendMessageToLog);
