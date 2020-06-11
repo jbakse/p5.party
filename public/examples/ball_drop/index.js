@@ -1,7 +1,3 @@
-//
-/* eslint-disable no-unused-vars */
-/* global partyConnect partyLoadShared partyIsHost createCheckbox */
-
 let shared, host;
 
 function preload() {
@@ -20,7 +16,7 @@ function setup() {
 
   // set defaults on shared data
   host.ball = host.ball || {
-    x: width * 0.5,
+    x: width * 0.51,
     y: 0,
     dX: 0,
     dY: 0,

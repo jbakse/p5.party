@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* global partyConnect partyLoadShared */
-
 let shared;
 function preload() {
   partyConnect(

@@ -4,9 +4,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Examples</title>
-    <link rel="stylesheet" href="/style.css" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&display=swap");
+      html {
+        font-family: "Josefin Sans", sans-serif;
+        font-weight: 300;
+        font-size: 24px;
+        line-height: 1.5;
+      }
 
-    <script src="dist/p5.party.js"></script>
+      body {
+        background-color: white;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-weight: 400;
+      }
+
+      a,
+      a:visited {
+        color: #006666;
+        text-decoration: none;
+        border-bottom: 1px dotted #006666;
+      }
+    </style>
+
+    <script src="/dist/p5.party.js"></script>
   </head>
   <body>
     <article class="pad-xl">
@@ -22,7 +47,6 @@
         <li><a href="./callback">callback</a></li>
         <li><a href="./chat_log">Chat Log</a></li>
         <li><a href="./chat_log_no_p5">Chat Log No P5</a></li>
-
       </ul>
     </article>
   </body>

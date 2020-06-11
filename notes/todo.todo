@@ -1,5 +1,11 @@
 # Tooling 
 
+.-- add a webpage endpoint to the server
+	: won't fix
+	: this is not important enough for the time/complexity required
+
+-- build party debug css in.
+
 -- I've got hello_party looking good, but need to consider
 	-- how quickpack packs examples without packing all of public
 	-- and examples currently link out resources in public
@@ -9,7 +15,8 @@
 		-- shows the script as text
 		-- loads the readme
 
----- why is p5.party.js 2mb again?!
+.- why is p5.party.js 2mb again?!
+	its not
 
 .- webpack-dev-server isn't livereloading static assets
 	webpack-dev-server doesn't livereload unless page includes bundle	

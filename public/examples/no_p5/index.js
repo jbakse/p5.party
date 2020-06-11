@@ -1,4 +1,3 @@
-/* globals party */
 console.log("Party", party);
 
 async function init() {
@@ -14,6 +13,9 @@ async function init() {
 
   console.log("Join Room");
   room.join();
+  // clients should remove themselves from the room before they disconnect
+  // but sometimes they don't or can't
+  // clear out any disconnected clients
   room.removeDisconnectedClients();
 
   console.log("Create Record");

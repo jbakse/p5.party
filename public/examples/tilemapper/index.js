@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* global partyConnect partyLoadShared createCheckbox */
-
 let grid_cols = 12;
 let grid_rows = 8;
 let row_height = 32;
