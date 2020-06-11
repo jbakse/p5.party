@@ -6,14 +6,14 @@ import { Client } from "./Client";
 import { Room } from "./Room";
 import { Record } from "./Record";
 
-// @todo remove this export
+// @todo remove this export?
 window.party = { Client, Room, Record };
 
 /* globals p5 */
 
 let __client, __room;
 
-window.p5 ? init() : log.error("p5.party requires p5");
+window.p5 ? init() : log.warn("p5.js not found.");
 
 function init() {
   p5.prototype.partyConnect = function (host, sketch_name, room_name, cb) {

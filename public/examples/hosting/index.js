@@ -1,8 +1,3 @@
-// https://opengameart.org/content/a-platformer-in-the-forest
-
-/* eslint-disable no-unused-vars */
-/* global partyConnect partyLoadShared partyIsHost */
-
 let shared;
 
 function preload() {
@@ -13,9 +8,11 @@ function preload() {
 function setup() {
   createCanvas(400, 400);
   noStroke();
-  // set defaults on shared data
-  shared.clicks = shared.clicks || [];
-  shared.startTime = shared.startTime || new Date();
+  // use partyIsHost in setup to see if you are the first one in the room
+  if (partyIsHost()) {
+    shared.clicks = [];
+    shared.startTime = new Date();
+  }
   console.log("start as host?", partyIsHost());
 }
 

@@ -4,10 +4,6 @@
 //
 // Written by Isabel Anguera
 
-/* eslint-disable no-unused-vars */
-/* global partyConnect partyLoadShared */
-/* global createButton createSelect */
-
 let shared; // p5.party shared object
 let teamColors; // colors used to draw tokens
 let selectedTeam; // team choosen from the dropdown

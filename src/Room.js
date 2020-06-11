@@ -1,6 +1,7 @@
 import { createEmitter } from "./emitter";
 import { Record } from "./Record";
 import * as log from "./log";
+import css from "./party_debug.css";
 
 export class Room {
   #client;

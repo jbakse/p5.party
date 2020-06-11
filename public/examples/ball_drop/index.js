@@ -1,7 +1,3 @@
-//
-/* eslint-disable no-unused-vars */
-/* global partyConnect partyLoadShared partyIsHost createCheckbox */
-
 let shared, host;
 
 function preload() {

@@ -1,3 +1,5 @@
+/// WARNING. This file is not used.
+
 const { Deepstream } = require("@deepstream/server");
 
 /*

@@ -1,51 +1,15 @@
 # Tooling 
 
--- add a webpage endpoint to the server
-
--- I've got hello_party looking good, but need to consider
-	-- how quickpack packs examples without packing all of public
-	-- and examples currently link out resources in public
-	-- examples/ should be self contained
-	-- can build a little viewer page in public that takes a path to an example
-		-- runs the script
-		-- shows the script as text
-		-- loads the readme
-
----- why is p5.party.js 2mb again?!
-
-.- webpack-dev-server isn't livereloading static assets
-	webpack-dev-server doesn't livereload unless page includes bundle	
-
-.- build deepstream client into package
-	- how big is ds client? 190kB
-
-.- do we really need the regenerator runtime?
-	- can we webpack without it, targeting only recent browsers?
-	- just a few k, lets not worry abou tit
-
-.- make build smaller, its way too big!
-
 - consider providing min and unmin versions
 	https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
 	- compare to other p5 libraries
-
-
-- check github pages https
-- check notion embeded demos
-
 
 # Improve
 
 - Record 
 	- Keep track of records being created in lists so they can be cleaned up
 		or, maybe don't, and just assume that the whole thing gets blown away every night?
-	- check this out, in order to make record support sharing any property of the record (not just .shared)
-		-- Doesn't work because of the `shortcut reference` problem
-		- 1) watch the whole record instead of shared
-		- 2) return the part of the whole record you want to expose, or that is requested
-		- 3) done!
-	- ?Do a deep nested update of .shared (or whole record) so that shortcut references will still work?
-		-- would solve the `shortcut reference` problem
+
 
 - Client
 	- improve network usage for getAllClients
@@ -61,46 +25,20 @@
 	
 
 # Examples
-	- show isHost in setup to setup the room
 	
-# Questions
-	- how the hell is the onChange proxy handling array insert/remove (splice)?
-		a: onChange sees this as replacing the array with the new array, sends the entire contents of the array
-		a: this creates a lot of data on the wire but...
-		a: since it doesn't look like DS has a way to splice an array, this doesn't make things any worse at least
-
+	
 
 # Tips
-	- Don't store shortcut references to properties or nested properties of "shared".
-	shared = {a: cats, b: dogs}; shortcut_a = shared.a; 
-	... update from server overwrites contents of shared
-	console.log(shortcut_a);
-	// shortcut_a now points to old value of a not updated value found at shared.a
-
+	
 # Style / Naming
 
 
 # Requests
 - add way to clear the .shared object
-- freindly warning if user tries to read/write shared itself
-	don't know how to print a warning for this, how can i know if something is reassigned?
-	
+- add a way to clear all the shared records in a room
+
 
 # Questions
-- Can I make more than one shared data?
-	- Yes.
-	- and it avoids conflicts
-
-- What can be shared?
-	- Basic data like strings and numbers
-	- Arrays and Data Objects
-	- Nesting is okay
-	- Constructed Objects don't work, but sometimes you can "serialize" them
-	```
-	shared.color = color(random(255), random(255), random(255)).toString();
-	...
-	fill(shared.color);
-	```
 
 
 # Features
@@ -129,3 +67,14 @@
 
 - dashboard view?
 	- show apps, rooms, records, participants
+
+
+# Branch - Deep Update
+
+	- check this out, in order to make record support sharing any property of the record (not just .shared)
+		-- Doesn't work because of the `shortcut reference` problem
+		- 1) watch the whole record instead of shared
+		- 2) return the part of the whole record you want to expose, or that is requested
+		- 3) done!
+	- ?Do a deep nested update of .shared (or whole record) so that shortcut references will still work?
+		-- would solve the `shortcut reference` problem
