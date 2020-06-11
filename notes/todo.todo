@@ -4,6 +4,10 @@
 	https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
 	- compare to other p5 libraries
 
+- can bake package version into code somehow?
+
+- why is version on npm up to date, only 50k, and missing css? also dist was empty
+
 # Bugs
 	
 # Style / Naming
