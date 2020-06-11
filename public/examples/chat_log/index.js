@@ -1,11 +1,12 @@
-// https://opengameart.org/content/a-platformer-in-the-forest
-
-/* eslint-disable no-unused-vars */
 /* global connectToSharedRoom getSharedData */
 
-let shared;
-let chatHistory;
-let yourName;
+let chatHistory,
+  userName,
+  shared,
+  chatLog,
+  messageInput,
+  sendButton,
+  clearButton;
 
 function preload() {
   partyConnect(
@@ -14,22 +15,18 @@ function preload() {
     "main"
   );
   shared = partyLoadShared("globals");
-  host = partyLoadShared("host");
 }
 
 function setup() {
   let canvas=createCanvas(400, 400);
-  chatBox=document.getElementById('chatBox');
-  chatBox.style.height=(height - 60)+"px";
-  chatBox.style.width=width+"px";
+  chatLog=document.getElementById('chatLog');
+  chatLog.style.height=(height - 60)+"px";
+  chatLog.style.width=width+"px";
 
   //textbox that contains writing message
   messageInput = createInput();
   messageInput.size(width-50,20);
   messageInput.position(20, height-10);
-
-  //name of the user running this instance
-  yourName=nameGenerator();
 
   //button for sending messsages
   sendButton = createButton('send');
@@ -42,30 +39,31 @@ function setup() {
     }
   });
 
+  //name of the user running this instance
+  userName=nameGenerator();
   if (!shared.log) { 
-    shared.log='Weclome to ChatBox, '+yourName+'!';
+    shared.log=shared.log+'\n'+userName+' has entered the chat';
   }
   else {
-    shared.log=shared.log+'\n'+yourName+' has entered the chat';
+    shared.log='Weclome to chatLog, '+userName+'!';
   }
-
-  createButton("clear").mousePressed(() => {
-    shared.log=yourName+' has cleared the log. Blame them!';
-  });
-  
 }
 
 function draw() {
-  if (!shared) return;
   if (shared.log!=chatHistory) {
-    chatBox.innerHTML=shared.log;
-    chatBox.scrollTop=chatBox.scrollHeight;
+    chatLog.innerHTML=shared.log;
+    chatLog.scrollTop=chatLog.scrollHeight;
     chatHistory=shared.log;
+  }
+  if (partyIsHost() && !clearButton) {
+    clearButton=createButton("clear").mousePressed(() => {
+      shared.log=userName+' has cleared the log. Blame them!';
+    });
   }
 }
 
 function sendMessageToLog() {
-  shared.log=chatBox.innerHTML+'\n'+yourName+': “'+messageInput.value()+'”';
+  shared.log=chatLog.innerHTML+'\n'+userName+': “'+messageInput.value()+'”';
   messageInput.value('');
 }
 
@@ -74,52 +72,5 @@ function nameGenerator() {
 }
 
 let animalNames=[
-  "Cat",
-  "Moose",
-  "Zebra",
-  "Mongoose",
-  "Goose",
-  "Rabbit",
-  "Lion",
-  "Tiger",
-  "Horse",
-  "Pig",
-  "Human",
-  "Fish",
-  "Ladybug",
-  "Dog",
-  "Rhino",
-  "Python",
-  "Snake",
-  "Bear",
-  "Deer",
-  "Antelope",
-  "Elephant",
-  "Skunk",
-  "Capybara",
-  "Liger",
-  "Donkey",
-  "Camel",
-  "Giraffe",
-  "Walrus",
-  "Goat",
-  "Rooster",
-  "Monkey",
-  "Ape",
-  "Gorilla",
-  "Rat",
-  "Ox",
-  "Cow",
-  "Chicken",
-  "Eagle",
-  "Parrot",
-  "Wolf",
-  "Sheep",
-  "Anteater",
-  "Mouse",
-  "Spider",
-  "Owl",
-  "Carp",
-  "Salmon",
-  "Buffalo",
+  "Cat","Moose","Zebra","Mongoose","Goose","Rabbit","Lion","Tiger","Horse","Pig","Human","Fish","Ladybug","Dog","Rhino","Python","Snake","Bear","Deer","Antelope","Elephant","Skunk","Capybara","Liger","Donkey","Camel","Giraffe","Walrus","Goat","Rooster","Monkey","Ape","Gorilla","Rat","Ox","Cow","Chicken","Eagle","Parrot","Wolf","Sheep","Anteater","Mouse","Spider","Owl","Carp","Salmon","Buffalo",
 ]

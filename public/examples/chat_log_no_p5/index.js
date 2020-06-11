@@ -28,7 +28,7 @@ async function init() {
 	//create the global vaiable for accessing shared data
   shared = record.getShared();
 
-  // clean up on exit
+  //clean up on exit
   window.addEventListener("beforeunload", () => {
     shared.log=shared.log+'\n'+userName+' has left the chat';
     room.leave();
