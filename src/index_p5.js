@@ -66,4 +66,8 @@ function init() {
 
     return __room.getHostName() === __client.name();
   };
+
+  p5.prototype.partySetShared = function (shared, object) {
+    Record.recordForShared(shared).setShared(object);
+  };
 }

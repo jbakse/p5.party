@@ -8,8 +8,7 @@
 
 - Record 
 	- Keep track of records being created in lists so they can be cleaned up
-		or, maybe don't, and just assume that the whole thing gets blown away every night?
-
+	.-add a way to clear a record quickly	or, maybe don't, and just assume that the whole thing gets blown away every night?
 
 - Client
 	- improve network usage for getAllClients
@@ -18,6 +17,8 @@
 
 - Room
 	- move debug view to client?
+	- make debug view opt in, and allow to set frequency of polling
+		- better yet, remove need to poll?
 	- add ping to debug view
 	
 
