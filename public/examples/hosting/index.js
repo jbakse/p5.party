@@ -1,8 +1,3 @@
-// https://opengameart.org/content/a-platformer-in-the-forest
-
-/* eslint-disable no-unused-vars */
-/* global partyConnect partyLoadShared partyIsHost */
-
 let shared;
 
 function preload() {

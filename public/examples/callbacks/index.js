@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* global partyConnect partyLoadShared createButton*/
-
 let shared = false;
 function preload() {}
 
