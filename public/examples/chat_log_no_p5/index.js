@@ -1,11 +1,13 @@
-// https://opengameart.org/content/a-platformer-in-the-forest
-
 /* eslint-disable no-unused-vars */
 /* global connectToSharedRoom getSharedData */
 
 let chatHistory;
 let yourName;
 let shared;
+let chatBox;
+let messageInput;
+let sendButton;
+let clearButton;
 
 async function init() {
   console.log("Create Connection Manager");
@@ -59,9 +61,6 @@ function setup() {
 
   document.body.appendChild(messageInput);  
 
-  //name of the user running this instance
-  yourName=nameGenerator();
-
   //button for sending messsages
   sendButton = document.createElement("BUTTON");
   sendButton.innerHTML="SEND";
@@ -74,18 +73,22 @@ function setup() {
   });
   document.body.appendChild(sendButton);
 
-  if (!shared.log) { 
-    shared.log='Weclome to ChatBox, '+yourName+'!';
-  }
-  else {
-    shared.log=shared.log+'\n'+yourName+' has entered the chat';
-  }
   clearButton=document.createElement("BUTTON");
   clearButton.innerHTML="Clear";
   clearButton.onclick=function() {
     shared.log=yourName+' has cleared the log. Blame them!';
   };
   document.body.appendChild(clearButton);
+
+  //random name of the user running this instance
+  yourName=nameGenerator();
+
+  if (shared.log) { 
+    shared.log=shared.log+'\n'+yourName+' has entered the chat';
+  }
+  else {
+    shared.log='Weclome to ChatBox, '+yourName+'!';
+  }
 }
 
 function update() {
@@ -97,7 +100,7 @@ function update() {
   }
 }
 
-function sendMessageToLog() {
+function sendMessageToLog() { 
   shared.log=chatBox.innerHTML+'\n'+yourName+': “'+messageInput.value+'”';
   messageInput.value='';
 }
@@ -111,52 +114,5 @@ function random(array) {
 }
 
 let animalNames=[
-  "Cat",
-  "Moose",
-  "Zebra",
-  "Mongoose",
-  "Goose",
-  "Rabbit",
-  "Lion",
-  "Tiger",
-  "Horse",
-  "Pig",
-  "Human",
-  "Fish",
-  "Ladybug",
-  "Dog",
-  "Rhino",
-  "Python",
-  "Snake",
-  "Bear",
-  "Deer",
-  "Antelope",
-  "Elephant",
-  "Skunk",
-  "Capybara",
-  "Liger",
-  "Donkey",
-  "Camel",
-  "Giraffe",
-  "Walrus",
-  "Goat",
-  "Rooster",
-  "Monkey",
-  "Ape",
-  "Gorilla",
-  "Rat",
-  "Ox",
-  "Cow",
-  "Chicken",
-  "Eagle",
-  "Parrot",
-  "Wolf",
-  "Sheep",
-  "Anteater",
-  "Mouse",
-  "Spider",
-  "Owl",
-  "Carp",
-  "Salmon",
-  "Buffalo",
+  "Cat","Moose","Zebra","Mongoose","Goose","Rabbit","Lion","Tiger","Horse","Pig","Human","Fish","Ladybug","Dog","Rhino","Python","Snake","Bear","Deer","Antelope","Elephant","Skunk","Capybara","Liger","Donkey","Camel","Giraffe","Walrus","Goat","Rooster","Monkey","Ape","Gorilla","Rat","Ox","Cow","Chicken","Eagle","Parrot","Wolf","Sheep","Anteater","Mouse","Spider","Owl","Carp","Salmon","Buffalo",
 ]
