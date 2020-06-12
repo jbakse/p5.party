@@ -39,7 +39,7 @@
     "test": "echo \"No test specified\" && exit 0",
     "netlify": "npm run build && cp -r dist public",
     "prerelease": "npm run build && npm run pack",
-    "release": "echo 'hello'",
+    "release": "np",
     "pack": "npm run build && ln -s public/examples && zip p5.party.zip -r dist -r examples && rm -r examples && unzip -l p5.party.zip"
   },
   "dependencies": {
