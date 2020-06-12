@@ -10,6 +10,7 @@ export class Client {
   #isReady;
   #emitter;
   #deepstreamClient;
+  #clients = [];
 
   constructor(host) {
     this.#host = host;
@@ -21,6 +22,13 @@ export class Client {
     this.#deepstreamClient.on("connectionStateChanged", (connectionState) =>
       log.debug("connectionStateChanged", connectionState)
     );
+    this.#deepstreamClient.presence.getAll((error, clients) => {
+      this.#clients = clients;
+    });
+    this.#deepstreamClient.presence.subscribe(async (username, isLoggedIn) => {
+      this.#clients = await this.#deepstreamClient.presence.getAll();
+    });
+
     this.#isReady = false;
     this.#emitter = createEmitter();
     this.#deepstreamClient.login({ username: this.#name }, () => {
@@ -48,13 +56,16 @@ export class Client {
     return this.#deepstreamClient.record.getRecord(name);
   }
 
-  async getAllClients() {
-    // @todo getAllClients() will get network heavy if a lot of people
-    // were on at once. we could request getAll once and then update our own
-    // list with a subscription
-    // or a little slower, but more reliable maybe, subscribe to changes and refetch all then
-    const clients = await this.#deepstreamClient.presence.getAll();
-    clients.push(this.#name);
+  getList(name) {
+    if (!this.#isReady) {
+      log.error("Client.getList() called before client ready.");
+    }
+    return this.#deepstreamClient.record.getList(name);
+  }
+
+  getAllClients() {
+    const clients = [...this.#clients];
+    if (!clients.includes(this.#name)) clients.push(this.#name);
     return clients;
   }
 

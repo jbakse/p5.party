@@ -2,16 +2,16 @@ import * as log from "./log";
 import * as onChange from "on-change";
 import { createEmitter } from "./emitter";
 
-const customMergeStrategy = (
-  localValue,
-  localVersion,
-  remoteValue,
-  remoteVersion,
-  callback
-) => {
-  log.warn("Merge");
-  callback(null, remoteValue);
-};
+// const customMergeStrategy = (
+//   localValue,
+//   localVersion,
+//   remoteValue,
+//   remoteVersion,
+//   callback
+// ) => {
+//   log.warn("Merge");
+//   callback(null, remoteValue);
+// };
 export class Record {
   #client;
   #name;
@@ -29,6 +29,7 @@ export class Record {
       this.#shared,
       this._onClientChangedData.bind(this)
     );
+    this.#shared[Symbol.for("Record")] = this;
     this.#emitter = createEmitter();
     this.#isReady = false;
     this._connect();
@@ -70,8 +71,10 @@ export class Record {
   _onClientChangedData(path, newValue, oldValue) {
     // on-change alerts us when the value actually changes
     // so we don't need to test if newValue and oldValue are different
+
     this.#record.set("shared." + path, newValue);
   }
+
   _onServerChangedData(data) {
     // replace the CONTENTS of this.#shared
     // don't replace #shared itself as #watchedShared has a reference to it
@@ -93,5 +96,13 @@ export class Record {
 
   getShared() {
     return this.#watchedShared;
+  }
+
+  setShared(data) {
+    this.#record.set("shared", data);
+  }
+
+  static recordForShared(shared) {
+    return onChange.target(shared)[Symbol.for("Record")];
   }
 }

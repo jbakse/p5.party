@@ -10,6 +10,7 @@ export class Room {
   #isReady;
   #emitter;
   #record;
+  #recordList;
   #participants;
 
   constructor(client, appName, roomName) {
@@ -44,11 +45,16 @@ export class Room {
     // listen for clients connecting and disconnecting
     this.#client.presenceSubscribe(this._onPresenceHandler.bind(this));
 
+    this.#recordList = this.#client.getList(
+      `${this.#appName}-${this.#roomName}/_records`
+    );
+    await this.#recordList.whenReady();
+
     // ready
     this.#isReady = true;
     this.#emitter.emit("ready");
 
-    setInterval(this._displayParticipants.bind(this), 100);
+    setInterval(this._displayDebug.bind(this), 100);
   }
 
   // whenReady returns a promise AND calls a callback
@@ -65,7 +71,16 @@ export class Room {
   }
 
   getRecord(id) {
-    return new Record(this.#client, `${this.#appName}-${this.#roomName}/${id}`);
+    const name = `${this.#appName}-${this.#roomName}/${id}`;
+    const record = new Record(this.#client, name);
+    record.whenReady(async () => {
+      await this.#recordList.whenReady();
+      const entries = this.#recordList.getEntries();
+      if (!entries.includes(name)) {
+        this.#recordList.addEntry(name);
+      }
+    });
+    return record;
   }
 
   // add this client to the room
@@ -100,6 +115,16 @@ export class Room {
     );
     this.#record.set(`participants`, newParticipants);
   }
+
+  // async reset() {
+  //   for (const entry of this.#recordList.getEntries()) {
+  //     const record = this.#client.getRecord(entry);
+  //     await record.whenReady();
+  //     record.delete();
+  //   }
+  //   this.#recordList.delete();
+  //   return new Room(this.#client, this.#appName, this.#roomName);
+  // }
 
   _onPresenceHandler(username, isLoggedIn) {
     console.log(username, isLoggedIn ? "arrived" : "left");
@@ -139,7 +164,7 @@ export class Room {
     }
   }
 
-  async _displayParticipants() {
+  _displayDebug() {
     // create element if needed
     let el = document.getElementById("party-debug");
     if (!el) {
@@ -149,13 +174,14 @@ export class Room {
     }
 
     // collect info
-    const onlineClients = await this.#client.getAllClients();
+    const onlineClients = this.#client.getAllClients();
 
     // generate output
     let output = "";
     output += '<div class="label">p5.party debug</div>';
     output += `<div class="app">${this.#appName}</div>`;
     output += `<div class="room">${this.#roomName}</div>`;
+    output += `<div class="label">Participants</div>`;
 
     for (const name of this.#participants) {
       const shortName = name.substr(-4);
@@ -164,6 +190,11 @@ export class Room {
       const me = this.#client.name() === name ? "me" : "";
 
       output += `<div class="participant ${host} ${me} ${missing}">${shortName}</div>`;
+    }
+
+    output += `<div class="label">Shared Objects</div>`;
+    for (const entry of this.#recordList.getEntries()) {
+      output += `<div class="record">${entry.split("/")[1]}</div>`;
     }
 
     el.innerHTML = output;
