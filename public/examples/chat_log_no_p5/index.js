@@ -1,10 +1,4 @@
-let chatHistory,
-  userName,
-  shared,
-  chatLog,
-  messageInput,
-  sendButton,
-  clearButton;
+let userName, shared, chatLog, messageInput, sendButton, clearButton;
 
 async function init() {
   //create a new client and connect to server
@@ -35,6 +29,7 @@ async function init() {
   });
 
   setup();
+  record.watchShared(onChange);
 }
 init();
 
@@ -59,26 +54,28 @@ function setup() {
     shared.log = [`${userName} has cleared the log. Blame them!`];
   };
 
-  if (shared.log) {
+  if (!shared.log) {
     shared.log = [];
     shared.names = animalNames;
   }
 
+  //add to chatLog all existing messages
+  shared.log.forEach(addMessage);
+
   //random name for the user and introduction
   userName = spliceRandom(shared.names);
   shared.log.push(`${userName} has entered the chat`);
-
-  setInterval(update, 100);
 }
 
-function update() {
-  if (shared.log != chatHistory) {
-    chatHistory = shared.log;
-    let message = document.createElement("div");
-    message.innerHTML = shared.log[shared.log.length - 1];
-    chatLog.append(message);
-    chatLog.scrollTop = chatLog.scrollHeight;
-  }
+function onChange() {
+  addMessage(shared.log[shared.log.length - 1]);
+}
+
+function addMessage(text) {
+  let message = document.createElement("div");
+  message.innerHTML = text;
+  chatLog.append(message);
+  chatLog.scrollTop = chatLog.scrollHeight;
 }
 
 function sendMessageToLog() {
