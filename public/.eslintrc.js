@@ -2,10 +2,11 @@
 module.exports = {
   globals: {
     party: "readonly",
-    partyLoadShared: "readonly",
     partyConnect: "readonly",
-    partyIsHost: "readonly",
+    partyLoadShared: "readonly",
     partySetShared: "readonly",
+    partyWatchShared: "readonly",
+    partyIsHost: "readonly",
     select: "readonly",
     selectAll: "readonly",
     removeElements: "readonly",
