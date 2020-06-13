@@ -6,7 +6,7 @@
 
 - can bake package version into code somehow?
 
-- why is version on npm up to date, only 50k, and missing css? also dist was empty
+.- why is version on npm up to date, only 50k, and missing css? also dist was empty
 
 # Bugs
 	
@@ -36,6 +36,10 @@
 # Requests
 - add a way to clear all the shared records in a room
 
+# Branch - Subscribe
+
+--- get shared object changed messages
+
 # Branch - Push Improvements
 
 - config auto push or not on records
@@ -43,9 +47,9 @@
 
 # Branch - Participants
 
-- expose participant count
-- expose participant list
-- expose a record of info for each participant
+--- expose participant count
+--- expose participant list
+--- expose a record of info for each participant
 
 # Branch - Info
 - using vue?
