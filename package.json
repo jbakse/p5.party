@@ -1,6 +1,6 @@
 {
   "name": "p5.party",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "Justin Bakse",
   "license": "MIT",
   "description": "Pre-release! An easy to use library for simple multi-user sketches with p5.js.",
@@ -19,7 +19,8 @@
   ],
   "main": "src/index_p5.js",
   "sideEffects": [
-    "./src/index.p5.js"
+    "./src/index.p5.js",
+    "./src/party_debug.css"
   ],
   "engines": {
     "node": "14.1.0"
@@ -37,7 +38,7 @@
     "serve": "PORT=${PORT:-6020} deepstream start",
     "test": "echo \"No test specified\" && exit 0",
     "netlify": "npm run build && cp -r dist public",
-    "prepublishOnly": "npm run build && npm run pack",
+    "prerelease": "npm run build && npm run pack",
     "release": "np",
     "pack": "npm run build && ln -s public/examples && zip p5.party.zip -r dist -r examples && rm -r examples && unzip -l p5.party.zip"
   },

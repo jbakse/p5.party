@@ -68,6 +68,24 @@ function init() {
   };
 
   p5.prototype.partySetShared = function (shared, object) {
+    if (!Record.recordForShared(shared)) {
+      log.warn(
+        "partySetShared() doesn't recognize provided shared object.",
+        shared
+      );
+      return;
+    }
     Record.recordForShared(shared).setShared(object);
+  };
+
+  p5.prototype.partyWatchShared = function (shared, path, cb) {
+    if (!Record.recordForShared(shared)) {
+      log.warn(
+        "partyWatchShared() doesn't recognize provided shared object.",
+        shared
+      );
+      return;
+    }
+    Record.recordForShared(shared).watchShared(path, cb);
   };
 }
