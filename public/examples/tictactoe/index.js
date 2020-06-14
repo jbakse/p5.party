@@ -51,8 +51,10 @@ function setup() {
   // Make the clear button
   const clearButton = createButton("clear").mousePressed(() => {
     if (selectedTeam != "Observer") {
-      shared.currentTurn = "Blue";
-      shared.boardState = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+      partySetShared(shared, {
+        boardState: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        currentTurn: "Blue",
+      });
     }
   });
 }
