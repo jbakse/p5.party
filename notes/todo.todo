@@ -1,3 +1,11 @@
+# NOW
+i'm working on this right now, i need to make sure that when you call
+partyGetMyShared and partyGetParticipantShared you get back a "live"
+object or array that will get updated with the right data
+and i need to make p5 wait for preload and provide callbackswaaaz
+
+
+
 # Tooling 
 
 - consider providing min and unmin versions
@@ -9,6 +17,9 @@
 .- why is version on npm up to date, only 50k, and missing css? also dist was empty
 
 # Bugs
+- you currently need to call getParticipantShared every time you use it to ensure you have an update to date list
+- make this work more like shared where i replace contents keeping references pointting the right spot
+
 	
 # Style / Naming
 

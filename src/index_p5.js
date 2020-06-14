@@ -88,4 +88,16 @@ function init() {
     }
     Record.recordForShared(shared).watchShared(path, cb);
   };
+
+  p5.prototype.partyGetMyShared = function () {
+    return __room.getMyShared();
+    // __room.whenReady(() => {
+    //   this._decrementPreload();
+    // });
+  };
+  // p5.prototype.registerPreloadMethod("partyGetMyShared", p5.prototype);
+
+  p5.prototype.partyGetParticipantShareds = function () {
+    return __room.getParticipantShareds();
+  };
 }

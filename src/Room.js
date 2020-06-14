@@ -2,6 +2,7 @@ import { createEmitter } from "./emitter";
 import { Record } from "./Record";
 import * as log from "./log";
 import css from "./party_debug.css";
+css;
 
 export class Room {
   #client;
@@ -12,6 +13,9 @@ export class Room {
   #record;
   #recordList;
   #participants;
+  #participantRecords;
+  #participantShareds;
+  #myRecord;
 
   constructor(client, appName, roomName) {
     this.#client = client;
@@ -19,15 +23,31 @@ export class Room {
     this.#roomName = roomName;
     this.#isReady = false;
     this.#emitter = createEmitter();
+    this.#participantRecords = {};
+    this.#participantShareds = [];
     this._connect();
   }
 
-  async _connect() {
-    await this.#client.whenReady();
+  // @todo #myRecord is a Record() and #record is a ds.record
+  // this is confusing, make less confusing
 
-    const recordName = `${this.#appName}-${this.#roomName}/_room_data`;
-    this.#record = this.#client.getRecord(recordName);
+  async _connect() {
+    // load my record for this room
+    this.#myRecord = this.getRecord(`_${this.#client.name()}`);
+
+    await this.#client.whenReady();
+    // load room data record
+    this.#record = this.#client.getRecord(
+      `${this.#appName}-${this.#roomName}/_room_data`
+    );
+
+    // load records list records list
+    this.#recordList = this.#client.getList(
+      `${this.#appName}-${this.#roomName}/_records`
+    );
     await this.#record.whenReady();
+    await this.#myRecord.whenReady();
+    await this.#recordList.whenReady();
 
     // create participants list if it doesn't exist
     if (!this.#record.get("participants")) {
@@ -37,18 +57,15 @@ export class Room {
 
     // listen for participants joining and leaving room
     this.#participants = this.#record.get("participants");
+
     this.#record.subscribe("participants", (data) => {
       this.#participants = data;
       this._chooseHost();
+      this._updateParticpantRecords();
     });
 
     // listen for clients connecting and disconnecting
     this.#client.presenceSubscribe(this._onPresenceHandler.bind(this));
-
-    this.#recordList = this.#client.getList(
-      `${this.#appName}-${this.#roomName}/_records`
-    );
-    await this.#recordList.whenReady();
 
     // ready
     this.#isReady = true;
@@ -108,6 +125,17 @@ export class Room {
     return this.#record.get(`host`);
   }
 
+  getMyShared() {
+    return this.#myRecord.getShared();
+    // const myRecord = this.#participantRecords[this.#client.name()];
+    // return myRecord && myRecord.getShared();
+  }
+
+  getParticipantShareds() {
+    return this.#participantShareds;
+    // return Object.values(this.#participantRecords).map((r) => r.getShared());
+  }
+
   async removeDisconnectedClients() {
     const online = await this.#client.getAllClients();
     const newParticipants = this.#participants.filter((p) =>
@@ -162,6 +190,44 @@ export class Room {
       log.debug("!!!!!Setting new host:", newHost);
       this.#record.set("host", newHost);
     }
+  }
+
+  async _updateParticpantRecords() {
+    // initialize
+    // this.#participantRecords = this.#participantRecords || {};
+
+    // collect data
+    const recordIds = Object.keys(this.#participantRecords);
+    const participantIds = this.#participants;
+    const allIds = [...recordIds, ...participantIds];
+
+    // add and remove records
+    const recordWhenReadies = [];
+    allIds.forEach((id) => {
+      if (recordIds.includes(id) && !participantIds.includes(id)) {
+        // remove record
+        delete this.#participantRecords[id];
+      }
+      if (participantIds.includes(id) && !recordIds.includes(id)) {
+        // add record
+        this.#participantRecords[id] = new Record(
+          this.#client,
+          `${this.#appName}-${this.#roomName}/_${id}`
+        );
+        recordWhenReadies.push(this.#participantRecords[id].whenReady());
+      }
+    });
+
+    // wait for records to get ready
+    await Promise.all(recordWhenReadies);
+
+    // empty array
+    this.#participantShareds.length = 0;
+    Object.values(this.#participantRecords).forEach((r) => {
+      this.#participantShareds.push(r.getShared());
+    });
+
+    // @todo currently not removing or hiding disconnected clients (ghosts)
   }
 
   _displayDebug() {
