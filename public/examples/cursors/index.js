@@ -3,7 +3,7 @@ let participants;
 let shared;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "cursors", "main");
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "cursors", "main1");
   shared = partyLoadShared("shared");
   me = partyGetMyShared();
   participants = partyGetParticipantShareds();
@@ -18,7 +18,7 @@ function setup() {
   // set defaults on shared data
 }
 
-function mousePressed(e) {
+function mouseMoved(e) {
   // write shared dataa
   me.x = mouseX;
   me.y = mouseY;
@@ -34,6 +34,6 @@ function draw() {
       ellipse(p.x, p.y, 20, 20);
     }
   }
-  fill("#000066");
+  fill("#ffffff");
   ellipse(me.x, me.y, 15, 15);
 }

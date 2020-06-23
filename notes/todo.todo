@@ -1,9 +1,19 @@
 # NOW
+okay so i cleaned up record, its looking okay, take another look at it to see if its clean
+think throught he symetry of adding/removing records.
+
+
 i'm working on this right now, i need to make sure that when you call
 partyGetMyShared and partyGetParticipantShared you get back a "live"
 object or array that will get updated with the right data
 and i need to make p5 wait for preload and provide callbackswaaaz
 
+i'm looking at the Room class and the constructor _connect sequence
+need to think about what can be initialized prior to any awaits.
+there are several awaits but "before first await" is critical because thats what
+is ready when the constructor returns.
+probablya good idea to have the first await be the first line of _connect
+make it clear that everythign in connect isn't done when the constructor returns
 
 
 # Tooling 

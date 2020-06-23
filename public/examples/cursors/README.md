@@ -1,7 +1,7 @@
 # hello_party
 
-This example shows how to connect to a party server, load a shared data object, and read and write to it. It also shows how to share a p5 color.
+This example demonstrates using `partyGetMyShared()` and `partyGetParticipantShareds()`
 
-- **click** to move the dot
+- **move cursor** to move the dot, your dot will be marked with white
 
 > Open this example in two browser windows at once!

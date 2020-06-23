@@ -62,6 +62,12 @@ export class Record {
     this.#record.set("shared", data);
   }
 
+  async delete() {
+    this.setShared({});
+    await this.#record.whenReady();
+    this.#record.delete();
+  }
+
   async watchShared(path_or_cb, cb) {
     await this.whenReady();
     if (typeof path_or_cb === "string") {
