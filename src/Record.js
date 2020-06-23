@@ -95,8 +95,8 @@ export class Record {
     if (!this.#record.get("shared")) this.#record.set("shared", {});
 
     // report
-    log.debug("RecordManager: Record ready.");
-    log.debug(this.#record.get());
+    log.debug("RecordManager: Record ready.", this.#name);
+    // log.debug(this.#record.get());
 
     // ready
     this.#isReady = true;

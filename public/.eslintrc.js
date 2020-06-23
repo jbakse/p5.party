@@ -7,6 +7,9 @@ module.exports = {
     partySetShared: "readonly",
     partyWatchShared: "readonly",
     partyIsHost: "readonly",
+    partyGetMyShared: "readonly",
+    partyGetParticipantShareds: "readonly",
+
     select: "readonly",
     selectAll: "readonly",
     removeElements: "readonly",

@@ -58,6 +58,7 @@ export class Room {
       }
 
       // subscribe to changes on the participans array
+      await this._updateParticpantRecords();
       this.#roomDataRecord.subscribe("participants", (data) => {
         this.#participants = data;
         this._chooseHost();
@@ -144,11 +145,12 @@ export class Room {
     return this.#roomDataRecord.get(`host`);
   }
 
-  getMyShared() {
-    return this.#clientParticpantRecord.getShared();
-    // const myRecord = this.#participantRecords[this.#client.name()];
-    // return myRecord && myRecord.getShared();
+  getMyRecord() {
+    return this.#clientParticpantRecord;
   }
+  // getMyShared() {
+  //   return this.#clientParticpantRecord.getShared();
+  // }
 
   getParticipantShareds() {
     return this.#participantShareds;
@@ -199,14 +201,13 @@ export class Room {
 
     // if we didn't find one, return
     if (!newHost) {
-      log.debug("couldn't find a host in participants:", this.#participants);
+      log.debug("Couldn't find a host in participants:", this.#participants);
       return;
     }
 
     // have only the new host set host so that multiple clients
     // don't try to set the host at once, causing problems with DS
     if (newHost === this.#client.name()) {
-      log.debug("!!!!!Setting new host:", newHost);
       this.#roomDataRecord.set("host", newHost);
     }
   }
@@ -224,11 +225,6 @@ export class Room {
     const recordWhenReadies = [];
     allIds.forEach((id) => {
       if (recordIds.includes(id) && !participantIds.includes(id)) {
-        // remove record
-        // const record = this.#participantRecords;
-        console.log("delete", id);
-        // const name = `${this.#appName}-${this.#roomName}/_${id}`;
-        // this.#recordList.removeEntry(name);
         this.#participantRecords[id].delete();
         delete this.#participantRecords[id];
       }

@@ -14,7 +14,12 @@ function preload() {
 function setup() {
   createCanvas(400, 400);
   noStroke();
-  console.log("setup", me, participants);
+  console.log("setup");
+  me.x = 0;
+  me.y = 0;
+  console.log("myShared", JSON.stringify(me));
+  console.log("participantShareds", JSON.stringify(participants));
+
   // set defaults on shared data
 }
 

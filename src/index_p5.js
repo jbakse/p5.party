@@ -22,7 +22,8 @@ function init() {
       return;
     }
     connect(host, sketch_name, room_name).then(() => {
-      // log.warn("partyConnect done!");
+      log.log("partyConnect done!");
+
       cb && cb();
       this._decrementPreload();
     });
@@ -48,7 +49,7 @@ function init() {
     const record = __room.getRecord(record_id);
 
     record.whenReady(() => {
-      // log.warn("partyLoadShared done!", record_id);
+      log.log("partyLoadShared done!", record_id);
       cb && cb(record.getShared());
       this._decrementPreload();
     });
@@ -57,6 +58,43 @@ function init() {
   };
 
   p5.prototype.registerPreloadMethod("partyLoadShared", p5.prototype);
+
+  p5.prototype.partyGetMyShared = function (cb) {
+    if (!__room) {
+      log.error("partyGetMyShared() called before partyConnect()");
+      return undefined;
+    }
+
+    const record = __room.getMyRecord();
+
+    __room.whenReady(() => {
+      log.log("partyGetMyShared done!");
+      cb && cb(record.getShared());
+      this._decrementPreload();
+    });
+    return record.getShared();
+  };
+  p5.prototype.registerPreloadMethod("partyGetMyShared", p5.prototype);
+
+  p5.prototype.partyGetParticipantShareds = function (cb) {
+    if (!__room) {
+      log.error(
+        "partyGetpartyGetParticipantSharedsMyShared() called before partyConnect()"
+      );
+      return undefined;
+    }
+    __room.whenReady(() => {
+      log.log("partyGetParticipantShareds done!");
+      cb && cb(__room.getParticipantShareds());
+      this._decrementPreload();
+    });
+
+    return __room.getParticipantShareds();
+  };
+  p5.prototype.registerPreloadMethod(
+    "partyGetParticipantShareds",
+    p5.prototype
+  );
 
   p5.prototype.partyIsHost = function () {
     if (!__room) {
@@ -87,17 +125,5 @@ function init() {
       return;
     }
     Record.recordForShared(shared).watchShared(path, cb);
-  };
-
-  p5.prototype.partyGetMyShared = function () {
-    return __room.getMyShared();
-    // __room.whenReady(() => {
-    //   this._decrementPreload();
-    // });
-  };
-  // p5.prototype.registerPreloadMethod("partyGetMyShared", p5.prototype);
-
-  p5.prototype.partyGetParticipantShareds = function () {
-    return __room.getParticipantShareds();
   };
 }
