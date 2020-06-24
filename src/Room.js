@@ -254,9 +254,8 @@ export class Room {
     // wait for records to get ready
     await Promise.all(recordWhenReadies);
 
-    // empty array
+    // empty and refill array
     this.#participantShareds.length = 0;
-    console.log(this.#participantRecords);
     Object.values(this.#participantRecords).forEach((r) => {
       this.#participantShareds.push(r.getShared());
     });

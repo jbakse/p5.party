@@ -5,8 +5,8 @@ let shared;
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "cursors", "main1");
   shared = partyLoadShared("shared");
-  me = partyGetMyShared();
-  participants = partyGetParticipantShareds();
+  me = partyLoadMyShared();
+  participants = partyLoadParticipantShareds();
 }
 
 function setup() {
@@ -34,8 +34,8 @@ function setup() {
   console.log("participants", JSON.stringify(participants));
 }
 
-function mouseClicked(e) {
-  // write shared dataa
+function mouseMoved(e) {
+  // write shared data
   me.x = mouseX;
   me.y = mouseY;
 }

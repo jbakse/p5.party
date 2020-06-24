@@ -64,26 +64,26 @@ function init() {
 
   p5.prototype.registerPreloadMethod("partyLoadShared", p5.prototype);
 
-  p5.prototype.partyGetMyShared = function (cb) {
+  p5.prototype.partyLoadMyShared = function (cb) {
     if (!__room) {
-      log.error("partyGetMyShared() called before partyConnect()");
+      log.error("partyLoadMyShared() called before partyConnect()");
       return undefined;
     }
 
     const record = __room.getMyRecord();
 
     record.whenReady(() => {
-      log.log("partyGetMyShared done!");
+      log.log("partyLoadMyShared done!");
       cb && cb(record.getShared());
       this._decrementPreload();
     });
     return record.getShared();
   };
-  p5.prototype.registerPreloadMethod("partyGetMyShared", p5.prototype);
+  p5.prototype.registerPreloadMethod("partyLoadMyShared", p5.prototype);
 
-  p5.prototype.partyGetParticipantShareds = function (cb) {
+  p5.prototype.partyLoadParticipantShareds = function (cb) {
     if (!__room) {
-      log.error("partyGetParticipantShareds() called before partyConnect()");
+      log.error("partyLoadParticipantShareds() called before partyConnect()");
       return undefined;
     }
 
@@ -92,7 +92,7 @@ function init() {
 
     const updateP = __room._updateParticpantRecords();
     updateP.then(() => {
-      log.log("partyGetParticipantShareds done!");
+      log.log("partyLoadParticipantShareds done!");
       cb && cb(__room.getParticipantShareds());
       this._decrementPreload();
     });
@@ -101,7 +101,7 @@ function init() {
   };
 
   p5.prototype.registerPreloadMethod(
-    "partyGetParticipantShareds",
+    "partyLoadParticipantShareds",
     p5.prototype
   );
 
