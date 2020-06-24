@@ -82,10 +82,11 @@ function init() {
       return undefined;
     }
 
-    // @todo, this whenReady is wrong, needs to check when
-    // _updateParticpantRecords is ready
-    // you are here
-    __room.whenReady(() => {
+    // @todo shouldn't call private method of __room
+    // @todo maybe pass a cb to getParticipantShareds, which will return immediately but call callback when ready
+
+    const updateP = __room._updateParticpantRecords();
+    updateP.then(() => {
       log.log("partyGetParticipantShareds done!");
       cb && cb(__room.getParticipantShareds());
       this._decrementPreload();
@@ -93,6 +94,7 @@ function init() {
 
     return __room.getParticipantShareds();
   };
+
   p5.prototype.registerPreloadMethod(
     "partyGetParticipantShareds",
     p5.prototype

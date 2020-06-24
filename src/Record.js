@@ -96,7 +96,7 @@ export class Record {
 
     // report
     log.debug("RecordManager: Record ready.", this.#name);
-    log.debug(this.#record.get());
+    //log.debug(this.#record.get());
 
     // ready
     this.#isReady = true;

@@ -1,8 +1,5 @@
 # NOW
 In the participant code...
-Can we refactor Room so that it only has one record for "me" a
-that is used in getMyShared and getParticipantShared (otherwise it takes a trip
-on the wire for those records to sync)
 
 Sometimes getting a Invalid state transition 
 ```

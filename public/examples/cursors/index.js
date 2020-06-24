@@ -7,8 +7,6 @@ function preload() {
   shared = partyLoadShared("shared");
   me = partyGetMyShared();
   participants = partyGetParticipantShareds();
-
-  console.log("preload", me, participants);
 }
 
 function setup() {
