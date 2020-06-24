@@ -70,6 +70,9 @@ export class Client {
   }
 
   presenceSubscribe(cb) {
+    if (!this.#isReady) {
+      log.error("Client.presenceSubscribe() called before client ready.");
+    }
     this.#deepstreamClient.presence.subscribe(cb);
   }
 
