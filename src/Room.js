@@ -2,53 +2,84 @@ import { createEmitter } from "./emitter";
 import { Record } from "./Record";
 import * as log from "./log";
 import css from "./party_debug.css";
+css;
 
 export class Room {
   #client;
   #appName;
   #roomName;
-  #isReady;
   #emitter;
-  #record;
+
+  #roomDataRecord;
   #recordList;
+  #participantRecords;
+  #participantShareds;
   #participants;
+  #clientParticpantRecord;
+
+  #isReady;
 
   constructor(client, appName, roomName) {
     this.#client = client;
     this.#appName = appName;
     this.#roomName = roomName;
-    this.#isReady = false;
     this.#emitter = createEmitter();
+
+    this.#participantRecords = {};
+    this.#participantShareds = [];
+
+    this.#clientParticpantRecord = new Record(
+      this.#client,
+      `${this.#appName}-${this.#roomName}/_${this.#client.name()}`
+    );
+
+    this.#isReady = false;
     this._connect();
   }
 
+  // @todo #myRecord is a Record() and #record is a ds.record
+  // this is confusing, make less confusing
+
   async _connect() {
     await this.#client.whenReady();
+    const connectRoomData = async () => {
+      // load the _room_data record
+      this.#roomDataRecord = this.#client.getRecord(
+        `${this.#appName}-${this.#roomName}/_room_data`
+      );
+      await this.#roomDataRecord.whenReady();
 
-    const recordName = `${this.#appName}-${this.#roomName}/_room_data`;
-    this.#record = this.#client.getRecord(recordName);
-    await this.#record.whenReady();
+      // initialize the participants array
+      this.#participants = this.#roomDataRecord.get("participants");
+      if (!this.#participants) {
+        this.#participants = [];
+        this.#roomDataRecord.set("participants", []);
+        await this.#roomDataRecord.whenReady();
+      }
 
-    // create participants list if it doesn't exist
-    if (!this.#record.get("participants")) {
-      this.#record.set("participants", []);
-    }
-    await this.#record.whenReady();
+      // subscribe to changes on the participans array
+      this.#roomDataRecord.subscribe("participants", (data) => {
+        this.#participants = data;
+        this._chooseHost();
+        this._updateParticpantRecords();
+      });
+    };
 
-    // listen for participants joining and leaving room
-    this.#participants = this.#record.get("participants");
-    this.#record.subscribe("participants", (data) => {
-      this.#participants = data;
-      this._chooseHost();
-    });
+    const connectRecordList = async () => {
+      // load the record list
+      this.#recordList = this.#client.getList(
+        `${this.#appName}-${this.#roomName}/_records`
+      );
+      await this.#recordList.whenReady();
+    };
 
-    // listen for clients connecting and disconnecting
+    // let part A and part B happen in parallel
+    const partA = connectRoomData();
+    const partB = connectRecordList();
+    await partA;
+    await partB;
+    await this.#clientParticpantRecord.whenReady();
     this.#client.presenceSubscribe(this._onPresenceHandler.bind(this));
-
-    this.#recordList = this.#client.getList(
-      `${this.#appName}-${this.#roomName}/_records`
-    );
-    await this.#recordList.whenReady();
 
     // ready
     this.#isReady = true;
@@ -73,6 +104,7 @@ export class Room {
   getRecord(id) {
     const name = `${this.#appName}-${this.#roomName}/${id}`;
     const record = new Record(this.#client, name);
+
     record.whenReady(async () => {
       await this.#recordList.whenReady();
       const entries = this.#recordList.getEntries();
@@ -80,6 +112,7 @@ export class Room {
         this.#recordList.addEntry(name);
       }
     });
+
     return record;
   }
 
@@ -87,7 +120,10 @@ export class Room {
   join() {
     const name = this.#client.name();
     if (!this.#participants.includes(name)) {
-      this.#record.set(`participants.${this.#participants.length}`, name);
+      this.#roomDataRecord.set(
+        `participants.${this.#participants.length}`,
+        name
+      );
     }
   }
 
@@ -96,7 +132,7 @@ export class Room {
     const newParticipants = this.#participants.filter(
       (p) => p !== this.#client.name()
     );
-    this.#record.set(`participants`, newParticipants);
+    this.#roomDataRecord.set(`participants`, newParticipants);
   }
 
   // check if this client is in the room
@@ -105,7 +141,20 @@ export class Room {
   }
 
   getHostName() {
-    return this.#record.get(`host`);
+    return this.#roomDataRecord.get(`host`);
+  }
+
+  getMyRecord() {
+    return this.#clientParticpantRecord;
+  }
+
+  // getMyShared() {
+  //   return this.#clientParticpantRecord.getShared();
+  // }
+
+  getParticipantShareds() {
+    return this.#participantShareds;
+    // return Object.values(this.#participantRecords).map((r) => r.getShared());
   }
 
   async removeDisconnectedClients() {
@@ -113,7 +162,7 @@ export class Room {
     const newParticipants = this.#participants.filter((p) =>
       online.includes(p)
     );
-    this.#record.set(`participants`, newParticipants);
+    this.#roomDataRecord.set(`participants`, newParticipants);
   }
 
   // async reset() {
@@ -127,7 +176,7 @@ export class Room {
   // }
 
   _onPresenceHandler(username, isLoggedIn) {
-    console.log(username, isLoggedIn ? "arrived" : "left");
+    // console.log(username, isLoggedIn ? "arrived" : "left");
     if (!this.contains(username)) return;
 
     if (isLoggedIn) {
@@ -141,7 +190,7 @@ export class Room {
   }
 
   async _chooseHost() {
-    const host = this.#record.get("host");
+    const host = this.#roomDataRecord.get("host");
     const onlineClients = await this.#client.getAllClients();
 
     // if host is online, we don't need a new one
@@ -152,16 +201,66 @@ export class Room {
 
     // if we didn't find one, return
     if (!newHost) {
-      log.debug("couldn't find a host in participants:", this.#participants);
+      log.debug("Couldn't find a host in participants:", this.#participants);
       return;
     }
 
     // have only the new host set host so that multiple clients
     // don't try to set the host at once, causing problems with DS
     if (newHost === this.#client.name()) {
-      log.debug("!!!!!Setting new host:", newHost);
-      this.#record.set("host", newHost);
+      this.#roomDataRecord.set("host", newHost);
     }
+  }
+
+  async _updateParticpantRecords() {
+    await this.#client.whenReady();
+    await this.whenReady();
+    await this.#roomDataRecord.whenReady();
+
+    // collect data
+    const participantRecordIds = Object.keys(this.#participantRecords);
+    const participantIds = this.#participants;
+    const allIds = [...new Set([...participantRecordIds, ...participantIds])];
+
+    //log.debug("participantRecordIds", participantRecordIds);
+    //log.debug("participantIds", participantIds);
+    //log.debug("allIds", allIds);
+
+    // add and remove records
+    const recordWhenReadies = [];
+    allIds.forEach((id) => {
+      if (participantRecordIds.includes(id) && !participantIds.includes(id)) {
+        //log.debug("remove", id);
+        this.#participantRecords[id].delete();
+        delete this.#participantRecords[id];
+      }
+      if (participantIds.includes(id) && !participantRecordIds.includes(id)) {
+        //log.debug("add", id);
+
+        if (id === this.#client.name()) {
+          this.#participantRecords[id] = this.#clientParticpantRecord;
+          recordWhenReadies.push(this.#clientParticpantRecord.whenReady());
+        } else {
+          const r = new Record(
+            this.#client,
+            `${this.#appName}-${this.#roomName}/_${id}`
+          );
+          this.#participantRecords[id] = r;
+          recordWhenReadies.push(r.whenReady());
+        }
+      }
+    });
+
+    // wait for records to get ready
+    await Promise.all(recordWhenReadies);
+
+    // empty and refill array
+    this.#participantShareds.length = 0;
+    Object.values(this.#participantRecords).forEach((r) => {
+      this.#participantShareds.push(r.getShared());
+    });
+
+    // @todo currently not removing or hiding disconnected clients (ghosts)
   }
 
   _displayDebug() {
@@ -185,7 +284,7 @@ export class Room {
 
     for (const name of this.#participants) {
       const shortName = name.substr(-4);
-      const host = this.#record.get(`host`) === name ? "host" : "";
+      const host = this.#roomDataRecord.get(`host`) === name ? "host" : "";
       const missing = !onlineClients.includes(name) ? "missing" : "";
       const me = this.#client.name() === name ? "me" : "";
 
