@@ -1,3 +1,28 @@
+# NOW
+In the participant code...
+
+Sometimes getting a Invalid state transition 
+```
+Invalid state transition.
+Details: {"transition":13,"state":"DELETING"} 
+History: 
+	From - to LOADING_OFFLINE via -
+	From LOADING_OFFLINE to SUBSCRIBING via 23
+	From SUBSCRIBING to READY via 4
+	From READY to DELETING via 9
+```
+
+Get you head back in the game and review the code paths for getMyShared and getParticipanShared
+
+Do they create and delete things correctly?
+Do they wait FULLY for the records in participants to be ready?
+I THINK NO.
+All shared objects SHOULD be loaded and initialized BEFORE setup is called, but i don't think participant array currently is fully ready.
+
+
+
+
+
 # Tooling 
 
 - consider providing min and unmin versions
@@ -9,6 +34,9 @@
 .- why is version on npm up to date, only 50k, and missing css? also dist was empty
 
 # Bugs
+- you currently need to call getParticipantShared every time you use it to ensure you have an update to date list
+- make this work more like shared where i replace contents keeping references pointting the right spot
+
 	
 # Style / Naming
 

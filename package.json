@@ -1,6 +1,6 @@
 {
   "name": "p5.party",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "author": "Justin Bakse",
   "license": "MIT",
   "description": "Pre-release! An easy to use library for simple multi-user sketches with p5.js.",
