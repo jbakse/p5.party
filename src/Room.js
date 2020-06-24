@@ -214,6 +214,7 @@ export class Room {
 
   async _updateParticpantRecords() {
     await this.#client.whenReady();
+    await this.whenReady();
     await this.#roomDataRecord.whenReady();
 
     // collect data
@@ -255,6 +256,7 @@ export class Room {
 
     // empty array
     this.#participantShareds.length = 0;
+    console.log(this.#participantRecords);
     Object.values(this.#participantRecords).forEach((r) => {
       this.#participantShareds.push(r.getShared());
     });

@@ -17,7 +17,7 @@ function setup() {
   console.log("partyIsHost()", partyIsHost());
   if (partyIsHost()) {
     // if partyIsHost is true, this client is the first one in the room
-    console.log("Participants.length should be 1: ", participants.length === 1);
+    console.log("Participants.length should be 1:", participants.length === 1);
     console.log("me should equal participants[0]", me === participants[0]);
     me.x = 200;
     me.y = 200;

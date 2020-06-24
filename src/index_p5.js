@@ -36,6 +36,11 @@ function init() {
     await __room.whenReady();
     __room.join();
     __room.removeDisconnectedClients();
+    window.addEventListener("beforeunload", () => {
+      __room.leave();
+
+      // __client.close();
+    });
   }
 
   p5.prototype.registerPreloadMethod("partyConnect", p5.prototype);
