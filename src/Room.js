@@ -58,11 +58,10 @@ export class Room {
       }
 
       // subscribe to changes on the participans array
-      await this._updateParticpantRecords();
       this.#roomDataRecord.subscribe("participants", (data) => {
         this.#participants = data;
         this._chooseHost();
-        this._updateParticpantRecords();
+        this._updateParticpantRecords(true);
       });
     };
 
@@ -212,34 +211,45 @@ export class Room {
     }
   }
 
-  async _updateParticpantRecords() {
+  async _updateParticpantRecords(subTriggered) {
+    await this.#roomDataRecord.whenReady();
+
+    this.update_count = this.update_count || 0;
+    console.log(" _update ", this.update_count++, subTriggered);
     // initialize
     // this.#participantRecords = this.#participantRecords || {};
 
     // collect data
-    const recordIds = Object.keys(this.#participantRecords);
+    const participantRecordIds = Object.keys(this.#participantRecords);
     const participantIds = this.#participants;
-    const allIds = [...recordIds, ...participantIds];
+    const allIds = [...new Set([...participantRecordIds, ...participantIds])];
+
+    console.log("participantRecordIds", participantRecordIds);
+    console.log("participantIds", participantIds);
+    console.log("allIds", allIds);
 
     // add and remove records
     const recordWhenReadies = [];
     allIds.forEach((id) => {
-      if (recordIds.includes(id) && !participantIds.includes(id)) {
+      if (participantRecordIds.includes(id) && !participantIds.includes(id)) {
+        console.log("remove", id);
         this.#participantRecords[id].delete();
         delete this.#participantRecords[id];
       }
-      if (participantIds.includes(id) && !recordIds.includes(id)) {
-        // add record
-        this.#participantRecords[id] = new Record(
+      if (participantIds.includes(id) && !participantRecordIds.includes(id)) {
+        console.log("add", id);
+        const r = new Record(
           this.#client,
           `${this.#appName}-${this.#roomName}/_${id}`
         );
-        recordWhenReadies.push(this.#participantRecords[id].whenReady());
+        this.#participantRecords[id] = r;
+        recordWhenReadies.push(r.whenReady());
       }
     });
 
     // wait for records to get ready
     await Promise.all(recordWhenReadies);
+    log.log("all readies", recordWhenReadies);
 
     // empty array
     this.#participantShareds.length = 0;

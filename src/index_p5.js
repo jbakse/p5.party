@@ -67,7 +67,7 @@ function init() {
 
     const record = __room.getMyRecord();
 
-    __room.whenReady(() => {
+    record.whenReady(() => {
       log.log("partyGetMyShared done!");
       cb && cb(record.getShared());
       this._decrementPreload();
@@ -78,11 +78,13 @@ function init() {
 
   p5.prototype.partyGetParticipantShareds = function (cb) {
     if (!__room) {
-      log.error(
-        "partyGetpartyGetParticipantSharedsMyShared() called before partyConnect()"
-      );
+      log.error("partyGetParticipantShareds() called before partyConnect()");
       return undefined;
     }
+
+    // @todo, this whenReady is wrong, needs to check when
+    // _updateParticpantRecords is ready
+    // you are here
     __room.whenReady(() => {
       log.log("partyGetParticipantShareds done!");
       cb && cb(__room.getParticipantShareds());
