@@ -62,12 +62,6 @@ export class Record {
     this.#record.set("shared", data);
   }
 
-  async delete() {
-    this.setShared({});
-    await this.#record.whenReady();
-    this.#record.delete();
-  }
-
   async watchShared(path_or_cb, cb) {
     await this.whenReady();
     if (typeof path_or_cb === "string") {
@@ -95,8 +89,8 @@ export class Record {
     if (!this.#record.get("shared")) this.#record.set("shared", {});
 
     // report
-    log.debug("RecordManager: Record ready.", this.#name);
-    //log.debug(this.#record.get());
+    log.debug("RecordManager: Record ready.");
+    log.debug(this.#record.get());
 
     // ready
     this.#isReady = true;

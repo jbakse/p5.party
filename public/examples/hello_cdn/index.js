@@ -1,6 +1,10 @@
 let shared;
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "hello_cdn", "main");
+  partyConnect(
+    "wss://deepstream-server-1.herokuapp.com",
+    "hello_party",
+    "main"
+  );
   shared = partyLoadShared("shared");
 }
 

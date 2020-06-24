@@ -22,8 +22,7 @@ function init() {
       return;
     }
     connect(host, sketch_name, room_name).then(() => {
-      log.log("partyConnect done!");
-
+      // log.warn("partyConnect done!");
       cb && cb();
       this._decrementPreload();
     });
@@ -36,11 +35,6 @@ function init() {
     await __room.whenReady();
     __room.join();
     __room.removeDisconnectedClients();
-    window.addEventListener("beforeunload", () => {
-      __room.leave();
-
-      // __client.close();
-    });
   }
 
   p5.prototype.registerPreloadMethod("partyConnect", p5.prototype);
@@ -54,7 +48,7 @@ function init() {
     const record = __room.getRecord(record_id);
 
     record.whenReady(() => {
-      log.log("partyLoadShared done!", record_id);
+      // log.warn("partyLoadShared done!", record_id);
       cb && cb(record.getShared());
       this._decrementPreload();
     });
@@ -63,47 +57,6 @@ function init() {
   };
 
   p5.prototype.registerPreloadMethod("partyLoadShared", p5.prototype);
-
-  p5.prototype.partyLoadMyShared = function (cb) {
-    if (!__room) {
-      log.error("partyLoadMyShared() called before partyConnect()");
-      return undefined;
-    }
-
-    const record = __room.getMyRecord();
-
-    record.whenReady(() => {
-      log.log("partyLoadMyShared done!");
-      cb && cb(record.getShared());
-      this._decrementPreload();
-    });
-    return record.getShared();
-  };
-  p5.prototype.registerPreloadMethod("partyLoadMyShared", p5.prototype);
-
-  p5.prototype.partyLoadParticipantShareds = function (cb) {
-    if (!__room) {
-      log.error("partyLoadParticipantShareds() called before partyConnect()");
-      return undefined;
-    }
-
-    // @todo shouldn't call private method of __room
-    // @todo maybe pass a cb to getParticipantShareds, which will return immediately but call callback when ready
-
-    const updateP = __room._updateParticpantRecords();
-    updateP.then(() => {
-      log.log("partyLoadParticipantShareds done!");
-      cb && cb(__room.getParticipantShareds());
-      this._decrementPreload();
-    });
-
-    return __room.getParticipantShareds();
-  };
-
-  p5.prototype.registerPreloadMethod(
-    "partyLoadParticipantShareds",
-    p5.prototype
-  );
 
   p5.prototype.partyIsHost = function () {
     if (!__room) {
