@@ -1,4 +1,4 @@
-let shared, host;
+let shared;
 
 function preload() {
   partyConnect(
@@ -7,7 +7,6 @@ function preload() {
     "main"
   );
   shared = partyLoadShared("shared");
-  host = partyLoadShared("host");
 }
 
 function setup() {
