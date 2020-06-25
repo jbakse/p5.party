@@ -1,109 +1,139 @@
-/* global connectToSharedRoom getSharedData */
-
-let chatHistory,
-  userName,
-  shared,
-  chatLog,
-  messageInput,
-  sendButton,
-  clearButton;
+let userName, shared, chatLog, messageInput, sendButton, clearButton;
 
 async function init() {
-  //create a new client on the backend server
+  //create a new client and connect to server
   const client = new party.Client("wss://deepstream-server-1.herokuapp.com");
   await client.whenReady();
 
-  //create a room using the parameters of the project name and room name
+  //create a room
   const room = new party.Room(client, "chat_log_nop5", "main");
   await room.whenReady();
-	
-	//join the room and remove any clients who are no longer present
+
+  //join the room and remove any clients who are no longer present
   room.join();
   room.removeDisconnectedClients();
 
-	//create a record that will be used for transporting data between users
-  const record = new party.Record(client, "chat_log_nop5-main/test");
+  //create a record that will be used for transporting data between users
+  const record = room.getRecord("test");
   await record.whenReady();
-	
-	//create the global vaiable for accessing shared data
+
+  //get the shared object from the record
   shared = record.getShared();
 
   //clean up on exit
   window.addEventListener("beforeunload", () => {
-    shared.log=shared.log+'\n'+userName+' has left the chat';
+    shared.log.push(`${userName} has left the chat`);
+    shared.names.push(userName);
     room.leave();
     client.close();
   });
 
-  shared = record.getShared();
-
   setup();
-  setInterval(update, 100);
+  record.watchShared(onChange);
 }
 init();
 
 function setup() {
-  chatLog=document.createElement('DIV');
-  chatLog.style.cssText="background-color: Snow; overflow: auto; white-space: pre; padding: 20px; height:400px; width:400px"
-  document.body.appendChild(chatLog);  
+  chatLog = document.getElementById("chatLog");
 
   //textbox that contains writing message
-  messageInput = document.createElement("INPUT");
-  messageInput.style.width="330px";
-
-  document.body.appendChild(messageInput);  
+  messageInput = document.getElementById("messageInput");
 
   //button for sending messsages
-  sendButton = document.createElement("BUTTON");
-  sendButton.innerHTML="SEND";
-
-  sendButton.onclick=sendMessageToLog;
-  sendButton.onkeypress=addEventListener('keyup', function event(e){
-    if (e.key==="Enter"){
+  sendButton = document.getElementById("sendButton");
+  sendButton.onclick = sendMessageToLog;
+  sendButton.onkeypress = addEventListener("keyup", function event(e) {
+    if (e.key === "Enter") {
       sendMessageToLog();
     }
   });
-  document.body.appendChild(sendButton);
 
-  clearButton=document.createElement("BUTTON");
-  clearButton.innerHTML="Clear";
-  clearButton.onclick=function() {
-    shared.log=userName+' has cleared the log. Blame them!';
+  //clears the shared log and leaves a blame message
+  clearButton = document.getElementById("clearButton");
+  clearButton.onclick = function () {
+    shared.log = [`${userName} has cleared the log. Blame them!`];
   };
-  document.body.appendChild(clearButton);
 
-  //random name of the user running this instance
-  userName=nameGenerator();
-
-  if (shared.log) { 
-    shared.log=shared.log+'\n'+userName+' has entered the chat';
+  if (!shared.log) {
+    shared.log = [];
+    shared.names = animalNames;
   }
-  else {
-    shared.log='Weclome to chatLog, '+userName+'!';
-  }
+
+  //add to chatLog all existing messages
+  shared.log.forEach(addMessage);
+
+  //random name for the user and introduction
+  userName = spliceRandom(shared.names);
+  shared.log.push(`${userName} has entered the chat`);
 }
 
-function update() {
-  if (shared.log!=chatHistory) {
-    chatLog.innerHTML=shared.log;
-    chatLog.scrollTop=chatLog.scrollHeight;
-    chatHistory=shared.log;
-  }
+function onChange() {
+  addMessage(shared.log[shared.log.length - 1]);
 }
 
-function sendMessageToLog() { 
-  shared.log=chatLog.innerHTML+'\n'+userName+': “'+messageInput.value+'”';
-  messageInput.value='';
+function addMessage(text) {
+  let message = document.createElement("div");
+  message.innerHTML = text;
+  chatLog.append(message);
+  chatLog.scrollTop = chatLog.scrollHeight;
 }
 
-function nameGenerator() {
-  return random(animalNames);
+function sendMessageToLog() {
+  shared.log.push(`${userName}: “${messageInput.value}”`);
+  messageInput.value = "";
 }
 
-function random(array) {
-  return array[Math.floor(Math.random() * array.length)];
+function spliceRandom(array) {
+  return array.splice(Math.floor(Math.random() * array.length), 1);
 }
 
-let animalNames=[
-  "Cat","Moose","Zebra","Mongoose","Goose","Rabbit","Lion","Tiger","Horse","Pig","Human","Fish","Ladybug","Dog","Rhino","Python","Snake","Bear","Deer","Antelope","Elephant","Skunk","Capybara","Liger","Donkey","Camel","Giraffe","Walrus","Goat","Rooster","Monkey","Ape","Gorilla","Rat","Ox","Cow","Chicken","Eagle","Parrot","Wolf","Sheep","Anteater","Mouse","Spider","Owl","Carp","Salmon","Buffalo",
-]
+let animalNames = [
+  "Cat",
+  "Moose",
+  "Zebra",
+  "Mongoose",
+  "Goose",
+  "Rabbit",
+  "Lion",
+  "Tiger",
+  "Horse",
+  "Pig",
+  "Human",
+  "Fish",
+  "Ladybug",
+  "Dog",
+  "Rhino",
+  "Python",
+  "Snake",
+  "Bear",
+  "Deer",
+  "Antelope",
+  "Elephant",
+  "Skunk",
+  "Capybara",
+  "Liger",
+  "Donkey",
+  "Camel",
+  "Giraffe",
+  "Walrus",
+  "Goat",
+  "Rooster",
+  "Monkey",
+  "Ape",
+  "Gorilla",
+  "Rat",
+  "Ox",
+  "Cow",
+  "Chicken",
+  "Eagle",
+  "Parrot",
+  "Wolf",
+  "Sheep",
+  "Anteater",
+  "Mouse",
+  "Spider",
+  "Owl",
+  "Carp",
+  "Salmon",
+  "Buffalo",
+];
