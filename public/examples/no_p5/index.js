@@ -19,6 +19,7 @@ async function init() {
   room.removeDisconnectedClients();
 
   console.log("Create Record");
+  // @todo fix next line to use room
   const record = new party.Record(client, "nop5-main/test");
   await record.whenReady();
   console.log("Record Ready");

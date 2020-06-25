@@ -16,35 +16,38 @@ let __client, __room;
 window.p5 ? init() : log.warn("p5.js not found.");
 
 function init() {
+  ////////////////////////////////////////////////
+  // partyConnect (preload)
+
+  p5.prototype.registerPreloadMethod("partyConnect", p5.prototype);
   p5.prototype.partyConnect = function (host, sketch_name, room_name, cb) {
     if (__client) {
       log.warn("You should only call partyConnect() one time");
       return;
     }
-    connect(host, sketch_name, room_name).then(() => {
-      log.log("partyConnect done!");
 
+    const connect = async () => {
+      __client = new Client(host);
+      __room = new Room(__client, sketch_name, room_name);
+      await __room.whenReady();
+      __room.join();
+      __room.removeDisconnectedClients();
+      window.addEventListener("beforeunload", () => {
+        __room.leave();
+      });
+    };
+
+    connect().then(() => {
+      log.log("partyConnect done!");
       cb && cb();
       this._decrementPreload();
     });
   };
 
-  async function connect(host, sketch_name, room_name) {
-    __client = new Client(host);
-    __room = new Room(__client, sketch_name, room_name);
-    await __client.whenReady();
-    await __room.whenReady();
-    __room.join();
-    __room.removeDisconnectedClients();
-    window.addEventListener("beforeunload", () => {
-      __room.leave();
+  ////////////////////////////////////////////////
+  // partyLoadShared (preload)
 
-      // __client.close();
-    });
-  }
-
-  p5.prototype.registerPreloadMethod("partyConnect", p5.prototype);
-
+  p5.prototype.registerPreloadMethod("partyLoadShared", p5.prototype);
   p5.prototype.partyLoadShared = function (record_id, cb) {
     if (!__room) {
       log.error("partyLoadShared() called before partyConnect()");
@@ -62,8 +65,10 @@ function init() {
     return record.getShared();
   };
 
-  p5.prototype.registerPreloadMethod("partyLoadShared", p5.prototype);
+  ////////////////////////////////////////////////
+  // partyLoadMyShared (preload)
 
+  p5.prototype.registerPreloadMethod("partyLoadMyShared", p5.prototype);
   p5.prototype.partyLoadMyShared = function (cb) {
     if (!__room) {
       log.error("partyLoadMyShared() called before partyConnect()");
@@ -77,9 +82,17 @@ function init() {
       cb && cb(record.getShared());
       this._decrementPreload();
     });
+
     return record.getShared();
   };
-  p5.prototype.registerPreloadMethod("partyLoadMyShared", p5.prototype);
+
+  ////////////////////////////////////////////////
+  // partyLoadParticipantShareds (preload)
+
+  p5.prototype.registerPreloadMethod(
+    "partyLoadParticipantShareds",
+    p5.prototype
+  );
 
   p5.prototype.partyLoadParticipantShareds = function (cb) {
     if (!__room) {
@@ -87,23 +100,17 @@ function init() {
       return undefined;
     }
 
-    // @todo shouldn't call private method of __room
-    // @todo maybe pass a cb to getParticipantShareds, which will return immediately but call callback when ready
-
-    const updateP = __room._updateParticpantRecords();
-    updateP.then(() => {
+    const shareds = __room.getParticipantShareds(() => {
       log.log("partyLoadParticipantShareds done!");
-      cb && cb(__room.getParticipantShareds());
+      cb && cb(shareds);
       this._decrementPreload();
     });
 
-    return __room.getParticipantShareds();
+    return shareds;
   };
 
-  p5.prototype.registerPreloadMethod(
-    "partyLoadParticipantShareds",
-    p5.prototype
-  );
+  ////////////////////////////////////////////////
+  // partyIsHost
 
   p5.prototype.partyIsHost = function () {
     if (!__room) {
@@ -113,6 +120,9 @@ function init() {
 
     return __room.getHostName() === __client.name();
   };
+
+  ////////////////////////////////////////////////
+  // partySetShared
 
   p5.prototype.partySetShared = function (shared, object) {
     if (!Record.recordForShared(shared)) {
@@ -124,6 +134,9 @@ function init() {
     }
     Record.recordForShared(shared).setShared(object);
   };
+
+  ////////////////////////////////////////////////
+  // partyWatchShared
 
   p5.prototype.partyWatchShared = function (shared, path, cb) {
     if (!Record.recordForShared(shared)) {

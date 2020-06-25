@@ -9,9 +9,21 @@
       button {
         margin-top: 1em;
       }
+      #chatLog {
+        background-color: Snow;
+        overflow: auto;
+        white-space: pre;
+        padding: 20px;
+        height: 400px;
+        width: 400px;
+      }
     </style>
   </head>
   <body>
+    <div id="chatLog"></div>
+    <input id="messageInput" type="text" />
+    <button id="sendButton" type="button">SEND</button>
+    <button id="clearButton" type="button">CLEAR</button>
     <script src="/dist/p5.party.js"></script>
     <script src="index.js"></script>
   </body>
