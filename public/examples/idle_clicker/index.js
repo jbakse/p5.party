@@ -18,10 +18,13 @@ function setup() {
 
 function draw() {
   background(220);
-  textSize(32);
+  textSize(28);
+  let total = 0;
   for (let i = 0; i < shareds.length; i++) {
-    text(shareds[i].name + " " + shareds[i].score, 10, i * 32 + 32);
+    text(shareds[i].name + " " + shareds[i].score, 10, i * 32 + 96);
+    total += shareds[i].score;
   }
+  text("Total " + total, 10, 32);
 }
 
 function mouseClicked() {
