@@ -16,7 +16,7 @@ let yellowTeamColor;
 function preload() {
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
-    "tic-tac-toe",
+    "tic_tac_toe",
     "main"
   );
   shared = partyLoadShared("globals");
@@ -141,7 +141,6 @@ function showOutcome() {
   strokeWeight(10);
   let gameIsWon = false;
   let blueWins;
-  let yellowWins;
 
   // top row
   if (checkCombo(0, 1, 2)) {
