@@ -152,9 +152,9 @@ export class Room {
   //   return this.#clientParticpantRecord.getShared();
   // }
 
-  getParticipantShareds() {
+  getParticipantShareds(cb) {
+    cb && this._updateParticpantRecords().then(cb);
     return this.#participantShareds;
-    // return Object.values(this.#participantRecords).map((r) => r.getShared());
   }
 
   async removeDisconnectedClients() {
@@ -213,7 +213,6 @@ export class Room {
   }
 
   async _updateParticpantRecords() {
-    await this.#client.whenReady();
     await this.whenReady();
     await this.#roomDataRecord.whenReady();
 
