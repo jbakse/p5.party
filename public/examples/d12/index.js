@@ -146,6 +146,9 @@ function keyReleased() {
   if (showInputOnRelease) {
     mode = "message";
     message_input = createInput("");
+    message_input.id("message-input");
+    message_input.attribute("autocomplete", "off");
+
     message_input.elt.focus();
     console.log(message_input);
     showInputOnRelease = false;
