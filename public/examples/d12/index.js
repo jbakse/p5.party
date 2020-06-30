@@ -18,6 +18,10 @@ let messageTimeout;
 
 let font;
 
+let p8file;
+let gfx;
+let map;
+
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "d12", "main1");
   shared = partyLoadShared("shared");
@@ -26,6 +30,7 @@ function preload() {
   images.d12_1205 = loadImage("./images/d12_1205.png");
   images.player = loadImage("./images/player.png");
   font = loadFont("pixeldroidConsoleRegular/pixeldroidConsoleRegular.otf");
+  p8file = loadStrings("p8/test.p8");
 }
 
 function setup() {
@@ -34,6 +39,8 @@ function setup() {
   me.row = 5;
   me.col = 5;
   moveCamera(me.row * TILE_SIZE, me.col * TILE_SIZE);
+  gfx = gfxFromP8(p8file);
+  map = mapFromP8(p8file, gfx);
 }
 
 function mousePressed(e) {}
@@ -69,14 +76,23 @@ function draw() {
   moveCamera(localMe.x, localMe.y);
 
   // set camera
-  scale(8);
-  translate(-camera.x, -camera.y);
-  translate(
-    (VIEW_WIDTH - 1) * 0.5 * TILE_SIZE,
-    (VIEW_HEIGHT - 1) * 0.5 * TILE_SIZE
-  );
+  push();
+  {
+    scale(8);
+    translate(-camera.x, -camera.y);
+    translate(
+      (VIEW_WIDTH - 1) * 0.5 * TILE_SIZE,
+      (VIEW_HEIGHT - 1) * 0.5 * TILE_SIZE
+    );
 
-  drawView();
+    drawView();
+  }
+  pop();
+
+  noSmooth();
+
+  image(gfx, 0, 0, 256, 256);
+  image(map, 256, 0);
 }
 
 function drawView() {
@@ -150,7 +166,7 @@ function keyReleased() {
     message_input.attribute("autocomplete", "off");
 
     message_input.elt.focus();
-    console.log(message_input);
+
     showInputOnRelease = false;
     return;
   }
@@ -165,4 +181,65 @@ function movePoint(p1, p2, max = Infinity) {
   const dY = constrain(p2.y - p1.y, -max, max);
   p1.x += dX;
   p1.y += dY;
+}
+
+function gfxFromP8(s) {
+  console.log("gfxFromP8");
+
+  const gfx_s = s.slice(
+    s.indexOf("__gfx__") + 1,
+    s.indexOf("__gfx__") + 1 + 128
+  );
+
+  const colors = [
+    "#000000", // black
+    "#222A54", // navy
+    "#7B2654", // plum
+    "#16874E", // dark green
+    "#A75433", // brown
+    "#5E574F", // gray
+    "#C2C3C7", // light gray
+    "#FEF1E7", // white
+    "#F8154C", // red
+    "#F9A500", // orange
+    "#FAEE00", // yellow
+    "#21E515", // green
+    "#4CABFF", // blue
+    "#84759D", // purple
+    "#FA78A9", // pink
+    "#FBCDA8", // peach
+  ];
+
+  const gfx = createImage(128, 128);
+  gfx.loadPixels();
+  for (let y = 0; y < 128; y++) {
+    for (let x = 0; x < 128; x++) {
+      const i = parseInt(gfx_s[y][x], 16);
+      gfx.set(x, y, color(colors[i]));
+    }
+  }
+  gfx.updatePixels();
+  return gfx;
+}
+
+function mapFromP8(s, gfx) {
+  gfx = gfx || gfxFromP8(s);
+
+  const map_s = s.slice(
+    s.indexOf("__map__") + 1,
+    s.indexOf("__map__") + 1 + 32
+  );
+
+  const map = createImage(128 * 8, 32 * 8);
+  // map.loadPixels();
+  for (let y = 0; y < 32; y++) {
+    for (let x = 0; x < 128; x++) {
+      const sprite_x = parseInt(map_s[y][x * 2 + 1], 16);
+      const sprite_y = parseInt(map_s[y][x * 2], 16);
+      if (sprite_x === 0 && sprite_y === 0) continue;
+      map.copy(gfx, sprite_x * 8, sprite_y * 8, 8, 8, x * 8, y * 8, 8, 8);
+    }
+  }
+  // map.updatePixels();
+  return map;
 }
