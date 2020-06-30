@@ -1,0 +1,18 @@
+@font-face {
+  font-family: "pixeldroidConsoleRegular";
+
+  src: url("pixeldroidConsoleRegular/pixeldroidConsoleRegular.ttf")
+    format("truetype");
+}
+
+#message-input {
+  background: yellow;
+  color: black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  outline: none;
+  border: 0;
+  font-size: 64px;
+  font-family: "pixeldroidConsoleRegular", monospace;
+}
