@@ -32,7 +32,7 @@ function preload() {
   // load resources
   images.player = loadImage("./images/player.png");
   font = loadFont("pixeldroidConsoleRegular/pixeldroidConsoleRegular.otf");
-  p8file = loadStrings("p8/test.p8");
+  p8file = loadStrings("p8/d12.p8");
 }
 
 function setup() {
