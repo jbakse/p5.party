@@ -90,15 +90,16 @@ function draw() {
   pop();
 
   noSmooth();
-
-  image(gfx, 0, 0, 256, 256);
-  image(map, 256, 0);
 }
 
 function drawView() {
   noSmooth();
   push();
-  image(images.d12_1205, 4, 4, 128, 128);
+
+  fill("black");
+  rect(0, 0, map.width, map.height);
+  image(map, 0, 0);
+
   for (const p of players) {
     const localP = localPlayerData.get(p);
     image(images.player, localP.x, localP.y, TILE_SIZE, TILE_SIZE);
@@ -184,8 +185,6 @@ function movePoint(p1, p2, max = Infinity) {
 }
 
 function gfxFromP8(s) {
-  console.log("gfxFromP8");
-
   const gfx_s = s.slice(
     s.indexOf("__gfx__") + 1,
     s.indexOf("__gfx__") + 1 + 128
@@ -230,12 +229,39 @@ function mapFromP8(s, gfx) {
     s.indexOf("__map__") + 1 + 32
   );
 
-  const map = createImage(128 * 8, 32 * 8);
+  const shared_s = s.slice(
+    s.indexOf("__gfx__") + 1 + 64,
+    s.indexOf("__gfx__") + 1 + 128
+  );
+
+  // shared portion of __gfx__ is different format than __map__ data
+  // need to join pairs of lines
+  // need to flip nibble order "abcd" -> "badc"
+  function reversePairs(s) {
+    let out = "";
+    for (let i = 0; i < s.length; i += 2) {
+      out += s[i + 1] + s[i];
+    }
+    return out;
+  }
+
+  let map_ext_s = shared_s.reduce((out, value, index, _in) => {
+    if (index % 2 === 0) {
+      out.push(reversePairs(_in[index] + _in[index + 1]));
+    }
+    return out;
+  }, []);
+
+  map_s.push(...map_ext_s);
+
+  const map = createImage(128 * 8, 64 * 8);
   // map.loadPixels();
-  for (let y = 0; y < 32; y++) {
+  for (let y = 0; y < 64; y++) {
     for (let x = 0; x < 128; x++) {
-      const sprite_x = parseInt(map_s[y][x * 2 + 1], 16);
-      const sprite_y = parseInt(map_s[y][x * 2], 16);
+      let sprite_x = parseInt(map_s[y][x * 2 + 1], 16);
+      let sprite_y = parseInt(map_s[y][x * 2], 16);
+      // shared data bit order is backwards
+      // if (y >= 32) [sprite_x, sprite_y] = [sprite_y, sprite_x];
       if (sprite_x === 0 && sprite_y === 0) continue;
       map.copy(gfx, sprite_x * 8, sprite_y * 8, 8, 8, x * 8, y * 8, 8, 8);
     }
