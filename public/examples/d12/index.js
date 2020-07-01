@@ -20,11 +20,12 @@ let message_input;
 let messageTimeout;
 
 // resources
-const images = [];
+
 let font;
 let p8file;
 let map;
 let flags;
+let sprites;
 
 function preload() {
   // get shared data
@@ -33,7 +34,7 @@ function preload() {
   players = partyLoadParticipantShareds();
 
   // load resources
-  images.player = loadImage("./images/player.png");
+
   font = loadFont("pixeldroidConsoleRegular/pixeldroidConsoleRegular.otf");
   p8file = loadStrings("p8/d12.p8");
 }
@@ -43,6 +44,8 @@ function setup() {
 
   me.row = 3;
   me.col = 1;
+  me.avatarId = randomInt(0, 16);
+
   moveCamera(me.row * TILE_SIZE, me.col * TILE_SIZE);
 
   const p = [...defaultPalette];
@@ -50,6 +53,20 @@ function setup() {
   const gfx = gfxFromP8(p8file, p);
   map = mapFromP8(p8file, gfx);
   flags = flagsFromP8(p8file);
+  sprites = spritesFromSheet(gfx);
+}
+
+function spritesFromSheet(gfx, w = 8, h = 8) {
+  const sprites = [];
+  for (let x = 0; x < gfx.width / w; x++) {
+    sprites[x] = [];
+    for (let y = 0; y < gfx.height / h; y++) {
+      const i = createImage(w, h);
+      i.copy(gfx, x * w, y * h, w, h, 0, 0, w, h);
+      sprites[x][y] = i;
+    }
+  }
+  return sprites;
 }
 
 function draw() {
@@ -140,11 +157,12 @@ function drawGame() {
 
     push();
     translate(localP.x, localP.y);
+    const playerSprite = sprites[p.avatarId][0];
     if (!localP.flipX) {
-      image(images.player, 0, 0, TILE_SIZE, TILE_SIZE);
+      image(playerSprite, 0, 0, TILE_SIZE, TILE_SIZE);
     } else {
       scale(-1, 1);
-      image(images.player, 0, 0, -TILE_SIZE, TILE_SIZE);
+      image(playerSprite, 0, 0, -TILE_SIZE, TILE_SIZE);
     }
     pop();
 
@@ -369,12 +387,18 @@ function flagsFromP8(s) {
   return flags;
 }
 
-// disable keyboard scrolling
+///
+
+function randomInt(min, max) {
+  return floor(random(min, max));
+}
+
+// disable arrowkey scrolling
 window.addEventListener(
   "keydown",
   function (e) {
-    // space and arrow keys
-    if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+    // arrow keys
+    if ([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
       e.preventDefault();
     }
   },
