@@ -5,6 +5,7 @@
 // Written by Isabel Anguera
 
 let shared; // p5.party shared object
+
 let teamColors; // colors used to draw tokens
 let selectedTeam; // team choosen from the dropdown
 
@@ -14,11 +15,7 @@ let blueTeamColor;
 let yellowTeamColor;
 
 function preload() {
-  partyConnect(
-    "wss://deepstream-server-1.herokuapp.com",
-    "tic_tac_toe",
-    "main"
-  );
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "teams_ttt", "main");
   shared = partyLoadShared("globals");
 }
 
@@ -141,6 +138,7 @@ function showOutcome() {
   strokeWeight(10);
   let gameIsWon = false;
   let blueWins;
+  let yellowWins;
 
   // top row
   if (checkCombo(0, 1, 2)) {

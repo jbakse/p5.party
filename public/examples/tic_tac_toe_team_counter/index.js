@@ -4,31 +4,26 @@
 //
 // Written by Isabel Anguera
 
-// const { push, fill, pop } = require("core-js/fn/array");
-
-// const { fill } = require("core-js/fn/array");
-
-let me; // p5.party shared object for each participant
-
 let shared; // p5.party shared object
+let my;
+let participants;
+
+let teamColors; // colors used to draw tokens
+let selectedTeam; // team choosen from the dropdown
+
+let blueTeamArray = [];
+let yellowTeamArray = [];
 
 const gridSize = 150;
 
-let selectedTeam;
 let blueTeamColor;
 let yellowTeamColor;
 
-// let pickedTeamsDisplay;
-
 function preload() {
-  partyConnect(
-    "wss://deepstream-server-1.herokuapp.com",
-    "tic_tac_toe_with_teams",
-    "main"
-  );
-
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "teams_ttt", "main");
   shared = partyLoadShared("globals");
-  me = partyLoadMyShared();
+  my = partyLoadMyShared();
+  participants = partyLoadParticipantShareds();
 }
 
 function setup() {
@@ -38,14 +33,12 @@ function setup() {
   blueTeamColor = color(60, 98, 181);
   yellowTeamColor = color(255, 220, 82);
 
-  shared.blueTeamArray = [];
-  shared.yellowTeamArray = [];
-
   // Init shared
   // boardState describes what is each cell of the board
   // 0 - empty, 1 - blue token, 2 - yellow token
   shared.boardState = shared.boardState || [0, 0, 0, 0, 0, 0, 0, 0, 0];
   shared.currentTurn = shared.currentTurn || "Blue";
+  shared.teamsArray = shared.teamsArray || [];
 
   // Make a select menu
   const teamDropDownMenu = createSelect();
@@ -58,15 +51,8 @@ function setup() {
   // When an option is chosen, assign it to selectedTeam
   teamDropDownMenu.changed(() => {
     selectedTeam = teamDropDownMenu.value();
-    me.pickedTeam = selectedTeam;
-
-    if (me.pickedTeam === "Blue") {
-      shared.blueTeamArray.push("Blue");
-    }
-
-    if (me.pickedTeam === "Yellow") {
-      shared.yellowTeamArray.push("Yellow");
-    }
+    my.pickedTeam = selectedTeam;
+    updateTeamsList();
   });
 
   // Make the clear button
@@ -75,8 +61,6 @@ function setup() {
       partySetShared(shared, {
         boardState: [0, 0, 0, 0, 0, 0, 0, 0, 0],
         currentTurn: "Blue",
-        yellowTeamArray: shared.yellowTeamArray,
-        blueTeamArray: shared.blueTeamArray,
       });
     }
   });
@@ -91,7 +75,6 @@ function draw() {
   fill("white");
   stroke("red");
   strokeWeight(10);
-
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
       rect(5 + i * gridSize, 5 + j * gridSize, gridSize, gridSize);
@@ -126,14 +109,14 @@ function draw() {
     textFont("Gill Sans");
     text(shared.currentTurn + " team's turn!", 12, 482);
 
-    // Display team member count
+    // Display num players on each team
     textSize(16);
     text(
       "Players on Blue: " +
-        shared.blueTeamArray.length +
+        blueTeamArray.length +
         ", Yellow: " +
-        shared.yellowTeamArray.length,
-      250,
+        yellowTeamArray.length,
+      260,
       482
     );
     pop();
@@ -176,6 +159,7 @@ function showOutcome() {
   strokeWeight(10);
   let gameIsWon = false;
   let blueWins;
+  let yellowWins;
 
   // top row
   if (checkCombo(0, 1, 2)) {
@@ -268,4 +252,15 @@ function showOutcome() {
     text("Yellow Team Wins!", 145, 482);
     pop();
   }
+}
+
+function updateTeamsList() {
+  // shared.teamsArray = [];
+
+  for (let i = 0; i < participants.length; i++) {
+    shared.teamsArray.push(participants[i].pickedTeam);
+    blueTeamArray = shared.teamsArray.filter((word) => word === "Blue");
+    yellowTeamArray = shared.teamsArray.filter((word) => word === "Yellow");
+  }
+  console.log(shared.teamsArray, blueTeamArray, yellowTeamArray);
 }
