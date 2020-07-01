@@ -30,6 +30,8 @@ let sprites;
 let shouldBounce = false;
 let shouldCycle = true;
 
+let speed = 4;
+
 function preload() {
   // get shared data
   partyConnect("wss://deepstream-server-1.herokuapp.com", "d12", "main1");
@@ -164,7 +166,8 @@ function drawGame() {
     translate(localP.x, localP.y);
     const bounce = (-floor(localP.x / 4 + localP.y / 4) % 2) * shouldBounce;
 
-    const frame = (floor(localP.x / 2 + localP.y / 2) % 4) * shouldCycle;
+    const frame =
+      (floor(localP.x / speed + localP.y / speed) % 4) * shouldCycle;
     const playerSprite = sprites[frame][p.avatarId];
 
     if (!localP.flipX) {
@@ -228,6 +231,9 @@ function checkPressedKeys() {
 function keyPressed() {
   if (key === "q") {
     me.avatarId = ++me.avatarId % sprites[0].length;
+  }
+  if (key === "z") {
+    speed = speed === 4 ? 2 : 4;
   }
   if (key === "b") {
     shouldBounce = !shouldBounce;
