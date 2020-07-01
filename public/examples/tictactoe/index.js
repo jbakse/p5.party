@@ -5,9 +5,11 @@
 // Written by Isabel Anguera
 
 let shared; // p5.party shared object
+let my; // p5.party shared record of user's own data
+let participants; // p5.party shared record of all participant's data
 
-let teamColors; // colors used to draw tokens
-let selectedTeam; // team choosen from the dropdown
+let blueTeamCount; // Number of players on blue team
+let yellowTeamCount; // Number of players on yellow team
 
 const gridSize = 150;
 
@@ -15,8 +17,14 @@ let blueTeamColor;
 let yellowTeamColor;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "tictactoe", "main");
+  partyConnect(
+    "wss://deepstream-server-1.herokuapp.com",
+    "tic_tac_toe",
+    "default"
+  );
   shared = partyLoadShared("globals");
+  my = partyLoadMyShared();
+  participants = partyLoadParticipantShareds();
 }
 
 function setup() {
@@ -40,14 +48,14 @@ function setup() {
   teamDropDownMenu.option("Yellow");
   teamDropDownMenu.option("Observer");
 
-  // When an option is chosen, assign it to selectedTeam
+  // When an option is chosen, assign it to my.selectedTeam
   teamDropDownMenu.changed(() => {
-    selectedTeam = teamDropDownMenu.value();
+    my.selectedTeam = teamDropDownMenu.value();
   });
 
   // Make the clear button
   const clearButton = createButton("clear").mousePressed(() => {
-    if (selectedTeam != "Observer") {
+    if (my.selectedTeam != "Observer") {
       partySetShared(shared, {
         boardState: [0, 0, 0, 0, 0, 0, 0, 0, 0],
         currentTurn: "Blue",
@@ -98,15 +106,24 @@ function draw() {
     textSize(22);
     textFont("Gill Sans");
     text(shared.currentTurn + " team's turn!", 12, 482);
+
+    // Display num players on each team
+    textSize(16);
+    text(
+      "Players on Blue: " + blueTeamCount + ", Yellow: " + yellowTeamCount,
+      260,
+      482
+    );
     pop();
   }
 
   showOutcome();
+  updateTeamsList();
 }
 
 function mousePressed() {
   if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) return;
-  if (selectedTeam !== shared.currentTurn) return;
+  if (my.selectedTeam !== shared.currentTurn) return;
 
   const col = Math.floor(mouseX / gridSize);
   const row = Math.floor(mouseY / gridSize);
@@ -115,7 +132,7 @@ function mousePressed() {
   // return if cell already marked
   if (shared.boardState[index] > 0) return;
 
-  shared.boardState[index] = selectedTeam === "Blue" ? 1 : 2;
+  shared.boardState[index] = my.selectedTeam === "Blue" ? 1 : 2;
 
   if (shared.currentTurn === "Blue") {
     shared.currentTurn = "Yellow";
@@ -138,7 +155,6 @@ function showOutcome() {
   strokeWeight(10);
   let gameIsWon = false;
   let blueWins;
-  let yellowWins;
 
   // top row
   if (checkCombo(0, 1, 2)) {
@@ -230,5 +246,16 @@ function showOutcome() {
     textFont("Gill Sans");
     text("Yellow Team Wins!", 145, 482);
     pop();
+  }
+}
+
+// Checks which team each participant is on and tallies team count
+function updateTeamsList() {
+  blueTeamCount = 0;
+  yellowTeamCount = 0;
+
+  for (let i = 0; i < participants.length; i++) {
+    if (participants[i].selectedTeam === "Blue") blueTeamCount++;
+    if (participants[i].selectedTeam === "Yellow") yellowTeamCount++;
   }
 }
