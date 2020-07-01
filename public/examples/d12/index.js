@@ -3,6 +3,8 @@ const TILE_SIZE = 8;
 const VIEW_WIDTH = 12;
 const VIEW_HEIGHT = 12;
 
+const WALL_FLAG = 1;
+
 // shared
 let me;
 let players;
@@ -22,6 +24,7 @@ const images = [];
 let font;
 let p8file;
 let map;
+let flags;
 
 function preload() {
   // get shared data
@@ -38,7 +41,7 @@ function preload() {
 function setup() {
   createCanvas(VIEW_WIDTH * TILE_SIZE * SCALE, VIEW_HEIGHT * TILE_SIZE * SCALE);
 
-  me.row = 1;
+  me.row = 3;
   me.col = 1;
   moveCamera(me.row * TILE_SIZE, me.col * TILE_SIZE);
 
@@ -46,6 +49,8 @@ function setup() {
   p[5] = "rgba(0,0,0,0)";
   const gfx = gfxFromP8(p8file, p);
   map = mapFromP8(p8file, gfx);
+  flags = flagsFromP8(p8file);
+  console.log(flags);
 }
 
 function draw() {
@@ -102,7 +107,7 @@ function drawGame() {
   background(0);
 
   // set camera transform
-  scale(8);
+  scale(4);
   translate(-camera.x, -camera.y);
   translate(
     (VIEW_WIDTH - 1) * 0.5 * TILE_SIZE,
@@ -111,11 +116,20 @@ function drawGame() {
 
   // set draw modes
   noSmooth();
+  noStroke();
 
   // draw map
-  fill("gray");
+  fill("#5E574F");
   rect(0, 0, map.width, map.height);
   image(map, 0, 0);
+
+  // draw wall flags
+  // fill("red");
+  // for (let y = 0; y < flags.length; y++) {
+  //   for (let x = 0; x < 128; x++) {
+  //     if (flags[x][y] & WALL_FLAG) rect(x * 8 + 3, y * 8 + 3, 2, 2);
+  //   }
+  // }
 
   // draw players
   for (const p of players) {
@@ -152,16 +166,16 @@ function drawMessage(s, x, y) {
 function keyPressed() {
   if (mode === "move") {
     if (keyCode === LEFT_ARROW || key === "a") {
-      me.col -= 1;
+      if (!(flags[me.col - 1][me.row] & WALL_FLAG)) me.col -= 1;
     }
     if (keyCode === RIGHT_ARROW || key === "d") {
-      me.col += 1;
+      if (!(flags[me.col + 1][me.row] & WALL_FLAG)) me.col += 1;
     }
     if (keyCode === UP_ARROW || key === "w") {
-      me.row -= 1;
+      if (!(flags[me.col][me.row - 1] & WALL_FLAG)) me.row -= 1;
     }
     if (keyCode === DOWN_ARROW || key === "s") {
-      me.row += 1;
+      if (!(flags[me.col][me.row + 1] & WALL_FLAG)) me.row += 1;
     }
     if (key === " " || keyCode === RETURN) {
       startMessageOnRelease = true;
@@ -309,4 +323,29 @@ function mapFromP8(s, gfx) {
   }
 
   return map;
+}
+
+function flagsFromP8(s) {
+  const map_s = mapDataFromP8(s);
+
+  const gff_s = s.slice(s.indexOf("__gff__") + 1, s.indexOf("__map__"));
+
+  const flags_hex = gff_s.join("");
+
+  const flags = [];
+
+  for (let x = 0; x < 128; x++) {
+    flags[x] = [];
+    for (let y = 0; y < map_s.length; y++) {
+      let sprite_x = parseInt(map_s[y][x * 2 + 1], 16);
+      let sprite_y = parseInt(map_s[y][x * 2], 16);
+      const flags_index = (sprite_y * 16 + sprite_x) * 2;
+      const f_int = parseInt(flags_hex.substr(flags_index, 2), 16);
+      flags[x][y] = f_int;
+      if (x === 24 || x === 23)
+        console.log(x, y, sprite_x, sprite_y, flags_index, f_int);
+    }
+  }
+
+  return flags;
 }
