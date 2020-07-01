@@ -72,7 +72,10 @@ function step() {
   for (const p of players) {
     const localP = localPlayerData.get(p);
     const goalP = { x: p.col * TILE_SIZE, y: p.row * TILE_SIZE };
-    localP.flip = localP.x > goalP.p;
+
+    if (localP.x > goalP.x) localP.flipX = true;
+    if (localP.x < goalP.x) localP.flipX = false;
+
     movePoint(localP, goalP, 1);
   }
 
@@ -117,10 +120,17 @@ function drawGame() {
   // draw players
   for (const p of players) {
     const localP = localPlayerData.get(p);
-    image(images.player, localP.x, localP.y, TILE_SIZE, TILE_SIZE);
-    if (localP.flip) {
-      image(images.player, localP.x, localP.y, TILE_SIZE, TILE_SIZE);
+
+    push();
+    translate(localP.x, localP.y);
+    if (!localP.flipX) {
+      image(images.player, 0, 0, TILE_SIZE, TILE_SIZE);
+    } else {
+      scale(-1, 1);
+      image(images.player, 0, 0, -TILE_SIZE, TILE_SIZE);
     }
+    pop();
+
     if (p.message) drawMessage(p.message, localP.x, localP.y);
   }
 }
