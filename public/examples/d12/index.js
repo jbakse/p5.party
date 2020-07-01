@@ -50,7 +50,6 @@ function setup() {
   const gfx = gfxFromP8(p8file, p);
   map = mapFromP8(p8file, gfx);
   flags = flagsFromP8(p8file);
-  console.log(flags);
 }
 
 function draw() {
@@ -65,10 +64,14 @@ function draw() {
   }
 
   // step + draw
+  input();
   step();
   drawGame();
 }
 
+function input() {
+  checkPressedKeys();
+}
 ////////////////////////////////////////////////////////
 // GAME LOGIC
 
@@ -163,20 +166,40 @@ function drawMessage(s, x, y) {
 ////////////////////////////////////////////////////////
 // INPUT
 
+function checkPressedKeys() {
+  if (mode !== "move") return;
+
+  const localMe = localPlayerData.get(me);
+  if (!(localMe.x === me.col * 8 && localMe.y === me.row * 8)) return;
+
+  if (keyIsDown(LEFT_ARROW) || keyIsDown(65 /*a*/)) {
+    if (!(flags[me.col - 1][me.row] & WALL_FLAG)) {
+      me.col -= 1;
+      return;
+    }
+  }
+  if (keyIsDown(RIGHT_ARROW) || keyIsDown(68 /*d*/)) {
+    if (!(flags[me.col + 1][me.row] & WALL_FLAG)) {
+      me.col += 1;
+      return;
+    }
+  }
+  if (keyIsDown(UP_ARROW) || keyIsDown(87 /*w*/)) {
+    if (!(flags[me.col][me.row - 1] & WALL_FLAG)) {
+      me.row -= 1;
+      return;
+    }
+  }
+  if (keyIsDown(DOWN_ARROW) || keyIsDown(83 /*s*/)) {
+    if (!(flags[me.col][me.row + 1] & WALL_FLAG)) {
+      me.row += 1;
+      return;
+    }
+  }
+}
+
 function keyPressed() {
   if (mode === "move") {
-    if (keyCode === LEFT_ARROW || key === "a") {
-      if (!(flags[me.col - 1][me.row] & WALL_FLAG)) me.col -= 1;
-    }
-    if (keyCode === RIGHT_ARROW || key === "d") {
-      if (!(flags[me.col + 1][me.row] & WALL_FLAG)) me.col += 1;
-    }
-    if (keyCode === UP_ARROW || key === "w") {
-      if (!(flags[me.col][me.row - 1] & WALL_FLAG)) me.row -= 1;
-    }
-    if (keyCode === DOWN_ARROW || key === "s") {
-      if (!(flags[me.col][me.row + 1] & WALL_FLAG)) me.row += 1;
-    }
     if (key === " " || keyCode === RETURN) {
       startMessageOnRelease = true;
     }
@@ -252,8 +275,6 @@ function gfxFromP8(s, palette) {
 
   // find __gfx__ strings
   const gfx_s = s.slice(s.indexOf("__gfx__") + 1, s.indexOf("__gff__"));
-
-  console.log("shared_s", gfx_s.length);
 
   // draw pixels
   const gfx = createImage(128, gfx_s.length);
@@ -342,10 +363,20 @@ function flagsFromP8(s) {
       const flags_index = (sprite_y * 16 + sprite_x) * 2;
       const f_int = parseInt(flags_hex.substr(flags_index, 2), 16);
       flags[x][y] = f_int;
-      if (x === 24 || x === 23)
-        console.log(x, y, sprite_x, sprite_y, flags_index, f_int);
     }
   }
 
   return flags;
 }
+
+// disable keyboard scrolling
+window.addEventListener(
+  "keydown",
+  function (e) {
+    // space and arrow keys
+    if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+      e.preventDefault();
+    }
+  },
+  false
+);
