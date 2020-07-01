@@ -158,11 +158,12 @@ function drawGame() {
     push();
     translate(localP.x, localP.y);
     const playerSprite = sprites[p.avatarId][0];
+    const bounce = -floor(localP.x / 4 + localP.y / 4) % 2;
     if (!localP.flipX) {
-      image(playerSprite, 0, 0, TILE_SIZE, TILE_SIZE);
+      image(playerSprite, 0, bounce, TILE_SIZE, TILE_SIZE);
     } else {
       scale(-1, 1);
-      image(playerSprite, 0, 0, -TILE_SIZE, TILE_SIZE);
+      image(playerSprite, 0, bounce, -TILE_SIZE, TILE_SIZE);
     }
     pop();
 
