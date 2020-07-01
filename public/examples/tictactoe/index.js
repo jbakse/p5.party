@@ -15,7 +15,7 @@ let blueTeamColor;
 let yellowTeamColor;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "teams_ttt", "main");
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "tictactoe", "main");
   shared = partyLoadShared("globals");
 }
 

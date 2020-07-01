@@ -20,7 +20,11 @@ let blueTeamColor;
 let yellowTeamColor;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "teams_ttt", "main");
+  partyConnect(
+    "wss://deepstream-server-1.herokuapp.com",
+    "teams_ttt",
+    "default"
+  );
   shared = partyLoadShared("globals");
   my = partyLoadMyShared();
   participants = partyLoadParticipantShareds();
@@ -38,7 +42,6 @@ function setup() {
   // 0 - empty, 1 - blue token, 2 - yellow token
   shared.boardState = shared.boardState || [0, 0, 0, 0, 0, 0, 0, 0, 0];
   shared.currentTurn = shared.currentTurn || "Blue";
-  shared.teamsArray = shared.teamsArray || [];
 
   // Make a select menu
   const teamDropDownMenu = createSelect();
@@ -255,7 +258,7 @@ function showOutcome() {
 }
 
 function updateTeamsList() {
-  // shared.teamsArray = [];
+  shared.teamsArray = [];
 
   for (let i = 0; i < participants.length; i++) {
     shared.teamsArray.push(participants[i].pickedTeam);
