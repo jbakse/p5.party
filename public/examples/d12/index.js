@@ -42,7 +42,9 @@ function setup() {
   me.col = 1;
   moveCamera(me.row * TILE_SIZE, me.col * TILE_SIZE);
 
-  const gfx = gfxFromP8(p8file);
+  const p = [...defaultPalette];
+  p[5] = "rgba(0,0,0,0)";
+  const gfx = gfxFromP8(p8file, p);
   map = mapFromP8(p8file, gfx);
 }
 
@@ -201,40 +203,42 @@ function cancelMessage() {
 ////////////////////////////////////////////////////////
 // LOADING
 
-function gfxFromP8(s, colors) {
+const defaultPalette = [
+  "#000000", // black
+  "#222A54", // navy
+  "#7B2654", // plum
+  "#16874E", // dark green
+  "#A75433", // brown
+  "#5E574F", // gray
+  "#C2C3C7", // light gray
+  "#FEF1E7", // white
+  "#F8154C", // red
+  "#F9A500", // orange
+  "#FAEE00", // yellow
+  "#21E515", // green
+  "#4CABFF", // blue
+  "#84759D", // purple
+  "#FA78A9", // pink
+  "#FBCDA8", // peach
+];
+
+function gfxFromP8(s, palette) {
   // default palette
-  colors = colors || [
-    "#000000", // black
-    "#222A54", // navy
-    "#7B2654", // plum
-    "#16874E", // dark green
-    "#A75433", // brown
-    "#5E574F", // gray
-    "#C2C3C7", // light gray
-    "#FEF1E7", // white
-    "#F8154C", // red
-    "#F9A500", // orange
-    "#FAEE00", // yellow
-    "#21E515", // green
-    "#4CABFF", // blue
-    "#84759D", // purple
-    "#FA78A9", // pink
-    "#FBCDA8", // peach
-  ];
+  palette = palette || defaultPalette;
 
   // find __gfx__ strings
-  const gfx_s = s.slice(
-    s.indexOf("__gfx__") + 1,
-    s.indexOf("__gfx__") + 1 + 128
-  );
+  const gfx_s = s.slice(s.indexOf("__gfx__") + 1, s.indexOf("__gff__"));
+
+  console.log("shared_s", gfx_s.length);
 
   // draw pixels
-  const gfx = createImage(128, 128);
+  const gfx = createImage(128, gfx_s.length);
   gfx.loadPixels();
-  for (let y = 0; y < 128; y++) {
+  for (let y = 0; y < gfx_s.length; y++) {
     for (let x = 0; x < 128; x++) {
       const i = parseInt(gfx_s[y][x], 16);
-      gfx.set(x, y, color(colors[i]));
+
+      gfx.set(x, y, color(palette[i]));
     }
   }
   gfx.updatePixels();
@@ -251,8 +255,8 @@ function mapDataFromP8(s) {
 
   // find shared portion of __gfx__ strings
   const shared_s = s.slice(
-    s.indexOf("__gfx__") + 1 + 64,
-    s.indexOf("__gfx__") + 1 + 128
+    s.indexOf("__gfx__") + 1 + 64, // skip to shared part
+    s.indexOf("__gff__")
   );
 
   // shared portion of __gfx__ is in different format than __map__ data
@@ -282,10 +286,10 @@ function mapDataFromP8(s) {
 function mapFromP8(s, gfx) {
   gfx = gfx || gfxFromP8(s);
   const map_s = mapDataFromP8(s);
-  const map = createImage(128 * 8, 64 * 8);
+  const map = createImage(128 * 8, map_s.length * 8);
 
   // blit tiles into map
-  for (let y = 0; y < 64; y++) {
+  for (let y = 0; y < map_s.length; y++) {
     for (let x = 0; x < 128; x++) {
       let sprite_x = parseInt(map_s[y][x * 2 + 1], 16);
       let sprite_y = parseInt(map_s[y][x * 2], 16);
