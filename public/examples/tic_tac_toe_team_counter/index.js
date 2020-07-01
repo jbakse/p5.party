@@ -5,14 +5,11 @@
 // Written by Isabel Anguera
 
 let shared; // p5.party shared object
-let my;
-let participants;
+let my; // p5.party shared record of user's own data
+let participants; // p5.party shared record of all participant's data
 
-let teamColors; // colors used to draw tokens
-let selectedTeam; // team choosen from the dropdown
-
-let blueTeamArray = [];
-let yellowTeamArray = [];
+let blueTeamCount; // Number of players on blue team
+let yellowTeamCount; // Number of players on yellow team
 
 const gridSize = 150;
 
@@ -22,7 +19,7 @@ let yellowTeamColor;
 function preload() {
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
-    "teams_ttt",
+    "teams_ttt_2",
     "default"
   );
   shared = partyLoadShared("globals");
@@ -51,16 +48,14 @@ function setup() {
   teamDropDownMenu.option("Yellow");
   teamDropDownMenu.option("Observer");
 
-  // When an option is chosen, assign it to selectedTeam
+  // When an option is chosen, assign it to my.selectedTeam
   teamDropDownMenu.changed(() => {
-    selectedTeam = teamDropDownMenu.value();
-    my.pickedTeam = selectedTeam;
-    updateTeamsList();
+    my.selectedTeam = teamDropDownMenu.value();
   });
 
   // Make the clear button
   const clearButton = createButton("clear").mousePressed(() => {
-    if (selectedTeam != "Observer") {
+    if (my.selectedTeam != "Observer") {
       partySetShared(shared, {
         boardState: [0, 0, 0, 0, 0, 0, 0, 0, 0],
         currentTurn: "Blue",
@@ -115,10 +110,7 @@ function draw() {
     // Display num players on each team
     textSize(16);
     text(
-      "Players on Blue: " +
-        blueTeamArray.length +
-        ", Yellow: " +
-        yellowTeamArray.length,
+      "Players on Blue: " + blueTeamCount + ", Yellow: " + yellowTeamCount,
       260,
       482
     );
@@ -126,11 +118,12 @@ function draw() {
   }
 
   showOutcome();
+  updateTeamsList();
 }
 
 function mousePressed() {
   if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) return;
-  if (selectedTeam !== shared.currentTurn) return;
+  if (my.selectedTeam !== shared.currentTurn) return;
 
   const col = Math.floor(mouseX / gridSize);
   const row = Math.floor(mouseY / gridSize);
@@ -139,7 +132,7 @@ function mousePressed() {
   // return if cell already marked
   if (shared.boardState[index] > 0) return;
 
-  shared.boardState[index] = selectedTeam === "Blue" ? 1 : 2;
+  shared.boardState[index] = my.selectedTeam === "Blue" ? 1 : 2;
 
   if (shared.currentTurn === "Blue") {
     shared.currentTurn = "Yellow";
@@ -257,13 +250,13 @@ function showOutcome() {
   }
 }
 
+// Checks which team each participant is on and tallies team count
 function updateTeamsList() {
-  shared.teamsArray = [];
+  blueTeamCount = 0;
+  yellowTeamCount = 0;
 
   for (let i = 0; i < participants.length; i++) {
-    shared.teamsArray.push(participants[i].pickedTeam);
-    blueTeamArray = shared.teamsArray.filter((word) => word === "Blue");
-    yellowTeamArray = shared.teamsArray.filter((word) => word === "Yellow");
+    if (participants[i].selectedTeam === "Blue") blueTeamCount++;
+    if (participants[i].selectedTeam === "Yellow") yellowTeamCount++;
   }
-  console.log(shared.teamsArray, blueTeamArray, yellowTeamArray);
 }
