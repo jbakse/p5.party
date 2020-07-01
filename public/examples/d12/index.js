@@ -22,10 +22,13 @@ let messageTimeout;
 // resources
 
 let font;
-let p8file;
+let p8map, p8char;
 let map;
 let flags;
 let sprites;
+
+let shouldBounce = false;
+let shouldCycle = true;
 
 function preload() {
   // get shared data
@@ -36,7 +39,8 @@ function preload() {
   // load resources
 
   font = loadFont("pixeldroidConsoleRegular/pixeldroidConsoleRegular.otf");
-  p8file = loadStrings("p8/d12.p8");
+  p8map = loadStrings("p8/d12.p8");
+  p8char = loadStrings("p8/d12_chars.p8");
 }
 
 function setup() {
@@ -44,16 +48,17 @@ function setup() {
 
   me.row = 3;
   me.col = 1;
-  me.avatarId = randomInt(0, 16);
+  me.avatarId = 0; //randomInt(0, 16);
 
   moveCamera(me.row * TILE_SIZE, me.col * TILE_SIZE);
 
   const p = [...defaultPalette];
   p[5] = "rgba(0,0,0,0)";
-  const gfx = gfxFromP8(p8file, p);
-  map = mapFromP8(p8file, gfx);
-  flags = flagsFromP8(p8file);
-  sprites = spritesFromSheet(gfx);
+  const gfx = gfxFromP8(p8map, p);
+  map = mapFromP8(p8map, gfx);
+  flags = flagsFromP8(p8map);
+
+  sprites = spritesFromSheet(gfxFromP8(p8char));
 }
 
 function spritesFromSheet(gfx, w = 8, h = 8) {
@@ -127,7 +132,7 @@ function drawGame() {
   background(0);
 
   // set camera transform
-  scale(4);
+  scale(8);
   translate(-camera.x, -camera.y);
   translate(
     (VIEW_WIDTH - 1) * 0.5 * TILE_SIZE,
@@ -157,8 +162,11 @@ function drawGame() {
 
     push();
     translate(localP.x, localP.y);
-    const playerSprite = sprites[p.avatarId][0];
-    const bounce = -floor(localP.x / 4 + localP.y / 4) % 2;
+    const bounce = (-floor(localP.x / 4 + localP.y / 4) % 2) * shouldBounce;
+
+    const frame = (floor(localP.x / 2 + localP.y / 2) % 4) * shouldCycle;
+    const playerSprite = sprites[frame][p.avatarId];
+
     if (!localP.flipX) {
       image(playerSprite, 0, bounce, TILE_SIZE, TILE_SIZE);
     } else {
@@ -218,6 +226,15 @@ function checkPressedKeys() {
 }
 
 function keyPressed() {
+  if (key === "q") {
+    me.avatarId = ++me.avatarId % sprites[0].length;
+  }
+  if (key === "b") {
+    shouldBounce = !shouldBounce;
+  }
+  if (key === "c") {
+    shouldCycle = !shouldCycle;
+  }
   if (mode === "move") {
     if (key === " " || keyCode === RETURN) {
       startMessageOnRelease = true;
