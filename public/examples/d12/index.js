@@ -9,8 +9,8 @@ let me;
 let players;
 
 // local state
-const camera = { x: 0, y: 0 };
 let mode = "move";
+const camera = { x: 0, y: 0 };
 const localPlayerData = new WeakMap();
 
 // message
@@ -19,11 +19,12 @@ let message_input;
 let messageTimeout;
 
 // resources
-
 let font;
 let p8map, p8char;
+
+// p8 assets
 let map;
-let flags;
+let mapFlags;
 let sprites;
 
 function preload() {
@@ -40,34 +41,23 @@ function preload() {
 }
 
 function setup() {
+  pixelDensity(1);
   createCanvas(VIEW_WIDTH * TILE_SIZE * SCALE, VIEW_HEIGHT * TILE_SIZE * SCALE);
 
-  me.row = 3;
-  me.col = 1;
-  me.avatarId = 0; //randomInt(0, 16);
-
-  moveCamera(me.row * TILE_SIZE, me.col * TILE_SIZE);
-
+  // parse pico 8 data
   const p = [...defaultPalette];
   p[5] = "rgba(0,0,0,0)";
   const gfx = gfxFromP8(p8map, p);
   map = mapFromP8(p8map, gfx);
-  flags = flagsFromP8(p8map);
-
+  mapFlags = mapFlagsFromP8(p8map);
   sprites = spritesFromSheet(gfxFromP8(p8char, p));
-}
 
-function spritesFromSheet(gfx, w = 8, h = 8) {
-  const sprites = [];
-  for (let x = 0; x < gfx.width / w; x++) {
-    sprites[x] = [];
-    for (let y = 0; y < gfx.height / h; y++) {
-      const i = createImage(w, h);
-      i.copy(gfx, x * w, y * h, w, h, 0, 0, w, h);
-      sprites[x][y] = i;
-    }
-  }
-  return sprites;
+  // initilize self
+  me.row = 3;
+  me.col = 1;
+  me.avatarId = randomInt(0, sprites[0].length);
+
+  moveCamera(me.row * TILE_SIZE, me.col * TILE_SIZE);
 }
 
 function draw() {
@@ -85,11 +75,13 @@ function draw() {
   input();
   step();
   drawGame();
+  //drawScanlines();
 }
 
 function input() {
   checkPressedKeys();
 }
+
 ////////////////////////////////////////////////////////
 // GAME LOGIC
 
@@ -101,6 +93,11 @@ function step() {
 
     if (localP.x > goalP.x) localP.flipX = true;
     if (localP.x < goalP.x) localP.flipX = false;
+
+    if (localP.x > goalP.x) localP.facing = "left";
+    if (localP.x < goalP.x) localP.facing = "right";
+    if (localP.y > goalP.y) localP.facing = "up";
+    if (localP.y < goalP.y) localP.facing = "down";
 
     movePoint(localP, goalP, 1);
   }
@@ -121,14 +118,39 @@ function movePoint(p1, p2, max = Infinity) {
   p1.y += dY;
 }
 
+const actions = [];
+for (let i = 0; i < 128; i++) {
+  actions[i] = [];
+}
+actions[1][3] = "circle";
+actions[1][4] = "square";
+
+function performAction() {
+  console.log("action", me.col, me.row);
+  let offsetX = 0;
+  let offsetY = 0;
+  const localMe = localPlayerData.get(me);
+  if (localMe.facing === "left") offsetX = -1;
+  if (localMe.facing === "right") offsetX = 1;
+  if (localMe.facing === "up") offsetY = -1;
+  if (localMe.facing === "down") offsetY = 1;
+
+  const action = actions[me.col + offsetX][me.row + offsetY];
+  if (action) {
+    console.log(action);
+  }
+}
+
 ////////////////////////////////////////////////////////
 // DRAWING
 
 function drawGame() {
   background(0);
 
+  push();
+
   // set camera transform
-  scale(8);
+  scale(SCALE);
   translate(-camera.x, -camera.y);
   translate(
     (VIEW_WIDTH - 1) * 0.5 * TILE_SIZE,
@@ -157,31 +179,52 @@ function drawGame() {
     const localP = localPlayerData.get(p);
 
     push();
-    translate(localP.x, localP.y);
-    const bounce = -floor(localP.x / 4 + localP.y / 4) % 2;
-    const playerSprite = sprites[0][p.avatarId];
+    {
+      translate(localP.x, localP.y);
+      const shift = 0;
+      const bounce = -floor(localP.x / 4 + localP.y / 4) % 2;
+      const playerSprite = sprites[0][p.avatarId];
 
-    if (!localP.flipX) {
-      image(playerSprite, 0, bounce, TILE_SIZE, TILE_SIZE);
-    } else {
-      scale(-1, 1);
-      image(playerSprite, 0, bounce, -TILE_SIZE, TILE_SIZE);
+      if (!localP.flipX) {
+        image(playerSprite, 0, bounce + shift, TILE_SIZE, TILE_SIZE);
+      } else {
+        scale(-1, 1);
+        image(playerSprite, 0, bounce + shift, -TILE_SIZE, TILE_SIZE);
+      }
     }
     pop();
 
     if (p.message) drawMessage(p.message, localP.x, localP.y);
   }
+
+  pop();
 }
 
 function drawMessage(s, x, y) {
   push();
+  translate(0, -4);
   textFont(font, 16);
   textAlign(CENTER, BOTTOM);
   fill("black");
-  rect(x - textWidth(s) * 0.5 + 4, y - 8, textWidth(s) + 1, 8);
+  rect(x - textWidth(s) * 0.5 + 4, y - 8 + 1, textWidth(s) + 1, 7);
+  rect(x - textWidth(s) * 0.5 + 4 + 1, y - 8, textWidth(s) + 1 - 2, 9);
   fill("white");
   text(s, x + 4, y);
   pop();
+}
+
+function drawScanlines() {
+  for (let y = 0; y < height; y += SCALE) {
+    stroke(0, 0, 0, 200);
+    strokeWeight(SCALE / 4);
+
+    line(0, y, width, y);
+  }
+  for (let x = 0; x < width; x += SCALE) {
+    stroke(50, 50, 50, 20);
+    strokeWeight(SCALE / 4);
+    line(x, 0, x, height);
+  }
 }
 
 ////////////////////////////////////////////////////////
@@ -194,25 +237,25 @@ function checkPressedKeys() {
   if (!(localMe.x === me.col * 8 && localMe.y === me.row * 8)) return;
 
   if (keyIsDown(LEFT_ARROW) || keyIsDown(65 /*a*/)) {
-    if (!(flags[me.col - 1][me.row] & WALL_FLAG)) {
+    if (!(mapFlags[me.col - 1][me.row] & WALL_FLAG)) {
       me.col -= 1;
       return;
     }
   }
   if (keyIsDown(RIGHT_ARROW) || keyIsDown(68 /*d*/)) {
-    if (!(flags[me.col + 1][me.row] & WALL_FLAG)) {
+    if (!(mapFlags[me.col + 1][me.row] & WALL_FLAG)) {
       me.col += 1;
       return;
     }
   }
   if (keyIsDown(UP_ARROW) || keyIsDown(87 /*w*/)) {
-    if (!(flags[me.col][me.row - 1] & WALL_FLAG)) {
+    if (!(mapFlags[me.col][me.row - 1] & WALL_FLAG)) {
       me.row -= 1;
       return;
     }
   }
   if (keyIsDown(DOWN_ARROW) || keyIsDown(83 /*s*/)) {
-    if (!(flags[me.col][me.row + 1] & WALL_FLAG)) {
+    if (!(mapFlags[me.col][me.row + 1] & WALL_FLAG)) {
       me.row += 1;
       return;
     }
@@ -220,12 +263,15 @@ function checkPressedKeys() {
 }
 
 function keyPressed() {
-  if (key === "q") {
-    me.avatarId = ++me.avatarId % sprites[0].length;
-  }
   if (mode === "move") {
     if (key === " " || keyCode === RETURN) {
       startMessageOnRelease = true;
+    }
+    if (key === "q") {
+      me.avatarId = ++me.avatarId % sprites[0].length;
+    }
+    if (key === "f") {
+      performAction();
     }
   }
 
@@ -272,7 +318,7 @@ function cancelMessage() {
 }
 
 ////////////////////////////////////////////////////////
-// LOADING
+// pico 8
 
 const defaultPalette = [
   "#000000", // black
@@ -370,7 +416,7 @@ function mapFromP8(s, gfx) {
   return map;
 }
 
-function flagsFromP8(s) {
+function mapFlagsFromP8(s) {
   const map_s = mapDataFromP8(s);
 
   const gff_s = s.slice(s.indexOf("__gff__") + 1, s.indexOf("__map__"));
@@ -393,13 +439,29 @@ function flagsFromP8(s) {
   return flags;
 }
 
-///
+////////////////////////////////////////////////////////
+// UTILITY
+
+function spritesFromSheet(gfx, w = 8, h = 8) {
+  const sprites = [];
+  for (let x = 0; x < gfx.width / w; x++) {
+    sprites[x] = [];
+    for (let y = 0; y < gfx.height / h; y++) {
+      const i = createImage(w, h);
+      i.copy(gfx, x * w, y * h, w, h, 0, 0, w, h);
+      sprites[x][y] = i;
+    }
+  }
+  return sprites;
+}
 
 function randomInt(min, max) {
   return floor(random(min, max));
 }
 
-// disable arrowkey scrolling
+////////////////////////////////////////////////////////
+// BROWSER
+
 window.addEventListener(
   "keydown",
   function (e) {
