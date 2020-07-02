@@ -54,7 +54,7 @@ function setup() {
   map = mapFromP8(p8map, gfx);
   flags = flagsFromP8(p8map);
 
-  sprites = spritesFromSheet(gfxFromP8(p8char));
+  sprites = spritesFromSheet(gfxFromP8(p8char, p));
 }
 
 function spritesFromSheet(gfx, w = 8, h = 8) {
