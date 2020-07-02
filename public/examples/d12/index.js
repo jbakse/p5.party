@@ -2,7 +2,6 @@ const SCALE = 8;
 const TILE_SIZE = 8;
 const VIEW_WIDTH = 12;
 const VIEW_HEIGHT = 12;
-
 const WALL_FLAG = 1;
 
 // shared
@@ -26,11 +25,6 @@ let p8map, p8char;
 let map;
 let flags;
 let sprites;
-
-let shouldBounce = false;
-let shouldCycle = true;
-
-let speed = 4;
 
 function preload() {
   // get shared data
@@ -164,11 +158,8 @@ function drawGame() {
 
     push();
     translate(localP.x, localP.y);
-    const bounce = (-floor(localP.x / 4 + localP.y / 4) % 2) * shouldBounce;
-
-    const frame =
-      (floor(localP.x / speed + localP.y / speed) % 4) * shouldCycle;
-    const playerSprite = sprites[frame][p.avatarId];
+    const bounce = -floor(localP.x / 4 + localP.y / 4) % 2;
+    const playerSprite = sprites[0][p.avatarId];
 
     if (!localP.flipX) {
       image(playerSprite, 0, bounce, TILE_SIZE, TILE_SIZE);
@@ -231,15 +222,6 @@ function checkPressedKeys() {
 function keyPressed() {
   if (key === "q") {
     me.avatarId = ++me.avatarId % sprites[0].length;
-  }
-  if (key === "z") {
-    speed = speed === 4 ? 2 : 4;
-  }
-  if (key === "b") {
-    shouldBounce = !shouldBounce;
-  }
-  if (key === "c") {
-    shouldCycle = !shouldCycle;
   }
   if (mode === "move") {
     if (key === " " || keyCode === RETURN) {
