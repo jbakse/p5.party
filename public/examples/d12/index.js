@@ -1,3 +1,5 @@
+/* global map_actions */
+
 const SCALE = 8;
 const TILE_SIZE = 8;
 const VIEW_WIDTH = 12;
@@ -7,6 +9,7 @@ const WALL_FLAG = 1;
 // shared
 let me;
 let players;
+let shared;
 
 // local state
 let mode = "move";
@@ -17,6 +20,13 @@ const localPlayerData = new WeakMap();
 let startMessageOnRelease = false;
 let message_input;
 let messageTimeout;
+
+// action message
+let actionMessage = {
+  string: "",
+  row: 0,
+  column: 0,
+};
 
 // resources
 let font;
@@ -29,10 +39,10 @@ let sprites;
 
 function preload() {
   // get shared data
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "d12", "main1");
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "d12", "main");
   me = partyLoadMyShared();
   players = partyLoadParticipantShareds();
-
+  shared = partyLoadShared("main");
   // load resources
 
   font = loadFont("pixeldroidConsoleRegular/pixeldroidConsoleRegular.otf");
@@ -53,7 +63,7 @@ function setup() {
   sprites = spritesFromSheet(gfxFromP8(p8char, p));
 
   // initilize self
-  me.row = 3;
+  me.row = 5;
   me.col = 1;
   me.avatarId = randomInt(0, 4);
 
@@ -120,27 +130,27 @@ function movePoint(p1, p2, max = Infinity) {
   p1.y += dY;
 }
 
-const actions = [];
-for (let i = 0; i < 128; i++) {
-  actions[i] = [];
-}
-actions[1][3] = "circle";
-actions[1][4] = "square";
-
-function performAction() {
-  console.log("action", me.col, me.row);
-  let offsetX = 0;
-  let offsetY = 0;
-  const localMe = localPlayerData.get(me);
-  if (localMe.facing === "left") offsetX = -1;
-  if (localMe.facing === "right") offsetX = 1;
-  if (localMe.facing === "up") offsetY = -1;
-  if (localMe.facing === "down") offsetY = 1;
-
-  const action = actions[me.col + offsetX][me.row + offsetY];
+function triggerAction(x, y) {
+  const action = map_actions[x][y];
   if (action) {
-    console.log(action);
+    if (typeof action === "string") {
+      say(x, y, action);
+    }
+    if (typeof action === "function") {
+      action();
+    }
+    me.movedSinceAction = false;
+    return true;
   }
+  return false;
+}
+
+function say(x, y, msg) {
+  actionMessage.string = msg;
+  actionMessage.col = x;
+  actionMessage.row = y;
+  clearTimeout(actionMessage.timeout);
+  actionMessage.timeout = setTimeout(() => (actionMessage.string = ""), 2000);
 }
 
 ////////////////////////////////////////////////////////
@@ -170,9 +180,9 @@ function drawGame() {
 
   // draw wall flags
   // fill("red");
-  // for (let y = 0; y < flags.length; y++) {
+  // for (let y = 0; y < mapFlags.length; y++) {
   //   for (let x = 0; x < 128; x++) {
-  //     if (flags[x][y] & WALL_FLAG) rect(x * 8 + 3, y * 8 + 3, 2, 2);
+  //     if (mapFlags[x][y] & WALL_FLAG) rect(x * 8 + 4, y * 8 + 4, 2, 2);
   //   }
   // }
 
@@ -186,7 +196,7 @@ function drawGame() {
       const shift = -2;
       const bounce = -floor(localP.x / 8 + localP.y / 8) % 2;
       const frame = (floor(localP.x / 8 + localP.y / 8) % 3) * localP.moving;
-      const playerSprite = sprites[4 + frame][p.avatarId];
+      const playerSprite = sprites[4 + frame][p.avatarId || 0];
 
       if (!localP.flipX) {
         image(playerSprite, 0, bounce + shift, TILE_SIZE, TILE_SIZE);
@@ -200,7 +210,25 @@ function drawGame() {
     if (p.message) drawMessage(p.message, localP.x, localP.y);
   }
 
+  // draw action message
+
+  if (actionMessage.string) {
+    drawMessage(
+      actionMessage.string,
+      actionMessage.col * 8,
+      actionMessage.row * 8
+    );
+  }
+
   pop();
+
+  if (!shared.lightsOn) {
+    push();
+    blendMode(MULTIPLY);
+    fill(50, 50, 255);
+    rect(0, 0, width, height);
+    pop();
+  }
 }
 
 function drawMessage(s, x, y) {
@@ -239,29 +267,24 @@ function checkPressedKeys() {
   const localMe = localPlayerData.get(me);
   if (!(localMe.x === me.col * 8 && localMe.y === me.row * 8)) return;
 
-  if (keyIsDown(LEFT_ARROW) || keyIsDown(65 /*a*/)) {
-    if (!(mapFlags[me.col - 1][me.row] & WALL_FLAG)) {
-      me.col -= 1;
-      return;
-    }
+  if (keyIsDown(LEFT_ARROW) || keyIsDown(65 /*a*/)) move(-1, 0);
+  else if (keyIsDown(RIGHT_ARROW) || keyIsDown(68 /*d*/)) move(1, 0);
+  else if (keyIsDown(UP_ARROW) || keyIsDown(87 /*w*/)) move(0, -1);
+  else if (keyIsDown(DOWN_ARROW) || keyIsDown(83 /*s*/)) move(0, 1);
+  else me.keysReleasedSinceAction = true;
+}
+
+function move(x, y) {
+  const col = me.col + x;
+  const row = me.row + y;
+  if (me.keysReleasedSinceAction) {
+    if (triggerAction(col, row)) me.keysReleasedSinceAction = false;
   }
-  if (keyIsDown(RIGHT_ARROW) || keyIsDown(68 /*d*/)) {
-    if (!(mapFlags[me.col + 1][me.row] & WALL_FLAG)) {
-      me.col += 1;
-      return;
-    }
-  }
-  if (keyIsDown(UP_ARROW) || keyIsDown(87 /*w*/)) {
-    if (!(mapFlags[me.col][me.row - 1] & WALL_FLAG)) {
-      me.row -= 1;
-      return;
-    }
-  }
-  if (keyIsDown(DOWN_ARROW) || keyIsDown(83 /*s*/)) {
-    if (!(mapFlags[me.col][me.row + 1] & WALL_FLAG)) {
-      me.row += 1;
-      return;
-    }
+  if (!(mapFlags[col][row] & WALL_FLAG)) {
+    me.col = col;
+    me.row = row;
+
+    return;
   }
 }
 
@@ -273,9 +296,9 @@ function keyPressed() {
     if (key === "q") {
       me.avatarId = ++me.avatarId % 4;
     }
-    if (key === "f") {
-      performAction();
-    }
+    // if (key === "f") {
+    //   performAction();
+    // }
   }
 
   if (mode === "message") {
@@ -460,6 +483,15 @@ function spritesFromSheet(gfx, w = 8, h = 8) {
 
 function randomInt(min, max) {
   return floor(random(min, max));
+}
+
+function rateLimit(func, rate) {
+  var timeout;
+  return function () {
+    if (!timeout) func.apply(this, arguments);
+    clearTimeout(timeout);
+    timeout = setTimeout(() => (timeout = null), rate);
+  };
 }
 
 ////////////////////////////////////////////////////////
