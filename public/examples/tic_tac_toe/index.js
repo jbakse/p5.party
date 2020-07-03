@@ -8,9 +8,6 @@ let shared; // p5.party shared object
 let my; // p5.party shared record of user's own data
 let participants; // p5.party shared record of all participant's data
 
-let blueTeamCount; // Number of players on blue team
-let yellowTeamCount; // Number of players on yellow team
-
 const gridSize = 150;
 
 let blueTeamColor;
@@ -109,8 +106,17 @@ function draw() {
 
     // Display num players on each team
     textSize(16);
+
+    const blueTeamCount = participants.filter(
+      (participant) => participant.selectedTeam === "Blue"
+    ).length;
+
+    const yellowTeamCount = participants.filter(
+      (participant) => participant.selectedTeam === "Yellow"
+    ).length;
+
     text(
-      "Players on Blue: " + blueTeamCount + ", Yellow: " + yellowTeamCount,
+      `Players on Blue: ${blueTeamCount}, Yellow ${yellowTeamCount}`,
       260,
       482
     );
@@ -118,7 +124,6 @@ function draw() {
   }
 
   showOutcome();
-  updateTeamsList();
 }
 
 function mousePressed() {
@@ -153,70 +158,61 @@ function showOutcome() {
   push();
   stroke(30);
   strokeWeight(10);
-  let gameIsWon = false;
-  let blueWins;
+
+  let winner = false;
 
   // top row
   if (checkCombo(0, 1, 2)) {
-    blueWins = shared.boardState[0] === 1 ? true : false;
+    winner = shared.boardState[0] === 1 ? "Blue" : "Yellow";
     line(40, 75, 410, 75);
-    gameIsWon = true;
   }
 
   // middle row
   if (checkCombo(3, 4, 5)) {
-    blueWins = shared.boardState[3] === 1 ? true : false;
+    winner = shared.boardState[3] === 1 ? "Blue" : "Yellow";
     line(40, 225, 410, 225);
-    gameIsWon = true;
   }
 
   // bottom row
   if (checkCombo(6, 7, 8)) {
-    blueWins = shared.boardState[6] === 1 ? true : false;
+    winner = shared.boardState[6] === 1 ? "Blue" : "Yellow";
     line(40, 375, 410, 375);
-    gameIsWon = true;
   }
 
   // left column
   if (checkCombo(0, 3, 6)) {
-    blueWins = shared.boardState[0] === 1 ? true : false;
+    winner = shared.boardState[0] === 1 ? "Blue" : "Yellow";
     line(75, 40, 75, 410);
-    gameIsWon = true;
   }
 
   // middle column
   if (checkCombo(1, 4, 7)) {
-    blueWins = shared.boardState[1] === 1 ? true : false;
+    winner = shared.boardState[1] === 1 ? "Blue" : "Yellow";
     line(225, 40, 225, 410);
-    gameIsWon = true;
   }
 
   // right column
   if (checkCombo(2, 5, 8)) {
-    blueWins = shared.boardState[2] === 1 ? true : false;
+    winner = shared.boardState[2] === 1 ? "Blue" : "Yellow";
     line(375, 40, 375, 410);
-    gameIsWon = true;
   }
 
   // diagonal \
   if (checkCombo(0, 4, 8)) {
-    blueWins = shared.boardState[0] === 1 ? true : false;
+    winner = shared.boardState[0] === 1 ? "Blue" : "Yellow";
     line(40, 40, 410, 410);
-    gameIsWon = true;
   }
 
   // diagonal /
   if (checkCombo(2, 4, 6)) {
-    blueWins = shared.boardState[2] === 1 ? true : false;
+    winner = shared.boardState[2] === 1 ? "Blue" : "Yellow";
     line(40, 410, 410, 40);
-    gameIsWon = true;
   }
 
   // show "draw" message
-  if (
-    gameIsWon === false &&
-    shared.boardState.every((cellState) => cellState > 0)
-  ) {
+  if (!winner && shared.boardState.every((cellState) => cellState > 0)) {
+    shared.currentTurn = "nobody";
+
     push();
     fill("white");
     noStroke();
@@ -224,38 +220,21 @@ function showOutcome() {
     textFont("Gill Sans");
     text("Tie Game!", 182, 482);
     pop();
+  }
 
+  // show winer message
+  if (winner) {
     shared.currentTurn = "nobody";
+
+    push();
+    fill("white");
+    noStroke();
+    textSize(22);
+    textFont("Gill Sans");
+    textAlign(CENTER);
+    text(`${winner} Team Wins!`, width * 0.5, 482);
+    pop();
   }
+
   pop();
-  if (gameIsWon) shared.currentTurn = "nobody";
-
-  if (blueWins && gameIsWon) {
-    push();
-    fill("white");
-    noStroke();
-    textSize(22);
-    textFont("Gill Sans");
-    text("Blue Team Wins!", 155, 482);
-    pop();
-  } else if (blueWins === false && gameIsWon) {
-    push();
-    fill("white");
-    noStroke();
-    textSize(22);
-    textFont("Gill Sans");
-    text("Yellow Team Wins!", 145, 482);
-    pop();
-  }
-}
-
-// Checks which team each participant is on and tallies team count
-function updateTeamsList() {
-  blueTeamCount = 0;
-  yellowTeamCount = 0;
-
-  for (let i = 0; i < participants.length; i++) {
-    if (participants[i].selectedTeam === "Blue") blueTeamCount++;
-    if (participants[i].selectedTeam === "Yellow") yellowTeamCount++;
-  }
 }
