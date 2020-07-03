@@ -55,7 +55,7 @@ function setup() {
   // initilize self
   me.row = 3;
   me.col = 1;
-  me.avatarId = randomInt(0, sprites[0].length);
+  me.avatarId = randomInt(0, 4);
 
   moveCamera(me.row * TILE_SIZE, me.col * TILE_SIZE);
 }
@@ -98,6 +98,8 @@ function step() {
     if (localP.x < goalP.x) localP.facing = "right";
     if (localP.y > goalP.y) localP.facing = "up";
     if (localP.y < goalP.y) localP.facing = "down";
+
+    localP.moving = localP.x !== goalP.x || localP.y !== goalP.y;
 
     movePoint(localP, goalP, 1);
   }
@@ -181,9 +183,10 @@ function drawGame() {
     push();
     {
       translate(localP.x, localP.y);
-      const shift = 0;
-      const bounce = -floor(localP.x / 4 + localP.y / 4) % 2;
-      const playerSprite = sprites[0][p.avatarId];
+      const shift = -2;
+      const bounce = -floor(localP.x / 8 + localP.y / 8) % 2;
+      const frame = (floor(localP.x / 8 + localP.y / 8) % 3) * localP.moving;
+      const playerSprite = sprites[4 + frame][p.avatarId];
 
       if (!localP.flipX) {
         image(playerSprite, 0, bounce + shift, TILE_SIZE, TILE_SIZE);
@@ -268,7 +271,7 @@ function keyPressed() {
       startMessageOnRelease = true;
     }
     if (key === "q") {
-      me.avatarId = ++me.avatarId % sprites[0].length;
+      me.avatarId = ++me.avatarId % 4;
     }
     if (key === "f") {
       performAction();
