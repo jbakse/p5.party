@@ -189,14 +189,15 @@ function drawGame() {
   // draw players
   for (const p of players) {
     const localP = localPlayerData.get(p);
-
+    if (!(typeof p.avatarId === "number")) continue;
     push();
     {
       translate(localP.x, localP.y);
       const shift = -2;
       const bounce = -floor(localP.x / 8 + localP.y / 8) % 2;
-      const frame = (floor(localP.x / 8 + localP.y / 8) % 3) * localP.moving;
-      const playerSprite = sprites[4 + frame][p.avatarId || 0];
+      const frame = localP.moving ? floor(localP.x / 8 + localP.y / 8) % 3 : 0;
+
+      const playerSprite = sprites[4 + frame][p.avatarId];
 
       if (!localP.flipX) {
         image(playerSprite, 0, bounce + shift, TILE_SIZE, TILE_SIZE);
