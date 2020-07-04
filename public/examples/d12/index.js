@@ -1,6 +1,7 @@
 /* global map_actions */
 
-const SCALE = 8;
+const SCALEX = 2;
+const SCALEY = 8;
 const TILE_SIZE = 8;
 const VIEW_WIDTH = 12;
 const VIEW_HEIGHT = 12;
@@ -52,7 +53,10 @@ function preload() {
 
 function setup() {
   pixelDensity(1);
-  createCanvas(VIEW_WIDTH * TILE_SIZE * SCALE, VIEW_HEIGHT * TILE_SIZE * SCALE);
+  createCanvas(
+    VIEW_WIDTH * TILE_SIZE * SCALEX,
+    VIEW_HEIGHT * TILE_SIZE * SCALEY
+  );
 
   // parse pico 8 data
   const p = [...defaultPalette];
@@ -85,7 +89,7 @@ function draw() {
   input();
   step();
   drawGame();
-  //drawScanlines();
+  // drawScanlines();
 }
 
 function input() {
@@ -162,7 +166,7 @@ function drawGame() {
   push();
 
   // set camera transform
-  scale(SCALE);
+  scale(SCALEX, SCALEY);
   translate(-camera.x, -camera.y);
   translate(
     (VIEW_WIDTH - 1) * 0.5 * TILE_SIZE,
@@ -208,7 +212,7 @@ function drawGame() {
     }
     pop();
 
-    if (p.message) drawMessage(p.message, localP.x, localP.y);
+    if (p.message) drawMessage(p.message, localP.x, localP.y, "#222A54");
   }
 
   // draw action message
@@ -217,7 +221,8 @@ function drawGame() {
     drawMessage(
       actionMessage.string,
       actionMessage.col * 8,
-      actionMessage.row * 8
+      actionMessage.row * 8,
+      "#000000"
     );
   }
 
@@ -232,31 +237,49 @@ function drawGame() {
   }
 }
 
-function drawMessage(s, x, y) {
+function drawMessage(s, x, y, c = "#16874E") {
   push();
-  translate(0, -4);
+  translate(4, -4);
   textFont(font, 16);
   textAlign(CENTER, BOTTOM);
-  fill("black");
-  rect(x - textWidth(s) * 0.5 + 4, y - 8 + 1, textWidth(s) + 1, 7);
-  rect(x - textWidth(s) * 0.5 + 4 + 1, y - 8, textWidth(s) + 1 - 2, 9);
+  const w = textWidth(s) + 5;
   fill("white");
-  text(s, x + 4, y);
+  rect(x - w * 0.5 - 1, y - 8, w + 2, 8);
+  rect(x - w * 0.5, y - 8 - 1, w, 8 + 2);
+  fill(c);
+  rect(x - w * 0.5, y - 8, w, 8);
+
+  fill("white");
+  text(s, x, y);
   pop();
 }
 
+let scanlineScroll = 0;
 function drawScanlines() {
-  for (let y = 0; y < height; y += SCALE) {
-    stroke(0, 0, 0, 200);
-    strokeWeight(SCALE / 4);
+  push();
+  scanlineScroll += SCALEY / 24;
+  translate(0, -scanlineScroll % (SCALEY * 2));
+  for (let y = 0; y < height; y += SCALEY * 2) {
+    stroke(255, 255, 255, 10);
+    strokeWeight(SCALEY);
 
     line(0, y, width, y);
   }
-  for (let x = 0; x < width; x += SCALE) {
-    stroke(50, 50, 50, 20);
-    strokeWeight(SCALE / 4);
-    line(x, 0, x, height);
-  }
+  pop();
+
+  // for (let y = 0; y < height; y += SCALEY) {
+  //   strokeWeight(1);
+  //   stroke(0, 0, 0, 50);
+  //   line(0, y, width, y);
+  //   stroke(0, 0, 0, 100);
+  //   line(0, y + 1, width, y + 1);
+  // }
+
+  // for (let x = 0; x < width; x += SCALEX) {
+  //   stroke(50, 50, 50, 200);
+  //   strokeWeight(0.5);
+  //   line(x, 0, x, height);
+  // }
 }
 
 ////////////////////////////////////////////////////////
