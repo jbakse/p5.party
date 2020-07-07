@@ -70,6 +70,7 @@ function setup() {
   me.row = 5;
   me.col = 1;
   me.avatarId = randomInt(0, 4);
+  me.ready = true;
 
   moveCamera(me.row * TILE_SIZE, me.col * TILE_SIZE);
 }
@@ -193,7 +194,7 @@ function drawGame() {
   // draw players
   for (const p of players) {
     const localP = localPlayerData.get(p);
-    if (!(typeof p.avatarId === "number")) continue;
+    if (!p.ready) continue;
     push();
     {
       translate(localP.x, localP.y);
@@ -242,12 +243,12 @@ function drawMessage(s, x, y, c = "#16874E") {
   translate(4, -4);
   textFont(font, 16);
   textAlign(CENTER, BOTTOM);
-  const w = textWidth(s) + 5;
+  const w = textWidth(s) + 2;
   fill("white");
-  rect(x - w * 0.5 - 1, y - 8, w + 2, 8);
-  rect(x - w * 0.5, y - 8 - 1, w, 8 + 2);
+  rect(x - w * 0.5 - 1, y - 8, w + 3, 8);
+  rect(x - w * 0.5, y - 8 - 1, w + 1, 8 + 2);
   fill(c);
-  rect(x - w * 0.5, y - 8, w, 8);
+  rect(x - w * 0.5, y - 8, w + 1, 8);
 
   fill("white");
   text(s, x, y);
