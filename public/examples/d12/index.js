@@ -1,7 +1,7 @@
 /* global map_actions */
 
 const SCALEX = 2;
-const SCALEY = 8;
+const SCALEY = 2;
 const TILE_SIZE = 8;
 const VIEW_WIDTH = 12;
 const VIEW_HEIGHT = 12;
