@@ -78,6 +78,7 @@ function setup() {
 function draw() {
   // init local player data for new players
   for (const p of players) {
+    if (!p.ready) continue;
     if (!localPlayerData.has(p)) {
       localPlayerData.set(p, {
         x: p.col * TILE_SIZE,
@@ -103,6 +104,7 @@ function input() {
 function step() {
   // move players
   for (const p of players) {
+    if (!p.ready) continue;
     const localP = localPlayerData.get(p);
     const goalP = { x: p.col * TILE_SIZE, y: p.row * TILE_SIZE };
 
@@ -193,8 +195,8 @@ function drawGame() {
 
   // draw players
   for (const p of players) {
-    const localP = localPlayerData.get(p);
     if (!p.ready) continue;
+    const localP = localPlayerData.get(p);
     push();
     {
       translate(localP.x, localP.y);
