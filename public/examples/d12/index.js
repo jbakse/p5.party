@@ -69,7 +69,7 @@ function setup() {
   // initilize self
   me.row = 5;
   me.col = 1;
-  me.avatarId = randomInt(0, 4);
+  me.avatarId = randomInt(0, 16);
   me.ready = true;
 
   moveCamera(me.row * TILE_SIZE, me.col * TILE_SIZE);
@@ -202,7 +202,8 @@ function drawGame() {
       const bounce = -floor(localP.x / 8 + localP.y / 8) % 2;
       const frame = localP.moving ? floor(localP.x / 8 + localP.y / 8) % 3 : 0;
 
-      const playerSprite = sprites[4 + frame][p.avatarId];
+      const playerSprite =
+        sprites[Math.floor(p.avatarId / 4) * 4 + frame][p.avatarId % 4];
 
       if (!localP.flipX) {
         image(playerSprite, 0, bounce + shift, TILE_SIZE, TILE_SIZE);
@@ -319,7 +320,7 @@ function keyPressed() {
       startMessageOnRelease = true;
     }
     if (key === "q") {
-      me.avatarId = ++me.avatarId % 4;
+      me.avatarId = ++me.avatarId % 16;
     }
     // if (key === "f") {
     //   performAction();
