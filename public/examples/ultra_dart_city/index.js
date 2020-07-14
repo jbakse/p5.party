@@ -3,12 +3,10 @@ let shared;
 let barY;
 let dir;
 
-let dartPos;
-
 function preload() {
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
-    "ultra-dart-city-4",
+    "ultra-dart-city-5",
     "main"
   );
   shared = partyLoadShared("shared");
