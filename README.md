@@ -29,6 +29,8 @@ p5.party is a library for easily creating multiuser sketches with p5.js. With p5
 
 [p5.party Demos](https://p5party.netlify.app/)
 
+:warning: p5.party is very new alpha release. Expect rough edges and bugs!
+
 ## What is it good for?
 
 **Prototyping + Sketching**
