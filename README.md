@@ -107,3 +107,7 @@ Distributed under the MIT License. See `license` for more information.
 - [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
 - [deepstream.io](http://deepstream.io)
 - [sindresorhus/on-change](https://github.com/sindresorhus/on-change)
+
+## Contributors
+
+p5.party was created by Justin Bakse, Munro Hoberman, and Isabel Anguera.
