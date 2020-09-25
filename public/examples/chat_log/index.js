@@ -65,6 +65,10 @@ function generateName() {
   return pickRandom(animalNames);
 }
 
+function pickRandom(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
 let animalNames = [
   "Cat",
   "Moose",

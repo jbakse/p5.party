@@ -1,5 +1,7 @@
 # D12
 
+## Join at `bit.ly/sketching-d12`
+
 Welcome to long table online!
 
 - **asdw** or **arrows** to move
@@ -7,3 +9,10 @@ Welcome to long table online!
 - **q** to change character
 
 > Open this example in two browser windows at once!
+
+<style>
+#readme code {
+   background-color: black;
+   color: #ffccaa;
+}
+</style>

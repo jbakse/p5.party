@@ -73,6 +73,8 @@ function setup() {
   me.ready = true;
 
   moveCamera(me.row * TILE_SIZE, me.col * TILE_SIZE);
+
+  shared.lightsOn = true;
 }
 
 function draw() {
