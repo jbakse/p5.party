@@ -1,5 +1,5 @@
 import * as log from "./log";
-import * as onChange from "on-change";
+import onChange from "on-change";
 import { createEmitter } from "./emitter";
 
 // const customMergeStrategy = (

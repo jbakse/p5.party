@@ -46,7 +46,7 @@
     "@deepstream/client": "^5.1.0",
     "@deepstream/server": "^5.1.1",
     "core-js": "^3.19.1",
-    "on-change": "^2.0.1",
+    "on-change": "^4.0.0",
     "regenerator-runtime": "^0.13.9",
     "webpack-merge": "^4.2.2"
   },
