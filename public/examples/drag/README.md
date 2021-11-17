@@ -1,7 +1,7 @@
 # drag
 
-?
+Some little squres to drag around.
 
-- **drag** to move the square
+- **drag** to move a square
 
 > Open this example in two browser windows at once!
