@@ -8,7 +8,7 @@
       "name": "Launch localhost",
       "type": "chrome",
       "request": "launch",
-      "url": "http://localhost:8080/",
+      "url": "http://localhost:8080/show_example.html?drag",
       "webRoot": "${workspaceFolder}/public"
     }
   ]

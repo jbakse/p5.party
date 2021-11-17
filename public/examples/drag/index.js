@@ -20,14 +20,10 @@ function pointInRect(p, r) {
   return p.x > r.l && p.x < r.l + r.w && p.y > r.t && p.y < r.t + r.h;
 }
 
-// function hydrate(data, _class) {
-//   let o = new window[_class]();
-//   o = Object.assign(o, data);
-//   return o;
-// }
-
 const my_id = uuidv4();
+
 let shared;
+
 function preload() {
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
@@ -41,20 +37,18 @@ function setup() {
   createCanvas(400, 400);
   noStroke();
 
-  shared.sprites = [];
-
-  shared.sprites.push(initSprite(new Rect(10, 10, 100, 100), "#ffff66"));
-  shared.sprites.push(initSprite(new Rect(30, 30, 100, 100), "#ff66ff"));
-  shared.sprites.push(initSprite(new Rect(50, 50, 100, 100), "#66ffff"));
-
-  console.log(shared.sprites);
+  if (partyIsHost()) {
+    shared.sprites = [];
+    shared.sprites.push(initSprite(new Rect(10, 10, 100, 100), "#ffff66"));
+    shared.sprites.push(initSprite(new Rect(30, 30, 100, 100), "#ff66ff"));
+    shared.sprites.push(initSprite(new Rect(50, 50, 100, 100), "#66ffff"));
+  }
 }
 
 function draw() {
   background("#cc6666");
-
-  shared.sprites.forEach((s) => stepSprite(s));
-  shared.sprites.forEach((s) => drawSprite(s));
+  shared.sprites.forEach(stepSprite);
+  shared.sprites.forEach(drawSprite);
 }
 
 function mousePressed() {
@@ -71,6 +65,7 @@ function initSprite(rect = new Rect(), color = "red") {
   const s = {};
   s.rect = rect;
   s.color = color;
+  s.touch = 0;
   return s;
 }
 
@@ -95,14 +90,11 @@ function drawSprite(s) {
 
 function mousePressedSprite(s) {
   if (pointInRect(new Point(mouseX, mouseY), s.rect)) {
-    const i = shared.sprites.indexOf(s);
-
     s.inDrag = true;
-    console.log("changed", shared.sprites.indexOf(s) !== i);
-
     s.owner = my_id;
     s.dragOffset = new Point(s.rect.l - mouseX, s.rect.t - mouseY);
 
+    const i = shared.sprites.indexOf(s);
     shared.sprites.splice(i, 1);
     shared.sprites.push(s);
     return true;

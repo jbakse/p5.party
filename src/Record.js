@@ -105,18 +105,76 @@ export class Record {
   _onClientChangedData(path, newValue, oldValue) {
     // on-change alerts us when the value actually changes
     // so we don't need to test if newValue and oldValue are different
-
     this.#record.set("shared." + path, newValue);
   }
 
+  // called from deepstreem. this is called when the deepstreem data store is
+  // updated, even if the update was local. If the update is local
+  // this.#shared === data -> true
+  // because this.#shared was updated first, triggering this callback
+  // if the change originated non-locally, than this.#shared does need to be
+  // updated
+
   _onServerChangedData(data) {
-    // replace the CONTENTS of this.#shared
     // don't replace #shared itself as #watchedShared has a reference to it
-    for (const key in this.#shared) {
-      delete this.#shared[key];
+    // instead patch it to match the incoming data
+    patchInPlace(this.#shared, data);
+  }
+}
+
+function getType(value) {
+  if (value === null) return "null";
+  if (typeof value === "object") return "object";
+  if (typeof value === "boolean") return "primative";
+  if (typeof value === "number") return "primative";
+  if (typeof value === "string") return "primative";
+  return "unsupported";
+}
+
+function patchInPlace(_old, _new) {
+  if (typeof _old !== "object") return log.error("_old is not an object");
+  if (typeof _new !== "object") return log.error("_new is not an object");
+
+  const oldKeys = Object.keys(_old);
+  const newKeys = Object.keys(_new);
+
+  // remove old keys not in new
+  for (const key of oldKeys) {
+    if (!Object.prototype.hasOwnProperty.call(_new, key)) {
+      log.debug(`remove ${key}`);
+      delete _old[key];
     }
-    for (const key in data) {
-      this.#shared[key] = data[key];
+  }
+
+  // patch shared object and array keys
+  for (const key of newKeys) {
+    if (Object.prototype.hasOwnProperty.call(_old, key)) {
+      const oldType = getType(_old[key]);
+      const newType = getType(_new[key]);
+      if (oldType === "unsupported") {
+        log.error(`_old[${key}] is unsupported type: ${typeof _new[key]}`);
+        continue;
+      }
+      if (newType === "unsupported") {
+        log.error(`_new[${key}] is unsupported type: ${typeof _new[key]}`);
+        continue;
+      }
+      if (oldType != "object" || newType != "object") {
+        if (_old[key] !== _new[key]) {
+          log.debug(`update ${key}`);
+          _old[key] = _new[key];
+        }
+        continue;
+      }
+      patchInPlace(_old[key], _new[key]);
+    }
+  }
+
+  // add new keys not in old
+  for (const key of newKeys) {
+    if (!Object.prototype.hasOwnProperty.call(_old, key)) {
+      log.debug(`add ${key}`);
+      _old[key] = _new[key];
     }
   }
 }
