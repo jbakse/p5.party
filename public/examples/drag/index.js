@@ -65,7 +65,6 @@ function initSprite(rect = new Rect(), color = "red") {
   const s = {};
   s.rect = rect;
   s.color = color;
-  s.touch = 0;
   return s;
 }
 
