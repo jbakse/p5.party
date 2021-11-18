@@ -118,7 +118,7 @@ export class Record {
   _onServerChangedData(data) {
     // don't replace #shared itself as #watchedShared has a reference to it
     // instead patch it to match the incoming data
-    patchInPlace(this.#shared, data);
+    patchInPlace(this.#shared, data, "shared");
   }
 }
 
@@ -131,7 +131,7 @@ function getType(value) {
   return "unsupported";
 }
 
-function patchInPlace(_old, _new) {
+function patchInPlace(_old, _new, _keyPath = "") {
   if (typeof _old !== "object") return log.error("_old is not an object");
   if (typeof _new !== "object") return log.error("_new is not an object");
 
@@ -141,8 +141,12 @@ function patchInPlace(_old, _new) {
   // remove old keys not in new
   for (const key of oldKeys) {
     if (!Object.prototype.hasOwnProperty.call(_new, key)) {
-      log.debug(`remove ${key}`);
-      delete _old[key];
+      log.debug(`remove ${_keyPath}.${key}`);
+      if (Array.isArray(_old)) {
+        _old.splice(key, 1);
+      } else {
+        delete _old[key];
+      }
     }
   }
 
@@ -152,28 +156,32 @@ function patchInPlace(_old, _new) {
       const oldType = getType(_old[key]);
       const newType = getType(_new[key]);
       if (oldType === "unsupported") {
-        log.error(`_old[${key}] is unsupported type: ${typeof _new[key]}`);
+        log.error(
+          `${_keyPath}.${key} is unsupported type: ${typeof _new[key]}`
+        );
         continue;
       }
       if (newType === "unsupported") {
-        log.error(`_new[${key}] is unsupported type: ${typeof _new[key]}`);
+        log.error(
+          `${_keyPath}.${key} is unsupported type: ${typeof _new[key]}`
+        );
         continue;
       }
       if (oldType != "object" || newType != "object") {
         if (_old[key] !== _new[key]) {
-          log.debug(`update ${key}`);
+          log.debug(`update ${_keyPath}.${key}`);
           _old[key] = _new[key];
         }
         continue;
       }
-      patchInPlace(_old[key], _new[key]);
+      patchInPlace(_old[key], _new[key], `${_keyPath}.${key}`);
     }
   }
 
   // add new keys not in old
   for (const key of newKeys) {
     if (!Object.prototype.hasOwnProperty.call(_old, key)) {
-      log.debug(`add ${key}`);
+      log.debug(`add ${_keyPath}.${key}`);
       _old[key] = _new[key];
     }
   }
