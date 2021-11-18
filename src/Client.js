@@ -84,4 +84,14 @@ export class Client {
   name() {
     return this.#name;
   }
+
+  ////////////////////////////////////////////////
+  // experimental pub/sub
+  subscribe(event, cb) {
+    this.#deepstreamClient.event.subscribe(event, cb);
+  }
+
+  emit(event, data) {
+    this.#deepstreamClient.event.emit(event, data);
+  }
 }
