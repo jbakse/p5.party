@@ -110,12 +110,12 @@ function drawBullet(b) {
 
 function keyPressed() {
   if (key === " ") {
-    // send.bullets.push({
-    //   x: me.tank.x,
-    //   y: me.tank.y,
-    //   dX: sin(me.tank.a) * 6,
-    //   dY: -cos(me.tank.a) * 6,
-    // });
+    send.bullets.push({
+      x: me.tank.x,
+      y: me.tank.y,
+      dX: sin(me.tank.a) * 6,
+      dY: -cos(me.tank.a) * 6,
+    });
     partyEmit("createBullet", "hell yeah");
   }
 
