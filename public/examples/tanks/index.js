@@ -116,6 +116,7 @@ function keyPressed() {
       dX: sin(me.tank.a) * 6,
       dY: -cos(me.tank.a) * 6,
     });
+
     partyEmit("createBullet", "hell yeah");
   }
 
