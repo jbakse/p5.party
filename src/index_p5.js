@@ -148,4 +148,14 @@ function init() {
     }
     Record.recordForShared(shared).watchShared(path, cb);
   };
+
+  ////////////////////////////////////////////////
+  // experimental pub/sub
+  p5.prototype.partySubscribe = function (event, cb) {
+    __client.subscribe(event, cb);
+  };
+
+  p5.prototype.partyEmit = function (event, data) {
+    __client.emit(event, data);
+  };
 }
