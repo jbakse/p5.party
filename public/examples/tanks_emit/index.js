@@ -1,13 +1,12 @@
-// uuidv4.min.js
-/* global uuidv4 */
-
 // p5.party experimental
 /* global partyEmit partySubscribe*/
 
 // project utils
-/* global Rect pointInRect fpsCounter*/
+/* global Rect pointInRect */
+/* global StatTracker */
+/* global debugShow */
 
-const fps = new fpsCounter();
+let stats;
 let shared, me, participants;
 
 function preload() {
@@ -19,6 +18,7 @@ function preload() {
 
 function setup() {
   createCanvas(400, 400).parent("canvas-wrap");
+  stats = new StatTracker();
 
   if (partyIsHost()) {
     shared.bullets = [];
@@ -34,20 +34,26 @@ function draw() {
   moveTank();
   if (partyIsHost()) stepGame();
   drawScene();
-  showDebugData();
+
+  stats.tick();
+  debugShow({
+    stats,
+    participants,
+  });
 }
 
 ///////////////////////////////////////////
 // HOST CODE
 
 function stepGame() {
-  // step bullets
   shared.bullets.forEach(stepBullet);
 }
 
 function stepBullet(b) {
   b.x += b.dX;
   b.y += b.dY;
+
+  // remove out of bounds bullets
   if (!pointInRect(b, new Rect(0, 0, 400, 400))) {
     const i = shared.bullets.indexOf(b);
     shared.bullets.splice(i, 1);
@@ -78,7 +84,6 @@ function moveTank() {
   if (keyIsDown(68) /*d*/) me.tank.a += radians(2);
 
   for (const bullet of shared.bullets) {
-    console.log(bullet, bullet.x, bullet.y, me.tank.x, me.tank.y);
     if (dist(bullet.x, bullet.y, me.tank.x, me.tank.y) < 15) {
       me.tank.spin = 0.4;
     }
@@ -127,26 +132,4 @@ function drawBullet(b) {
   push();
   ellipse(b.x, b.y, 10, 10);
   pop();
-}
-
-///////////////////////////////////////////
-// DEBUG CODE
-function showDebugData() {
-  const data = {
-    frameRate: fps.tick(),
-    bulletCount: shared.bullets.length,
-    playerCount: participants.length,
-    me,
-  };
-
-  const roundIt = (key, value) => {
-    if (typeof value === "number") return Math.floor(value * 100) / 100;
-    return value;
-  };
-
-  document.getElementById("debug").innerText = JSON.stringify(
-    data,
-    roundIt,
-    "  "
-  );
 }
