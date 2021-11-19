@@ -1,3 +1,18 @@
+I wrote a custome merge function in Record, but maybe it would be better to use a library?
+
+[Lodash.merge](https://lodash.com/docs/#merge)
+
+mergeWidth should be flexible enough to add debug reporting and customize behavior
+[Lodash.mergeWidth](https://lodash.com/docs/#mergeWith)
+
+might be worth compairing the merge function to
+https://github.com/deepstreamIO/deepstream.io/blob/892c0fea1b348cc5152e3b75cf19e3241ece3edc/src/utils/utils.ts#L77
+
+to see how the approaches differ, if one is better
+
+
+# NOW
+In the participant code...
 
 Feature Requests / Enhancements
 
