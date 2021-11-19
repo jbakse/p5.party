@@ -96,7 +96,6 @@ export class Record {
 
     // report
     log.debug("RecordManager: Record ready.", this.#name);
-    //log.debug(this.#record.get());
 
     // ready
     this.#isReady = true;
@@ -147,7 +146,7 @@ function patchInPlace(_old, _new, _keyPath = "") {
   // remove old keys not in new
   for (const key of oldKeys) {
     if (!Object.prototype.hasOwnProperty.call(_new, key)) {
-      log.debug(`remove ${_keyPath}.${key}`);
+      // log.debug(`remove ${_keyPath}.${key}`);
       if (Array.isArray(_old)) {
         _old.splice(key, 1);
       } else {
@@ -175,7 +174,7 @@ function patchInPlace(_old, _new, _keyPath = "") {
       }
       if (oldType !== "object" || newType !== "object") {
         if (_old[key] !== _new[key]) {
-          log.debug(`update ${_keyPath}.${key}`);
+          // log.debug(`update ${_keyPath}.${key}`);
           _old[key] = _new[key];
         }
         continue;
@@ -187,7 +186,7 @@ function patchInPlace(_old, _new, _keyPath = "") {
   // add new keys not in old
   for (const key of newKeys) {
     if (!Object.prototype.hasOwnProperty.call(_old, key)) {
-      log.debug(`add ${_keyPath}.${key}`);
+      // log.debug(`add ${_keyPath}.${key}`);
       _old[key] = _new[key];
     }
   }
