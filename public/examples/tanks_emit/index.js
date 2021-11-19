@@ -1,28 +1,13 @@
+// uuidv4.min.js
 /* global uuidv4 */
+
+// p5.party experimental
 /* global partyEmit partySubscribe*/
 
-class Rect {
-  constructor(l = 0, t = 0, w = 0, h = 0) {
-    this.l = l;
-    this.t = t;
-    this.w = w;
-    this.h = h;
-  }
-}
+// project utils
+/* global Rect pointInRect fpsCounter*/
 
-class Point {
-  constructor(x = 0, y = 0) {
-    this.x = x;
-    this.y = y;
-  }
-}
-
-function pointInRect(p, r) {
-  return p.x > r.l && p.x < r.l + r.w && p.y > r.t && p.y < r.t + r.h;
-}
-
-const bounds = new Rect(0, 0, 400, 400);
-
+const fps = new fpsCounter();
 let shared, me, participants;
 
 function preload() {
@@ -35,38 +20,92 @@ function preload() {
 function setup() {
   createCanvas(400, 400).parent("canvas-wrap");
 
-  noStroke();
-
   if (partyIsHost()) {
     shared.bullets = [];
   }
-  me.tank = { x: 100, y: 100, a: 0 };
+
+  me.tank = { x: random(width), y: random(height), a: random(2 * PI), spin: 0 };
 
   // hosting can change mid-game so every client subscribes, and then checks if it is host on every event
-
-  partySubscribe("createBullet", createBullet);
+  partySubscribe("createBullet", onCreateBullet);
 }
 
 function draw() {
-  checkKeys();
-  showData();
+  moveTank();
   if (partyIsHost()) stepGame();
   drawScene();
+  showDebugData();
 }
+
+///////////////////////////////////////////
+// HOST CODE
 
 function stepGame() {
   // step bullets
   shared.bullets.forEach(stepBullet);
 }
 
-function showData() {
-  document.getElementById("shared").innerText = JSON.stringify(
-    shared,
-    null,
-    "\t"
-  );
+function stepBullet(b) {
+  b.x += b.dX;
+  b.y += b.dY;
+  if (!pointInRect(b, new Rect(0, 0, 400, 400))) {
+    const i = shared.bullets.indexOf(b);
+    shared.bullets.splice(i, 1);
+  }
 }
+
+function onCreateBullet(b) {
+  if (partyIsHost()) shared.bullets.push(b);
+}
+
+///////////////////////////////////////////
+// CLIENT CODE - LOGIC
+
+function moveTank() {
+  // forward
+  if (keyIsDown(87) /*w*/) {
+    me.tank.x += sin(me.tank.a) * 3;
+    me.tank.y -= cos(me.tank.a) * 3;
+  }
+
+  // backward
+  if (keyIsDown(83) /*s*/) {
+    me.tank.x += sin(me.tank.a) * -1;
+    me.tank.y -= cos(me.tank.a) * -1;
+  }
+
+  if (keyIsDown(65) /*a*/) me.tank.a -= radians(2);
+  if (keyIsDown(68) /*d*/) me.tank.a += radians(2);
+
+  for (const bullet of shared.bullets) {
+    console.log(bullet, bullet.x, bullet.y, me.tank.x, me.tank.y);
+    if (dist(bullet.x, bullet.y, me.tank.x, me.tank.y) < 15) {
+      me.tank.spin = 0.4;
+    }
+  }
+
+  me.tank.spin *= 0.98;
+  me.tank.a += me.tank.spin;
+}
+
+function keyPressed() {
+  if (key === " ") {
+    partyEmit("createBullet", {
+      x: me.tank.x + sin(me.tank.a) * 16,
+      y: me.tank.y - cos(me.tank.a) * 16,
+      dX: sin(me.tank.a) * 6,
+      dY: -cos(me.tank.a) * 6,
+    });
+  }
+
+  return false;
+}
+
+///////////////////////////////////////////
+// CLIENT CODE - DRAW
+
 function drawScene() {
+  noStroke();
   background("#cc6666");
   shared.bullets.forEach(drawBullet);
   for (const p of participants) {
@@ -84,50 +123,30 @@ function drawTank(tank) {
   pop();
 }
 
-function createBullet(b) {
-  if (partyIsHost()) shared.bullets.push(b);
-}
-
-function stepBullet(b) {
-  b.x += b.dX;
-  b.y += b.dY;
-  if (!pointInRect(b, bounds)) {
-    const i = shared.bullets.indexOf(b);
-    shared.bullets.splice(i, 1);
-  }
-}
-
 function drawBullet(b) {
   push();
   ellipse(b.x, b.y, 10, 10);
   pop();
 }
 
-function keyPressed() {
-  if (key === " ") {
-    partyEmit("createBullet", {
-      x: me.tank.x,
-      y: me.tank.y,
-      dX: sin(me.tank.a) * 6,
-      dY: -cos(me.tank.a) * 6,
-    });
-  }
+///////////////////////////////////////////
+// DEBUG CODE
+function showDebugData() {
+  const data = {
+    frameRate: fps.tick(),
+    bulletCount: shared.bullets.length,
+    playerCount: participants.length,
+    me,
+  };
 
-  return false;
-}
-function checkKeys() {
-  // forward
-  if (keyIsDown(87) /*w*/) {
-    me.tank.x += sin(me.tank.a) * 3;
-    me.tank.y -= cos(me.tank.a) * 3;
-  }
+  const roundIt = (key, value) => {
+    if (typeof value === "number") return Math.floor(value * 100) / 100;
+    return value;
+  };
 
-  // backward
-  if (keyIsDown(83) /*s*/) {
-    me.tank.x += sin(me.tank.a) * -1;
-    me.tank.y -= cos(me.tank.a) * -1;
-  }
-
-  if (keyIsDown(65) /*a*/) me.tank.a -= radians(2);
-  if (keyIsDown(68) /*d*/) me.tank.a += radians(2);
+  document.getElementById("debug").innerText = JSON.stringify(
+    data,
+    roundIt,
+    "  "
+  );
 }
