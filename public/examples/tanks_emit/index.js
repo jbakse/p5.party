@@ -7,12 +7,12 @@
 /* global debugShow */
 
 let stats;
-let shared, me, participants;
+let shared, my, participants;
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "tanks", "main");
   shared = partyLoadShared("shared");
-  me = partyLoadMyShared();
+  my = partyLoadMyShared();
   participants = partyLoadParticipantShareds();
 }
 
@@ -24,7 +24,7 @@ function setup() {
     shared.bullets = [];
   }
 
-  me.tank = { x: random(width), y: random(height), a: random(2 * PI), spin: 0 };
+  my.tank = { x: random(width), y: random(height), a: random(2 * PI), spin: 0 };
 
   // hosting can change mid-game so every client subscribes, and then checks if it is host on every event
   partySubscribe("createBullet", onCreateBullet);
@@ -70,36 +70,36 @@ function onCreateBullet(b) {
 function moveTank() {
   // forward
   if (keyIsDown(87) /*w*/) {
-    me.tank.x += sin(me.tank.a) * 3;
-    me.tank.y -= cos(me.tank.a) * 3;
+    my.tank.x += sin(my.tank.a) * 3;
+    my.tank.y -= cos(my.tank.a) * 3;
   }
 
   // backward
   if (keyIsDown(83) /*s*/) {
-    me.tank.x += sin(me.tank.a) * -1;
-    me.tank.y -= cos(me.tank.a) * -1;
+    my.tank.x += sin(my.tank.a) * -1;
+    my.tank.y -= cos(my.tank.a) * -1;
   }
 
-  if (keyIsDown(65) /*a*/) me.tank.a -= radians(2);
-  if (keyIsDown(68) /*d*/) me.tank.a += radians(2);
+  if (keyIsDown(65) /*a*/) my.tank.a -= radians(2);
+  if (keyIsDown(68) /*d*/) my.tank.a += radians(2);
 
   for (const bullet of shared.bullets) {
-    if (dist(bullet.x, bullet.y, me.tank.x, me.tank.y) < 15) {
-      me.tank.spin = 0.4;
+    if (dist(bullet.x, bullet.y, my.tank.x, my.tank.y) < 15) {
+      my.tank.spin = 0.4;
     }
   }
 
-  me.tank.spin *= 0.98;
-  me.tank.a += me.tank.spin;
+  my.tank.spin *= 0.98;
+  my.tank.a += my.tank.spin;
 }
 
 function keyPressed() {
   if (key === " ") {
     partyEmit("createBullet", {
-      x: me.tank.x + sin(me.tank.a) * 16,
-      y: me.tank.y - cos(me.tank.a) * 16,
-      dX: sin(me.tank.a) * 6,
-      dY: -cos(me.tank.a) * 6,
+      x: my.tank.x + sin(my.tank.a) * 24,
+      y: my.tank.y - cos(my.tank.a) * 24,
+      dX: sin(my.tank.a) * 8,
+      dY: -cos(my.tank.a) * 8,
     });
   }
 
@@ -123,7 +123,7 @@ function drawTank(tank) {
   rectMode(CENTER);
   translate(tank.x, tank.y);
   rotate(tank.a);
-  rect(0, 0, 30, 30);
+  rect(0, 0, 32, 32);
   rect(0, -20, 5, 5);
   pop();
 }
