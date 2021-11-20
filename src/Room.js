@@ -37,9 +37,6 @@ export class Room {
     this._connect();
   }
 
-  // @todo #myRecord is a Record() and #record is a ds.record
-  // this is confusing, make less confusing
-
   async _connect() {
     await this.#client.whenReady();
     const connectRoomData = async () => {
