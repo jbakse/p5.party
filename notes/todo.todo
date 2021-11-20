@@ -1,18 +1,32 @@
-I wrote a custome merge function in Record, but maybe it would be better to use a library?
 
-[Lodash.merge](https://lodash.com/docs/#merge)
+Feature Requests / Enhancements
 
-mergeWidth should be flexible enough to add debug reporting and customize behavior
-[Lodash.mergeWidth](https://lodash.com/docs/#mergeWith)
+-	Room
+	--	make debug view opt in
+	--	add ping to debug view
+	-- 	add a way to clear all the shared records
+		more broadly, a full reset for rooms or apps would be good
+		during development having stale data stick around can be confusing
+		reloading a js program usually restarts it from 0, but not when you have data hanging out on the back end.
+		it could be a common pattern to have `setup->if host->reset room->init room`
+		might even automatically reset the room if its empty (not the persistant worlds question)
+		
+- 	Record 
 
-might be worth compairing the merge function to
-https://github.com/deepstreamIO/deepstream.io/blob/892c0fea1b348cc5152e3b75cf19e3241ece3edc/src/utils/utils.ts#L77
+- 	Client
+	- 	reconnect after page reload
+		consider cacheing random id in _session_ storage so reloads can reconnect as same client
 
-to see how the approaches differ, if one is better
 
 
-# NOW
-In the participant code...
+-	Branch - Push Improvements
+	--	config auto push or manual
+		I'm not sure if this would be useful at all?
+	-- 	config record push debounce
+		Again, not sure if this would work?
+		The thought here is it might be good to let code make lots of little changes, but not send them until the work is done.
+		Especially in a case where the same value might get updated many times in a row. e.g. incrementing the score could happen a lot in a single draw, but we only need to send the final version
+		
 
 Feature Requests / Enhancements
 
