@@ -10,14 +10,14 @@ let stats;
 let shared, my, participants;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "tanks", "main");
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "tanks_emit", "main");
   shared = partyLoadShared("shared");
   my = partyLoadMyShared();
   participants = partyLoadParticipantShareds();
 }
 
 function setup() {
-  createCanvas(400, 400).parent("canvas-wrap");
+  createCanvas(500, 400).parent("canvas-wrap");
   stats = new StatTracker();
 
   if (partyIsHost()) {
