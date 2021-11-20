@@ -1,6 +1,8 @@
-I considred using the symmetry npm package to patch Record.#shared with incoming data.
-After some experimenting, I switched creating a custom function to patch in place.
-These notes are thoughts on what changes would have been needed to get symmetry to work for this use case.
+2021.11.19
+
+You can probably delete this note after a while, if no reason to go back to symetry crops up.
+
+I considred using the symmetry npm package to patch Record.#shared with incoming data. After some experimenting, I switched creating a custom function to patch in place. These notes are thoughts on what changes would have been needed to get symmetry to work for this use case.
 
 # patch in place
 

@@ -1,6 +1,6 @@
-The identity bug. AKA The not-equal bug.
+Fixed as of 2021.11.19
 
-# The Bug.
+# The identity bug. AKA The not-equal bug.
 
 When you change a property of an object in the shared object, it is often (always?) replaced with another object with the same values.
 
@@ -58,8 +58,8 @@ This isn't just two different proxy objects being made of the same data. There a
 const s1 = shared.sprites[0]; // get a reference to shared data
 s1.animal = "bat"; // mutate shared data
 // change is noted and synced
-// shared.sprites[0] is replaced by new clone with new data. s1 is now an "old" clone
-// s1.animal doesn't get updated, but doesn't NEED to be in the SIMPLEST cases because s1 was updated by the actual assignment before the sync even happened
+// shared.sprites[0] is replaced by new clone with the new data. s1 is now an "old" clone
+// s1.animal doesn't get updates anymore. future assignments to shared.sprites[0] won't show upon s1 though!
 s1.name = "barry"; // mutate shared data
 // change is noted and synced: even though s1 is and old clone, it still sends changes just fine (but won't receive them)
 ```
@@ -73,9 +73,22 @@ https://github.com/Two-Screen/symmetry/
 https://github.com/AsyncBanana/microdiff
 https://news.ycombinator.com/item?id=29130661
 
+# Original
+
+This was the original code for updating Record.#shared when the bug above was identified. It wipes out everying in #shared and then copies everything from data in. This replaced even unchanged things even unchanged things with duplicates. This worked surprisingly well! We built all the initial demos on this. But leads to the idenity bug.
+
+```javascript
+for (const key in this.#shared) {
+  delete this.#shared[key];
+}
+for (const key in data) {
+  this.#shared[key] = data[key];
+}
+```
+
 # Second Try
 
-This was the second version, using the symmetry package to generate and apply a patch. to get symmetry to work would take changing its internals to patch-in-place and ultimately it looked like a hand rolled solution would be better.
+This was the second version, using the symmetry package to generate and apply a patch. It showed promise, but to get everything working using symmetry, i had to start chaning its internals. Symmetry has a copy-on-write approach and we need a patch-in-place and ultimately it looked like a hand rolled solution would be better.
 
 ```javascript
 console.log("this: shared", this.#shared);
@@ -90,16 +103,10 @@ if (p === "reset")
 if (typeof p === "object") applyPatch(this.#shared, p, true);
 ```
 
-# Original
+# Third try
 
-This was the original code for updating Record.#shared. It wipes out everying in #shared and then copies
-everything from data in. This replaced even unchanged things even unchanged things with duplicates. This worked surprisingly well! We built all the initial demos on this. But leads to the idenity bug.
+As of 2021.11.19, Record isusing hand rolled object merge and it addresses the bug pretty well.
 
-```javascript
-for (const key in this.#shared) {
-  delete this.#shared[key];
-}
-for (const key in data) {
-  this.#shared[key] = data[key];
-}
-```
+# Future
+
+I'm considering replacing the hand rolled one with lodashs merge, on the theory that they are better programmers than me. :)
