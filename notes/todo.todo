@@ -1,36 +1,75 @@
-I wrote a custome merge function in Record, but maybe it would be better to use a library?
 
-[Lodash.merge](https://lodash.com/docs/#merge)
+Feature Requests / Enhancements
 
-mergeWidth should be flexible enough to add debug reporting and customize behavior
-[Lodash.mergeWidth](https://lodash.com/docs/#mergeWith)
+-	Room
+	--	make debug view opt in
+	--	add ping to debug view
+	-- 	add a way to clear all the shared records
+		more broadly, a full reset for rooms or apps would be good
+		during development having stale data stick around can be confusing
+		reloading a js program usually restarts it from 0, but not when you have data hanging out on the back end.
+		it could be a common pattern to have `setup->if host->reset room->init room`
+		might even automatically reset the room if its empty (not the persistant worlds question)
+		
+- 	Record 
 
-might be worth compairing the merge function to
-https://github.com/deepstreamIO/deepstream.io/blob/892c0fea1b348cc5152e3b75cf19e3241ece3edc/src/utils/utils.ts#L77
+- 	Client
+	- 	reconnect after page reload
+		consider cacheing random id in _session_ storage so reloads can reconnect as same client
 
-to see how the approaches differ, if one is better
 
 
-# NOW
-In the participant code...
+-	Branch - Push Improvements
+	--	config auto push or manual
+		I'm not sure if this would be useful at all?
+	-- 	config record push debounce
+		Again, not sure if this would work?
+		The thought here is it might be good to let code make lots of little changes, but not send them until the work is done.
+		Especially in a case where the same value might get updated many times in a row. e.g. incrementing the score could happen a lot in a single draw, but we only need to send the final version
+		
 
-Sometimes getting a Invalid state transition 
-```
-Invalid state transition.
-Details: {"transition":13,"state":"DELETING"} 
-History: 
-	From - to LOADING_OFFLINE via -
-	From LOADING_OFFLINE to SUBSCRIBING via 23
-	From SUBSCRIBING to READY via 4
-	From READY to DELETING via 9
-```
+-	Branch - Participants
+	-- expose participant count
+	-- expose participant id list 
+	-- expose my id
 
-Get you head back in the game and review the code paths for getMyShared and getParticipanShared
 
-Do they create and delete things correctly?
-Do they wait FULLY for the records in participants to be ready?
-I THINK NO.
-All shared objects SHOULD be loaded and initialized BEFORE setup is called, but i don't think participant array currently is fully ready.
+
+# Contribution Project Ideas
+--	Server Admin Panel. Show connected apps/rooms/guests + stats.
+--	Client Admin Panel. Improve
+--	Example Games + Apps
+--	Video Tutorials
+--	Dorkshop
+-- 	Eleventy Docs. Migrate docs to .md/11ty. Visual design.
+
+
+
+# API Changes
+--	rename? partyGetParticipantShared() -> partyGetMyShared()
+--	rename? participants -> guests
+
+
+# Notes from from code-review
+-- 	Why does the room create a participant record automatically?
+	- :Could this partyGetMyShared() just be a call like partyGetShared(myID)
+
+
+
+
+# Improvements
+
+-- 	merging incoming data with shared object
+	: I wrote a custom merge function in Record, but maybe it would be better to use a library?
+	[Lodash.merge](https://lodash.com/docs/#merge)
+	mergeWidth should be flexible enough to add debug reporting and customize behavior
+	[Lodash.mergeWidth](https://lodash.com/docs/#mergeWith)
+	might be good to just study their merge and compare to the current party implementation
+	might be worth also studying the merge function in deepstream
+	https://github.com/deepstreamIO/deepstream.io/blob/892c0fea1b348cc5152e3b75cf19e3241ece3edc/src/utils/utils.ts#L77
+	to see how the approaches differ, if one is better
+
+
 
 
 
@@ -39,75 +78,42 @@ All shared objects SHOULD be loaded and initialized BEFORE setup is called, but 
 # Tooling 
 
 - upgrade webpack? maybe jump to esbuild and/or vite?
-
 - consider providing min and unmin versions
+
 	https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
-	- compare to other p5 libraries
+	compare to other p5 libraries
 
-- can bake package version into code somehow?
+--	can bake package version into code somehow?
+	I frequently think it would be nice if dist/lib.js had a comment at the top like /* p5.party v1.2.3 */
+	When you copy a dep into a project (rather than using npm or something) its easy forget what version it is
 
-.- why is version on npm up to date, only 50k, and missing css? also dist was empty
 
-# Bugs
-- you currently need to call getParticipantShared every time you use it to ensure you have an update to date list
-- make this work more like shared where i replace contents keeping references pointting the right spot
 
-	
-# Style / Naming
 
-# Enhancements
 
-- Record 
 
-- Client
-	- consider cacheing random id in _session_ storage so reloads can reconnect as same client
-	
-- Room
-	- make debug view opt in
-	- add ping to debug view?
 	
 	
 # Docs
-- also, while possibly this same library could be used for long term server persistance, for now limit the scope to session-longevity multiplayer
+-	merging_is_hard
+	and party can't do it for you
+	create conceptual doc on why merging is hard, strategies to avoid conflicts
+	started in merging_is_hard.md
+
 	
-# Questions
+# Design Questions
+-	Persistant Worlds?
+	deeptstream stores state locally in process memory, and can be connected to data store
+	currently it does not connect to a data store, and data will be lost on server/process restart
+	theoretically, this library could be used for prototyping persitent worlds right now, and with a data store would be even better, but the as a design decision we limit the scope to single-session-multiplayer for now
+
 
 # Tips
 
 # Examples
 
-# Requests
-- add a way to clear all the shared records in a room
 
-# Branch - Subscribe
 
---- get shared object changed messages
 
-# Branch - Push Improvements
 
-- config auto push or not on records
-- config record push debounce
-
-# Branch - Participants
-
---- expose participant count
---- expose participant list
---- expose a record of info for each participant
-
-# Branch - Info
-- using vue?
-- debug view?
-- room view?
-	- show room records
-	- show room participants
-- dashboard view?
-	- show apps, rooms, records, participants
-
-# Branch - Deep Update
-- check this out, in order to make record support sharing any property of the record (not just .shared)
-	-- Doesn't work because of the `shortcut reference` problem
-	- 1) watch the whole record instead of shared
-	- 2) return the part of the whole record you want to expose, or that is requested
-	- 3) done!
-- ?Do a deep nested update of .shared (or whole record) so that shortcut references will still work?
-	-- would solve the `shortcut reference` problem
+	
