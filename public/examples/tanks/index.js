@@ -1,5 +1,4 @@
 /* global uuidv4 */
-/* global partyEmit partySubscribe*/
 
 class Rect {
   constructor(l = 0, t = 0, w = 0, h = 0) {
@@ -23,12 +22,12 @@ function pointInRect(p, r) {
 
 const bounds = new Rect(0, 0, 400, 400);
 
-let shared, send, me, participants;
+let shared, new_bullets, me, participants;
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "tanks", "main");
   shared = partyLoadShared("shared");
-  send = partyLoadShared("send");
+  new_bullets = partyLoadShared("send");
   me = partyLoadMyShared();
   participants = partyLoadParticipantShareds();
 }
@@ -40,28 +39,23 @@ function setup() {
 
   if (partyIsHost()) {
     shared.bullets = [];
-    send.bullets = [];
+    new_bullets.bullets = [];
   }
-  me.tank = { x: 100, y: 100, a: 0 };
 
-  partySubscribe("createBullet", (d) => {
-    if (partyIsHost()) {
-      console.log("partySubscribe", d);
-    }
-  });
+  me.tank = { x: 100, y: 100, a: 0 };
 }
 
 function draw() {
   checkKeys();
-  showData();
   if (partyIsHost()) stepGame();
   drawScene();
+  showData();
 }
 
 function stepGame() {
-  // copy sent bullets to main bullet array
-  while (send.bullets.length) {
-    shared.bullets.push(send.bullets.shift());
+  // move sent bullets to main bullet array
+  while (new_bullets.bullets.length) {
+    shared.bullets.push(new_bullets.bullets.shift());
   }
 
   // step bullets
@@ -75,6 +69,7 @@ function showData() {
     "\t"
   );
 }
+
 function drawScene() {
   background("#cc6666");
   shared.bullets.forEach(drawBullet);
@@ -110,17 +105,17 @@ function drawBullet(b) {
 
 function keyPressed() {
   if (key === " ") {
-    send.bullets.push({
+    new_bullets.bullets.push({
       x: me.tank.x,
       y: me.tank.y,
       dX: sin(me.tank.a) * 6,
       dY: -cos(me.tank.a) * 6,
     });
-    partyEmit("createBullet", "hell yeah");
   }
 
   return false;
 }
+
 function checkKeys() {
   // forward
   if (keyIsDown(87) /*w*/) {
