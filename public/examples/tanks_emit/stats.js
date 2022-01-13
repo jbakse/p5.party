@@ -1,7 +1,7 @@
 /* global uuidv4 */
 /* global my */
-/* global partySubscribe partyEmit */
 
+/* exported StatTracker */
 class StatTracker {
   #id;
   #frames;
@@ -17,6 +17,7 @@ class StatTracker {
     partySubscribe("ping", this.onPing.bind(this));
     partySubscribe("pong", this.onPong.bind(this));
   }
+  // eslint-disable-next-line
   onPing(data) {
     if (partyIsHost()) {
       partyEmit("pong", data);

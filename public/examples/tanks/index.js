@@ -8,26 +8,21 @@ class Rect {
   }
 }
 
-/* exported Point */
-class Point {
-  constructor(x = 0, y = 0) {
-    this.x = x;
-    this.y = y;
-  }
-}
-
 function pointInRect(p, r) {
   return p.x > r.l && p.x < r.l + r.w && p.y > r.t && p.y < r.t + r.h;
 }
 
 const bounds = new Rect(0, 0, 400, 400);
 
-let shared, new_bullets, me, participants;
+let shared;
+let new_bullets;
+let me;
+let participants;
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "tanks", "main");
   shared = partyLoadShared("shared");
-  new_bullets = partyLoadShared("send");
+  new_bullets = partyLoadShared("new_bullets");
   me = partyLoadMyShared();
   participants = partyLoadParticipantShareds();
 }
@@ -111,8 +106,6 @@ function keyPressed() {
       dX: sin(me.tank.a) * 6,
       dY: -cos(me.tank.a) * 6,
     });
-
-    partyEmit("createBullet", "hell yeah");
   }
 
   return false;

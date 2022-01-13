@@ -1,7 +1,9 @@
 // p5.party experimental
-/* global partyEmit partySubscribe*/
 
 // project utils
+
+// @todo, witch to modules, would clean up global declartions below
+
 /* global Rect pointInRect */
 /* global StatTracker */
 /* global debugShow */
@@ -26,7 +28,7 @@ function setup() {
 
   my.tank = { x: random(width), y: random(height), a: random(2 * PI), spin: 0 };
 
-  // hosting can change mid-game so every client subscribes, and then checks if it is host on every event
+  // hosting can change mid-game so every client subscribes, and then checks if it is host on every message
   partySubscribe("createBullet", onCreateBullet);
 }
 
