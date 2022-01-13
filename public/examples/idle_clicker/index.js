@@ -35,7 +35,7 @@ function pickRandom(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-let names = [
+const names = [
   "Cookie",
   "Potato",
   "Lemon",

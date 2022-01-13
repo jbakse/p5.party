@@ -41,8 +41,9 @@ function setup() {
 
   //button for sending messsages
   sendButton = document.getElementById("sendButton");
+  // @todo move to addEventListener below? onkeypress is deprecated
   sendButton.onclick = sendMessageToLog;
-  sendButton.onkeypress = addEventListener("keyup", function event(e) {
+  sendButton.onkeypress = addEventListener("keyup", (e) => {
     if (e.key === "Enter") {
       sendMessageToLog();
     }
@@ -72,7 +73,7 @@ function onChange() {
 }
 
 function addMessage(text) {
-  let message = document.createElement("div");
+  const message = document.createElement("div");
   message.innerHTML = text;
   chatLog.append(message);
   chatLog.scrollTop = chatLog.scrollHeight;
@@ -87,7 +88,7 @@ function spliceRandom(array) {
   return array.splice(Math.floor(Math.random() * array.length), 1);
 }
 
-let animalNames = [
+const animalNames = [
   "Cat",
   "Moose",
   "Zebra",

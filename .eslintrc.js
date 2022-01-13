@@ -15,7 +15,13 @@ module.exports = {
   },
   globals: {},
   rules: {
-    "no-unused-vars": ["error", { vars: "all", args: "none" }],
+    "no-unused-vars": [
+      "error",
+      {
+        vars: "all",
+        args: "none",
+      },
+    ],
     "no-unused-expressions": [
       "error",
       { allowShortCircuit: true, allowTernary: true },
@@ -71,7 +77,7 @@ module.exports = {
     "new-cap": "error", //	Require constructor names to begin with a capital letter
     "no-alert": "error", //	Disallow the use of `alert`, `confirm`, and `prompt`
     "no-array-constructor": "error", //	Disallow `Array` constructors
-    "no-bitwise": "error", //	Disallow bitwise operators
+    // "no-bitwise": "error", //	Disallow bitwise operators
     "no-caller": "error", //	Disallow the use of `arguments.caller` or `arguments.callee`
     "no-confusing-arrow": "error", //	Disallow arrow functions where they could be confused with comparisons
     "no-console": "error", //	Disallow the use of `console`
@@ -97,7 +103,7 @@ module.exports = {
     "no-lonely-if": "error", //	Disallow `if` statements as the only statement in `else` blocks
     "no-loop-func": "error", //	Disallow function declarations that contain unsafe references inside loop statements
     "no-magic-numbers": "off", //	Disallow magic numbers
-    "no-mixed-operators": "error", //	Disallow mixed binary operators
+    // "no-mixed-operators": "error", //	Disallow mixed binary operators
     "no-multi-assign": "error", //	Disallow use of chained assignment expressions
     "no-multi-str": "error", //	Disallow multiline strings
     "no-negated-condition": "error", //	Disallow negated conditions
@@ -108,7 +114,7 @@ module.exports = {
     "no-new-wrappers": "error", //	Disallow `new` operators with the `String`, `Number`, and `Boolean` objectsstring literals
     "no-octal-escape": "error", //	Disallow octal escape sequences in string literals
     "no-param-reassign": "error", //	Disallow reassigning `function` parameters
-    "no-plusplus": "error", //	Disallow the unary operators `++` and `--`
+    // "no-plusplus": "error", //	Disallow the unary operators `++` and `--`
     "no-proto": "error", //	Disallow the use of the `__proto__` property
     "no-restricted-exports": "error", //	Disallow specified names in exports
     "no-restricted-globals": "error", //	Disallow specified global variables
@@ -119,7 +125,7 @@ module.exports = {
     "no-return-await": "error", //	Disallow unnecessary `return await`
     "no-script-url": "error", //	Disallow `javascript:` urls
     "no-sequences": "error", //	Disallow comma operators
-    "no-shadow": "error", //	Disallow variable declarations from shadowing variables declared in the outer scoperestricted names
+    // "no-shadow": "error", //	Disallow variable declarations from shadowing variables declared in the outer scoperestricted names
     // "no-ternary": "error", //	Disallow ternary operators
     "no-throw-literal": "error", //	Disallow throwing literals as exceptions
     "no-undef-init": "error", //	Disallow initializing variables to `undefined`

@@ -14,7 +14,7 @@ let shared;
 
 // local state
 let mode = "move";
-const camera = { x: 0, y: 0 };
+const mainCamera = { x: 0, y: 0 };
 const localPlayerData = new WeakMap();
 
 // message
@@ -23,7 +23,7 @@ let message_input;
 let messageTimeout;
 
 // action message
-let actionMessage = {
+const actionMessage = {
   string: "",
   row: 0,
   column: 0,
@@ -34,7 +34,7 @@ let font;
 let p8map, p8char;
 
 // p8 assets
-let map;
+let floorMap;
 let mapFlags;
 let sprites;
 
@@ -62,7 +62,7 @@ function setup() {
   const p = [...defaultPalette];
   p[5] = "rgba(0,0,0,0)";
   const gfx = gfxFromP8(p8map, p);
-  map = mapFromP8(p8map, gfx);
+  floorMap = mapFromP8(p8map, gfx);
   mapFlags = mapFlagsFromP8(p8map);
   sprites = spritesFromSheet(gfxFromP8(p8char, p));
 
@@ -129,7 +129,7 @@ function step() {
 }
 
 function moveCamera(x, y, max) {
-  movePoint(camera, { x, y }, max);
+  movePoint(mainCamera, { x, y }, max);
 }
 
 function movePoint(p1, p2, max = Infinity) {
@@ -172,7 +172,7 @@ function drawGame() {
 
   // set camera transform
   scale(SCALEX, SCALEY);
-  translate(-camera.x, -camera.y);
+  translate(-mainCamera.x, -mainCamera.y);
   translate(
     (VIEW_WIDTH - 1) * 0.5 * TILE_SIZE,
     (VIEW_HEIGHT - 1) * 0.5 * TILE_SIZE
@@ -184,8 +184,8 @@ function drawGame() {
 
   // draw map
   fill("#5E574F");
-  rect(0, 0, map.width, map.height);
-  image(map, 0, 0);
+  rect(0, 0, floorMap.width, floorMap.height);
+  image(floorMap, 0, 0);
 
   // draw wall flags
   // fill("red");
@@ -209,11 +209,11 @@ function drawGame() {
       const playerSprite =
         sprites[Math.floor(p.avatarId / 4) * 4 + frame][p.avatarId % 4];
 
-      if (!localP.flipX) {
-        image(playerSprite, 0, bounce + shift, TILE_SIZE, TILE_SIZE);
-      } else {
+      if (localP.flipX) {
         scale(-1, 1);
         image(playerSprite, 0, bounce + shift, -TILE_SIZE, TILE_SIZE);
+      } else {
+        image(playerSprite, 0, bounce + shift, TILE_SIZE, TILE_SIZE);
       }
     }
     pop();
@@ -313,8 +313,6 @@ function move(x, y) {
   if (!(mapFlags[col][row] & WALL_FLAG)) {
     me.col = col;
     me.row = row;
-
-    return;
   }
 }
 
@@ -341,7 +339,6 @@ function keyReleased() {
   if (startMessageOnRelease) {
     startMessageOnRelease = false;
     startMessage();
-    return;
   }
 }
 
@@ -395,10 +392,7 @@ const defaultPalette = [
   "#FBCDA8", // peach
 ];
 
-function gfxFromP8(s, palette) {
-  // default palette
-  palette = palette || defaultPalette;
-
+function gfxFromP8(s, palette = defaultPalette) {
   // find __gfx__ strings
   const gfx_s = s.slice(s.indexOf("__gfx__") + 1, s.indexOf("__gff__"));
 
@@ -433,15 +427,15 @@ function mapDataFromP8(s) {
   // shared portion of __gfx__ is in different format than __map__ data
   // need to join pairs of lines
   // need to flip nibble order "abcd" -> "badc"
-  function reversePairs(s) {
+  function reversePairs(string) {
     let out = "";
-    for (let i = 0; i < s.length; i += 2) {
-      out += s[i + 1] + s[i];
+    for (let i = 0; i < string.length; i += 2) {
+      out += string[i + 1] + string[i];
     }
     return out;
   }
 
-  let map_ext_s = shared_s.reduce((out, value, index, _in) => {
+  const map_ext_s = shared_s.reduce((out, value, index, _in) => {
     if (index % 2 === 0) {
       out.push(reversePairs(_in[index] + _in[index + 1]));
     }
@@ -454,16 +448,15 @@ function mapDataFromP8(s) {
   return map_s;
 }
 
-function mapFromP8(s, gfx) {
-  gfx = gfx || gfxFromP8(s);
+function mapFromP8(s, gfx = gfxFromP8(s)) {
   const map_s = mapDataFromP8(s);
   const map = createImage(128 * 8, map_s.length * 8);
 
   // blit tiles into map
   for (let y = 0; y < map_s.length; y++) {
     for (let x = 0; x < 128; x++) {
-      let sprite_x = parseInt(map_s[y][x * 2 + 1], 16);
-      let sprite_y = parseInt(map_s[y][x * 2], 16);
+      const sprite_x = parseInt(map_s[y][x * 2 + 1], 16);
+      const sprite_y = parseInt(map_s[y][x * 2], 16);
       if (sprite_x === 0 && sprite_y === 0) continue;
       map.copy(gfx, sprite_x * 8, sprite_y * 8, 8, 8, x * 8, y * 8, 8, 8);
     }
@@ -484,8 +477,8 @@ function mapFlagsFromP8(s) {
   for (let x = 0; x < 128; x++) {
     flags[x] = [];
     for (let y = 0; y < map_s.length; y++) {
-      let sprite_x = parseInt(map_s[y][x * 2 + 1], 16);
-      let sprite_y = parseInt(map_s[y][x * 2], 16);
+      const sprite_x = parseInt(map_s[y][x * 2 + 1], 16);
+      const sprite_y = parseInt(map_s[y][x * 2], 16);
       const flags_index = (sprite_y * 16 + sprite_x) * 2;
       const f_int = parseInt(flags_hex.substr(flags_index, 2), 16);
       flags[x][y] = f_int;
@@ -515,21 +508,21 @@ function randomInt(min, max) {
   return floor(random(min, max));
 }
 
-function rateLimit(func, rate) {
-  var timeout;
-  return function () {
-    if (!timeout) func.apply(this, arguments);
-    clearTimeout(timeout);
-    timeout = setTimeout(() => (timeout = null), rate);
-  };
-}
+// function rateLimit(func, rate) {
+//   let timeout;
+//   return function () {
+//     if (!timeout) func.apply(this, arguments);
+//     clearTimeout(timeout);
+//     timeout = setTimeout(() => (timeout = null), rate);
+//   };
+// }
 
 ////////////////////////////////////////////////////////
 // BROWSER
 
 window.addEventListener(
   "keydown",
-  function (e) {
+  (e) => {
     // arrow keys
     if ([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
       e.preventDefault();

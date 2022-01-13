@@ -15,5 +15,16 @@ module.exports = {
     partySubscribe: "readonly",
     partyEmit: "readonly",
   },
-  rules: {},
+  rules: {
+    "no-unused-vars": [
+      "error",
+      {
+        vars: "all",
+        args: "none",
+        varsIgnorePattern:
+          "preload|setup|draw|keyPressed|keyReleased|keyTyped|mouseMoved|mouseDragged|mousePressed|mouseReleased|mouseClicked|doubleClicked|mouseWheel|touchStarted|touchMoved|touchEnded",
+      },
+    ],
+    "no-console": 0,
+  },
 };

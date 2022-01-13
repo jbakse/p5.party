@@ -12,7 +12,7 @@ function preload() {
 }
 
 function setup() {
-  let canvas = createCanvas(400, 400);
+  createCanvas(400, 400);
   chatLog = document.getElementById("chatLog");
   chatLog.style.height = height - 60 + "px";
   chatLog.style.width = width + "px";
@@ -27,7 +27,7 @@ function setup() {
   sendButton.position(messageInput.x + messageInput.width, messageInput.y - 12);
   sendButton.size(AUTO, 24);
   sendButton.mousePressed(sendMessageToLog);
-  sendButton.onkeypress = addEventListener("keyup", function event(e) {
+  sendButton.onkeypress = addEventListener("keyup", (e) => {
     if (e.key === "Enter") {
       sendMessageToLog();
     }
@@ -35,15 +35,15 @@ function setup() {
 
   //name of the user running this instance
   userName = generateName();
-  if (!shared.log) {
-    shared.log = shared.log + "\n" + userName + " has entered the chat";
-  } else {
+  if (shared.log) {
     shared.log = "Weclome to chatLog, " + userName + "!";
+  } else {
+    shared.log = shared.log + "\n" + userName + " has entered the chat";
   }
 }
 
 function draw() {
-  if (shared.log != chatHistory) {
+  if (shared.log !== chatHistory) {
     chatLog.innerHTML = shared.log;
     chatLog.scrollTop = chatLog.scrollHeight;
     chatHistory = shared.log;
@@ -69,7 +69,7 @@ function pickRandom(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-let animalNames = [
+const animalNames = [
   "Cat",
   "Moose",
   "Zebra",

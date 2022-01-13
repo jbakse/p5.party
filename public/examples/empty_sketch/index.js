@@ -11,6 +11,7 @@ function preload() {
 
 function setup() {
   createCanvas(400, 400);
+  console.log(shared);
 }
 
 function draw() {

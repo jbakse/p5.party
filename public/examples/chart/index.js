@@ -48,7 +48,7 @@ function setup() {
 }
 
 function createItem() {
-  let label = document.getElementById("create-item-label").value;
+  const label = document.getElementById("create-item-label").value;
   if (!label) return;
   document.getElementById("create-item-label").value = "";
   shared.items.push(initItem(new Point(100, 100), "#ffff66", label));

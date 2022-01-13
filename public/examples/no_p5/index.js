@@ -36,7 +36,7 @@ async function init() {
     shared.text = input.value;
   };
   setInterval(() => {
-    if (input.value != shared.text) input.value = shared.text;
+    if (input.value !== shared.text) input.value = shared.text;
   }, 100);
 
   // clean up on exit

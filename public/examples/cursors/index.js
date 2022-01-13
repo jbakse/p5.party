@@ -1,10 +1,8 @@
 let me;
 let participants;
-let shared;
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "cursors", "main1");
-  shared = partyLoadShared("shared");
   me = partyLoadMyShared();
   participants = partyLoadParticipantShareds();
 }

@@ -71,13 +71,13 @@ function draw() {
 }
 
 function tossDart() {
-  let precision = map(barY, 300, 409, 0, 200);
+  const precision = map(barY, 300, 409, 0, 200);
 
-  let a = random() * 2 * PI;
-  let r = precision * sqrt(random());
+  const a = random() * 2 * PI;
+  const r = precision * sqrt(random());
 
-  let x = r * cos(a) + 200;
-  let y = r * sin(a) + 200;
+  const x = r * cos(a) + 200;
+  const y = r * sin(a) + 200;
 
   shared.x = x;
   shared.y = y;
