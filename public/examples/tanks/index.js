@@ -1,5 +1,4 @@
-/* global uuidv4 */
-
+/* exported Rect */
 class Rect {
   constructor(l = 0, t = 0, w = 0, h = 0) {
     this.l = l;
@@ -9,6 +8,7 @@ class Rect {
   }
 }
 
+/* exported Point */
 class Point {
   constructor(x = 0, y = 0) {
     this.x = x;
