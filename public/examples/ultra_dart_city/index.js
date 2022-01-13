@@ -65,7 +65,8 @@ function draw() {
 
   // darts thrown
   fill(random(255), random(255), random(255));
-  if (shared.x && shared.y != 0) {
+  //@todo below line looks weird
+  if (shared.x && shared.y !== 0) {
     ellipse(shared.x, shared.y, 10, 10);
   }
 }
