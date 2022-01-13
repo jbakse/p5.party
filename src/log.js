@@ -23,5 +23,6 @@ export const error = makeLogger(
 );
 
 function makeLogger(type, prefix, style) {
+  // eslint-disable-next-line
   return console[type].bind(window.console, `%c${prefix}`, style);
 }

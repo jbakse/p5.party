@@ -1,5 +1,8 @@
 /* eslint-env node */
 module.exports = {
+  parserOptions: {
+    sourceType: "script",
+  },
   globals: {
     party: "readonly",
     partyConnect: "readonly",
@@ -9,30 +12,8 @@ module.exports = {
     partyIsHost: "readonly",
     partyLoadMyShared: "readonly",
     partyLoadParticipantShareds: "readonly",
-    select: "readonly",
-    selectAll: "readonly",
-    removeElements: "readonly",
-    changed: "readonly",
-    input: "readonly",
-    createDiv: "readonly",
-    createP: "readonly",
-    createSpan: "readonly",
-    createImg: "readonly",
-    createA: "readonly",
-    createSlider: "readonly",
-    createButton: "readonly",
-    createCheckbox: "readonly",
-    createSelect: "readonly",
-    createRadio: "readonly",
-    createColorPicker: "readonly",
-    createInput: "readonly",
-    createFileInput: "readonly",
-    createVideo: "readonly",
-    createAudio: "readonly",
-    createCapture: "readonly",
-    createElement: "readonly",
+    partySubscribe: "readonly",
+    partyEmit: "readonly",
   },
-  rules: {
-    "no-unused-vars": "off",
-  },
+  rules: {},
 };

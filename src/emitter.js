@@ -6,7 +6,7 @@
 export const createEmitter = () => ({
   events: {},
   emit(event, ...args) {
-    for (let i of this.events[event] || []) {
+    for (const i of this.events[event] || []) {
       i(...args);
     }
   },

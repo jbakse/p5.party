@@ -1,23 +1,26 @@
 /* eslint-env node */
 module.exports = {
   root: true,
+  extends: ["eslint:recommended", "p5js"],
   env: {
     browser: true,
-    es6: true,
+    es6: true, // allows es6 globals
   },
-  extends: ["eslint:recommended", "p5js"],
-  globals: {
-    setup: "readonly",
-    Atomics: "readonly",
-    SharedArrayBuffer: "readonly",
-  },
-  parser: "@babel/eslint-parser",
   parserOptions: {
-    requireConfigFile: false, // I'm not sure if this should be false, or if a babel config should be set up. see: https://github.com/babel/babel/tree/main/eslint/babel-eslint-parser
-    ecmaVersion: 11,
-    // SourceType: "module",
+    ecmaVersion: 13, // allows es13 syntax
+    sourceType: "module",
+    ecmaFeatures: {
+      impliedStrict: true,
+    },
   },
+  globals: {},
   rules: {
+    "no-unused-vars": ["error", { vars: "all", args: "none" }],
+    "no-unused-expressions": [
+      "error",
+      { allowShortCircuit: true, allowTernary: true },
+    ],
+
     // Possible Problems
     "array-callback-return": "error",
     "no-await-in-loop": "error",
@@ -49,7 +52,7 @@ module.exports = {
     "dot-notation": "error", //	Enforce dot notation whenever possible
     eqeqeq: "error", //	Require the use of `===` and `!==`
     "func-name-matching": "error", //	Require function names to match the name of the variable or property to which they are assigned
-    "func-names": "error", //	Require or disallow named `function` expressions
+    // "func-names": "error", //	Require or disallow named `function` expressions
     "func-style": "off", //	Enforce the consistent use of either `function` declarations or expressions
     "grouped-accessor-pairs": "error", //	Require grouped accessor pairs in object literals and classes
     "guard-for-in": "error", //	Require `for-in` loops to include an `if` statement
@@ -59,11 +62,11 @@ module.exports = {
     "init-declarations": "off", //	Require or disallow initialization in variable declarations
     "max-classes-per-file": "off", //	Enforce a maximum number of classes per file
     "max-depth": "error", //	Enforce a maximum depth that blocks can be nested
-    "max-lines": "error", //	Enforce a maximum number of lines per file
-    "max-lines-per-function": "error", //	Enforce a maximum number of lines of code in a function
+    // "max-lines": "error", //	Enforce a maximum number of lines per file
+    // "max-lines-per-function": "error", //	Enforce a maximum number of lines of code in a function
     "max-nested-callbacks": "error", //	Enforce a maximum depth that callbacks can be nested
     "max-params": "off", //	Enforce a maximum number of parameters in function definitions
-    "max-statements": "error", //	Enforce a maximum number of statements allowed in function blocks
+    // "max-statements": "error", //	Enforce a maximum number of statements allowed in function blocks
     "multiline-comment-style": "off", //	Enforce a particular style for multiline comments
     "new-cap": "error", //	Require constructor names to begin with a capital letter
     "no-alert": "error", //	Disallow the use of `alert`, `confirm`, and `prompt`
@@ -72,10 +75,10 @@ module.exports = {
     "no-caller": "error", //	Disallow the use of `arguments.caller` or `arguments.callee`
     "no-confusing-arrow": "error", //	Disallow arrow functions where they could be confused with comparisons
     "no-console": "error", //	Disallow the use of `console`
-    "no-continue": "error", //	Disallow `continue` statements
+    // "no-continue": "error", //	Disallow `continue` statements
     "no-div-regex": "error", //	Disallow division operators explicitly at the beginning of regular expressions
-    "no-else-return": "error", //	Disallow `else` blocks after `return` statements in `if` statements
-    "no-empty-function": "error", //	Disallow empty functions
+    // "no-else-return": "error", //	Disallow `else` blocks after `return` statements in `if` statements
+    // "no-empty-function": "error", //	Disallow empty functions
     "no-eq-null": "error", //	Disallow `null` comparisons without type-checking operators
     "no-eval": "error", //	Disallow the use of `eval()`
     "no-extend-native": "error", //	Disallow extending native types
@@ -83,7 +86,7 @@ module.exports = {
     "no-extra-label": "error", //	Disallow unnecessary labels
     "no-floating-decimal": "error", //	Disallow leading or trailing decimal points in numeric literalsglobal variables
     "no-implicit-coercion": "error", //	Disallow shorthand type conversions
-    "no-implicit-globals": "error", //	Disallow declarations in the global scope
+    // "no-implicit-globals": "error", //	Disallow declarations in the global scope
     "no-implied-eval": "error", //	Disallow the use of `eval()`-like methods
     "no-inline-comments": "off", //	Disallow inline comments after code
     "no-invalid-this": "error", //	Disallow `this` keywords outside of classes or class-like objects
@@ -117,13 +120,13 @@ module.exports = {
     "no-script-url": "error", //	Disallow `javascript:` urls
     "no-sequences": "error", //	Disallow comma operators
     "no-shadow": "error", //	Disallow variable declarations from shadowing variables declared in the outer scoperestricted names
-    "no-ternary": "error", //	Disallow ternary operators
+    // "no-ternary": "error", //	Disallow ternary operators
     "no-throw-literal": "error", //	Disallow throwing literals as exceptions
     "no-undef-init": "error", //	Disallow initializing variables to `undefined`
-    "no-undefined": "error", //	Disallow the use of `undefined` as an identifier
-    "no-underscore-dangle": "error", //	Disallow dangling underscores in identifiers
+    // "no-undefined": "error", //	Disallow the use of `undefined` as an identifier
+    // "no-underscore-dangle": "error", //	Disallow dangling underscores in identifiers
     "no-unneeded-ternary": "error", //	Disallow ternary operators when simpler alternatives exist
-    "no-unused-expressions": "error", //	Disallow unused expressions
+    // "no-unused-expressions": "error", //	Disallow unused expressions
     "no-useless-call": "error", //	Disallow unnecessary calls to `.call()` and `.apply()`
     "no-useless-computed-key": "error", //	Disallow unnecessary computed property keys in objects and classes
     "no-useless-concat": "error", //	Disallow unnecessary concatenation of literals or template literals
@@ -134,7 +137,7 @@ module.exports = {
     "no-void": "error", //	Disallow `void` operators
     "no-warning-comments": "error", //	Disallow specified warning terms in comments
     "object-shorthand": "error", //	Require or disallow method and property shorthand syntax for object literals
-    "one-var": "error", //	Enforce variables to be declared either together or separately in functions
+    // "one-var": "error", //	Enforce variables to be declared either together or separately in functions
     "one-var-declaration-per-line": "error", //	Require or disallow newlines around variable declarations
     "operator-assignment": "error", //	Require or disallow assignment operator shorthand where possible
     "prefer-arrow-callback": "error", //	Require using arrow functions for callbacks
@@ -148,16 +151,16 @@ module.exports = {
     "prefer-regex-literals": "error", //	Disallow use of the `RegExp` constructor in favor of regular expression literals
     "prefer-rest-params": "error", //	Require rest parameters instead of `arguments`
     "prefer-spread": "error", //	Require spread operators instead of `.apply()`
-    "prefer-template": "error", //	Require template literals instead of string concatenation
+    // "prefer-template": "error", //	Require template literals instead of string concatenation
     "quote-props": "off", //	Require quotes around object literal property names
     radix: "error", //	Enforce the consistent use of the radix argument when using `parseInt()`
     "require-await": "error", //	Disallow async functions which have no `await` expression
     "require-unicode-regexp": "error", //	Enforce the use of `u` flag on RegExp
-    "sort-imports": "error", //	Enforce sorted import declarations within modules
+    // "sort-imports": "error", //	Enforce sorted import declarations within modules
     "sort-keys": "off", //	Require object keys to be sorted
     "sort-vars": "off", //	Require variables within the same declaration block to be sorted
-    "spaced-comment": "error", //	Enforce consistent spacing after the `//` or `/*` in a comment
-    strict: "error", //	Require or disallow strict mode directives
+    // "spaced-comment": "error", //	Enforce consistent spacing after the `//` or `/*` in a comment
+    // strict: "error", //	Require or disallow strict mode directives
     "symbol-description": "error", //	Require symbol descriptions
     "vars-on-top": "error", //	Require `var` declarations be placed at the top of their containing scope
     yoda: "error", //	Require or disallow "Yoda" conditions

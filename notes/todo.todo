@@ -25,6 +25,8 @@ All shared objects SHOULD be loaded and initialized BEFORE setup is called, but 
 
 # Tooling 
 
+- upgrade webpack? maybe jump to esbuild and/or vite?
+
 - consider providing min and unmin versions
 	https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
 	- compare to other p5 libraries

@@ -1,8 +1,9 @@
 import { createEmitter } from "./emitter";
 import { Record } from "./Record";
 import * as log from "./log";
+
+// eslint-disable-next-line
 import css from "./party_debug.css";
-css;
 
 export class Room {
   #client;
@@ -197,7 +198,7 @@ export class Room {
     if (onlineClients.includes(host)) return;
 
     // pick the first client that is online as the new host
-    let newHost = this.#participants.find((p) => onlineClients.includes(p));
+    const newHost = this.#participants.find((p) => onlineClients.includes(p));
 
     // if we didn't find one, return
     if (!newHost) {
@@ -284,7 +285,7 @@ export class Room {
     for (const name of this.#participants) {
       const shortName = name.substr(-4);
       const host = this.#roomDataRecord.get(`host`) === name ? "host" : "";
-      const missing = !onlineClients.includes(name) ? "missing" : "";
+      const missing = onlineClients.includes(name) ? "" : "missing";
       const me = this.#client.name() === name ? "me" : "";
 
       output += `<div class="participant ${host} ${me} ${missing}">${shortName}</div>`;

@@ -132,8 +132,14 @@ function getType(value) {
 }
 
 function patchInPlace(_old, _new, _keyPath = "") {
-  if (typeof _old !== "object") return log.error("_old is not an object");
-  if (typeof _new !== "object") return log.error("_new is not an object");
+  if (typeof _old !== "object") {
+    log.error("_old is not an object");
+    return;
+  }
+  if (typeof _new !== "object") {
+    log.error("_new is not an object");
+    return;
+  }
 
   const oldKeys = Object.keys(_old);
   const newKeys = Object.keys(_new);
@@ -167,7 +173,7 @@ function patchInPlace(_old, _new, _keyPath = "") {
         );
         continue;
       }
-      if (oldType != "object" || newType != "object") {
+      if (oldType !== "object" || newType !== "object") {
         if (_old[key] !== _new[key]) {
           log.debug(`update ${_keyPath}.${key}`);
           _old[key] = _new[key];

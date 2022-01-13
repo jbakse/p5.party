@@ -5,7 +5,7 @@ import * as log from "./log";
 /* !global DeepstreamClient */
 
 export class Client {
-  #host;
+  // #host;
   #name;
   #isReady;
   #emitter;
@@ -13,7 +13,7 @@ export class Client {
   #clients = [];
 
   constructor(host) {
-    this.#host = host;
+    // this.#host = host;
     this.#deepstreamClient = new DeepstreamClient(host);
     this.#name = this.#deepstreamClient.getUid();
     this.#deepstreamClient.on("error", (error, event, topic) =>
@@ -80,7 +80,7 @@ export class Client {
     this.#deepstreamClient.close();
   }
 
-  //@todo getter
+  // @todo getter
   name() {
     return this.#name;
   }
