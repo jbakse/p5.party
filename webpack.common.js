@@ -1,5 +1,6 @@
 /* eslint-env node */
 
+const webpack = require("webpack");
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
@@ -26,7 +27,20 @@ module.exports = {
     ],
   },
 
-  plugins: [new CleanWebpackPlugin()],
+  plugins: [
+    new CleanWebpackPlugin(),
+    // use npm/buffer module to polyfill node buffer module
+    // buffer is used by deepstream client
+    // https://viglucci.io/how-to-polyfill-buffer-with-webpack-5
+    new webpack.ProvidePlugin({
+      Buffer: ["buffer", "Buffer"],
+    }),
+  ],
+  resolve: {
+    fallback: {
+      buffer: require.resolve("buffer/"),
+    },
+  },
 
   output: {
     filename: "p5.party.js",

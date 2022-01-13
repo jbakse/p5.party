@@ -1,14 +1,21 @@
 /* eslint-env node */
 
-const merge = require("webpack-merge");
+const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
+
+// migration guide
+// https://github.com/webpack/webpack-dev-server/blob/master/migration-v4.md
 
 module.exports = merge(common, {
   mode: "development",
   devtool: "inline-source-map",
   devServer: {
-    publicPath: "/dist/",
-    contentBase: "./public/",
-    watchContentBase: true,
+    devMiddleware: {
+      publicPath: "/dist/",
+    },
+    static: {
+      directory: "./public/",
+      watch: true,
+    },
   },
 });
