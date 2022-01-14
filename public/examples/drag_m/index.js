@@ -35,7 +35,9 @@ window.mousePressed = () => {
 };
 
 window.mouseReleased = () => {
-  shared.sprites.forEach((s) => mouseReleasedSprite(s));
+  for (const s of shared.sprites.slice().reverse()) {
+    if (mouseReleasedSprite(s)) break;
+  }
 };
 
 function initSprite(rect = new Rect(), color = "red") {
@@ -65,11 +67,13 @@ function drawSprite(s) {
 }
 
 function mousePressedSprite(s) {
-  if (pointInRect(new Point(mouseX, mouseY), s.rect)) {
+  if (!s.inDrag && pointInRect(new Point(mouseX, mouseY), s.rect)) {
+    // begin drag
     s.inDrag = true;
     s.owner = my_id;
     s.dragOffset = new Point(s.rect.l - mouseX, s.rect.t - mouseY);
 
+    // move to top
     const i = shared.sprites.indexOf(s);
     shared.sprites.splice(i, 1);
     shared.sprites.push(s);
@@ -79,6 +83,10 @@ function mousePressedSprite(s) {
 }
 
 function mouseReleasedSprite(s) {
-  s.inDrag = false;
-  s.owner = null;
+  if (s.owner === my_id && pointInRect(new Point(mouseX, mouseY), s.rect)) {
+    s.inDrag = false;
+    s.owner = null;
+    return true;
+  }
+  return false;
 }
