@@ -12,6 +12,7 @@ module.exports = merge(common, {
   devServer: {
     devMiddleware: {
       publicPath: "/dist/",
+      mimeTypes: { jsm: "text/javascript" },
     },
     static: {
       directory: "./public/",

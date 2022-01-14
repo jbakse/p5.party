@@ -8,17 +8,18 @@ function preload() {
 function setup() {
   createCanvas(400, 400);
   noStroke();
+
   // use partyIsHost in setup to see if you are the first one in the room
   if (partyIsHost()) {
     shared.clicks = [];
     shared.startTime = new Date();
   }
-  console.log("start as host?", partyIsHost());
 }
 
 function draw() {
   background("#006666");
   noStroke();
+
   // reset the history every 10 seconds
   // we don't want every participant doing this
   // so we can ask the host to handle it
@@ -29,6 +30,7 @@ function draw() {
       shared.clicks = [];
     }
 
+    // out put some debuggin info
     fill(255);
     textSize(24);
     textFont("Courier New");

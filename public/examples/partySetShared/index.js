@@ -13,12 +13,13 @@ function setup() {
 }
 
 function mousePressed(e) {
-  // write x and y to shared data all at once
+  // replace all properties in shared
   partySetShared(shared, { x: mouseX, y: mouseY });
 }
 
 function keyPressed() {
-  partySetShared(shared, { x: width * 0.5, y: height * 0.5 });
+  // remove all properties from shared
+  partySetShared(shared, {});
 }
 
 function draw() {

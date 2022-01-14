@@ -28,6 +28,13 @@ Feature Requests / Enhancements
 		Especially in a case where the same value might get updated many times in a row. e.g. incrementing the score could happen a lot in a single draw, but we only need to send the final version
 		
 
+Release Package
+
+	-- Should examples be distributed in zip?
+	-- Should the zip even be distributed?
+	-- Review npm package.
+	-- What generates the license file?
+
 Feature Requests / Enhancements
 
 -	Room

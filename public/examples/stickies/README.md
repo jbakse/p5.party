@@ -1,6 +1,6 @@
-# drag
+# stickies
 
-Create and arrange items on a shared chart.
+Create and arrange notes on a board.
 
 - **click create** to craete a new card
 - **drag** to move an item

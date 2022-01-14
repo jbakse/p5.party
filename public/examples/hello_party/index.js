@@ -1,7 +1,5 @@
 let shared;
 
-/* exported preload setup draw mousePressed */
-
 function preload() {
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
@@ -21,7 +19,7 @@ function setup() {
 }
 
 function mousePressed() {
-  // write shared dataa
+  // write shared data
   shared.x = mouseX;
   shared.y = mouseY;
 }

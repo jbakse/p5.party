@@ -1,0 +1,3 @@
+- Should the cannonical variable name for current participant shared object be "me" or "my"?
+- should p5.party functions start with party? eg. partySetShared
+- can p5.party function names be improved?

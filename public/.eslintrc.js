@@ -22,9 +22,15 @@ module.exports = {
         vars: "all",
         args: "none",
         varsIgnorePattern:
-          "preload|setup|draw|keyPressed|keyReleased|keyTyped|mouseMoved|mouseDragged|mousePressed|mouseReleased|mouseClicked|doubleClicked|mouseWheel|touchStarted|touchMoved|touchEnded",
+          "\\b(preload|setup|draw|keyPressed|keyReleased|keyTyped|mouseMoved|mouseDragged|mousePressed|mouseReleased|mouseClicked|doubleClicked|mouseWheel|touchStarted|touchMoved|touchEnded)\\b",
       },
     ],
     "no-console": 0,
   },
+  overrides: [
+    {
+      files: ["**/*_m/*.js"],
+      parserOptions: { sourceType: "module" },
+    },
+  ],
 };

@@ -1,4 +1,4 @@
-let myShared, shareds;
+let me, participants;
 
 function preload() {
   partyConnect(
@@ -6,32 +6,32 @@ function preload() {
     "empty_example",
     "main"
   );
-  shareds = partyLoadParticipantShareds();
-  myShared = partyLoadMyShared();
+  participants = partyLoadParticipantShareds();
+  me = partyLoadMyShared();
 }
 
 function setup() {
   createCanvas(400, 400);
-  myShared.score = myShared.score || 0;
-  myShared.name = myShared.name || pickRandom(names);
+  me.score = 0;
+  me.name = pick(names);
 }
 
 function draw() {
   background(220);
   textSize(28);
   let total = 0;
-  for (let i = 0; i < shareds.length; i++) {
-    text(shareds[i].name + " " + shareds[i].score, 10, i * 32 + 96);
-    total += shareds[i].score;
+  for (let i = 0; i < participants.length; i++) {
+    text(participants[i].name + " " + participants[i].score, 10, i * 32 + 96);
+    total += participants[i].score;
   }
   text("Total " + total, 10, 32);
 }
 
 function mouseClicked() {
-  myShared.score++;
+  me.score++;
 }
 
-function pickRandom(array) {
+function pick(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 

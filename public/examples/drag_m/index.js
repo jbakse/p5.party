@@ -1,39 +1,16 @@
+import { Point, Rect, pointInRect } from "./shape.js";
+
 /* global uuidv4 */
-
-class Rect {
-  constructor(l = 0, t = 0, w = 0, h = 0) {
-    this.l = l;
-    this.t = t;
-    this.w = w;
-    this.h = h;
-  }
-}
-
-class Point {
-  constructor(x = 0, y = 0) {
-    this.x = x;
-    this.y = y;
-  }
-}
-
-function pointInRect(p, r) {
-  return p.x > r.l && p.x < r.l + r.w && p.y > r.t && p.y < r.t + r.h;
-}
-
 const my_id = uuidv4();
 
 let shared;
 
-function preload() {
-  partyConnect(
-    "wss://deepstream-server-1.herokuapp.com",
-    "hello_party",
-    "main"
-  );
+window.preload = () => {
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "drag", "main");
   shared = partyLoadShared("shared");
-}
+};
 
-function setup() {
+window.setup = () => {
   createCanvas(400, 400);
   noStroke();
 
@@ -43,23 +20,23 @@ function setup() {
     shared.sprites.push(initSprite(new Rect(30, 30, 100, 100), "#ff66ff"));
     shared.sprites.push(initSprite(new Rect(50, 50, 100, 100), "#66ffff"));
   }
-}
+};
 
-function draw() {
+window.draw = () => {
   background("#cc6666");
   shared.sprites.forEach(stepSprite);
   shared.sprites.forEach(drawSprite);
-}
+};
 
-function mousePressed() {
+window.mousePressed = () => {
   for (const s of shared.sprites.slice().reverse()) {
     if (mousePressedSprite(s)) break;
   }
-}
+};
 
-function mouseReleased() {
+window.mouseReleased = () => {
   shared.sprites.forEach((s) => mouseReleasedSprite(s));
-}
+};
 
 function initSprite(rect = new Rect(), color = "red") {
   const s = {};

@@ -1,4 +1,5 @@
-let shared, host;
+let host;
+let shared;
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "arcade", "main");
@@ -6,28 +7,23 @@ function preload() {
   host = partyLoadShared("host");
 }
 
-let run;
 function setup() {
   createCanvas(400, 400);
   noStroke();
 
-  run = createCheckbox("run");
-  run.checked(true);
-
-  // set defaults on shared data
-  host.ball = host.ball || {
-    x: width * 0.51,
-    y: 0,
-    dX: 0,
-    dY: 0,
-  };
-
-  shared.click = shared.click || {
-    x: width * 0.5,
-    y: height * 0.5,
-  };
-
-  frameRate(60);
+  // set initial values
+  if (partyIsHost()) {
+    host.ball = {
+      x: width * 0.5,
+      y: 0,
+      dX: 0,
+      dY: 0,
+    };
+    shared.click = {
+      x: width * 0.51,
+      y: height * 0.5,
+    };
+  }
 }
 
 function draw() {
@@ -40,8 +36,9 @@ function draw() {
     textFont("Courier New");
     text("Hosting!", 10, 30);
   }
+
   // read shared data
-  if (run.checked() && partyIsHost()) {
+  if (partyIsHost()) {
     // apply momentum
     host.ball.x += host.ball.dX;
     host.ball.y += host.ball.dY;
@@ -62,19 +59,20 @@ function draw() {
     // handle collisions
     if (dist(host.ball.x, host.ball.y, shared.click.x, shared.click.y) < 40) {
       // move out of penetration
-      const n = createVector(
+      const collision_vector = createVector(
         host.ball.x - shared.click.x,
         host.ball.y - shared.click.y
       );
-      n.normalize();
-      host.ball.x = shared.click.x + n.x * 40;
-      host.ball.y = shared.click.y + n.y * 40;
+      collision_vector.normalize();
+      host.ball.x = shared.click.x + collision_vector.x * 40;
+      host.ball.y = shared.click.y + collision_vector.y * 40;
 
-      // bounce ball
-      const d = createVector(host.ball.dX, host.ball.dY);
-      d.reflect(n.copy());
-      host.ball.dX = d.x * 0.5;
-      host.ball.dY = d.y * 0.5;
+      // bounce
+      const velocityVector = createVector(host.ball.dX, host.ball.dY);
+      velocityVector.reflect(collision_vector);
+      velocityVector.mult(0.5);
+      host.ball.dX = velocityVector.x;
+      host.ball.dY = velocityVector.y;
     }
   }
 
@@ -86,15 +84,6 @@ function draw() {
   ellipse(shared.click.x, shared.click.y, 40, 40);
 }
 
-function keyPressed(e) {
-  console.log("keypress");
-  host.ball = {
-    x: width * 0.5,
-    y: -50,
-    dX: 0,
-    dY: 0,
-  };
-}
 function mousePressed(e) {
   // write shared data
   shared.click.x = mouseX;
