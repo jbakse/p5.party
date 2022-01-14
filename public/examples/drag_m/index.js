@@ -83,10 +83,9 @@ function mousePressedSprite(s) {
 }
 
 function mouseReleasedSprite(s) {
-  if (s.owner === my_id && pointInRect(new Point(mouseX, mouseY), s.rect)) {
+  if (s.owner === my_id) {
     s.inDrag = false;
     s.owner = null;
-    return true;
   }
   return false;
 }
