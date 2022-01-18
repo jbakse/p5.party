@@ -1,7 +1,6 @@
 import { Point, Rect, pointInRect } from "./shape.js";
 
-/* global uuidv4 */
-const my_id = uuidv4();
+const my_id = Math.random();
 
 let shared;
 

@@ -33,8 +33,8 @@ But, if the participant is writing something else to the shared object, and writ
 
 # A Little Better
 
-This example goes a step further and uses second shared object to communicate new bullets to the host. All particpants write new bullets there, the host will remove them and add them to the main shared. Now we have multiple players and the host writing to the same record, but not rapidly. So we can still get a conflict, but its much less likely.
+This example goes a step further and uses separate shared object to communicate new bullets to the host. All particpants write new bullets there, the host will remove them and add them to the main shared. Now we have multiple players and the host writing to the same record, but not rapidly. Conflicts are now much less likely, but still possible.
 
-This is starting to look a lot like a message sending or event scheme. A real messaging system could prevent conflicts in this case.
+This is starting to look a lot like message sending, and message sending would be a good way to fully fix the issue for this specific case.
 
-See tanks_emit for an example that uses messages to solve this problem.
+See tanks_emit for an example that uses message sending to solve this problem.
