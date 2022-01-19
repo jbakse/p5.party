@@ -16,6 +16,7 @@ module.exports = {
     partyEmit: "readonly",
   },
   rules: {
+    "prefer-destructuring": "off",
     "no-unused-vars": [
       "error",
       {
