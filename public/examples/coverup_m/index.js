@@ -1,8 +1,8 @@
 // import { Rect, intersects } from "./shape.js";
+/*eslint complexity: ["error", 30]*/
 
-const roundLength = 5000;
+const roundLength = 10000;
 const drawCursors = false;
-
 let shared;
 let my;
 let participants;
@@ -18,13 +18,14 @@ window.setup = () => {
   createCanvas(400, 400);
   noStroke();
 
-  my.id = random();
-  my.tokenPos = false;
-  my.cursorPos = false;
-
   if (partyIsHost()) {
     startRound(1);
   }
+
+  my.id = random();
+  my.tokenPos = false;
+  my.cursorPos = false;
+  my.tokenColor = "black";
 };
 
 window.draw = () => {
@@ -43,7 +44,7 @@ window.draw = () => {
     }
   }
 
-  // draw squres
+  // draw squares
   if (shared.squares.length) {
     stroke("#000");
     strokeWeight(2);
@@ -58,7 +59,7 @@ window.draw = () => {
   if (shared.state === "play") {
     noStroke();
     if (my.tokenPos) {
-      fill("#000");
+      fill(my.tokenColor);
       ellipse(my.tokenPos.col * 50 + 25, my.tokenPos.row * 50 + 25, 50, 50);
     } else {
       const pos = getMouseSquare();
@@ -71,7 +72,7 @@ window.draw = () => {
   if (shared.state === "reveal") {
     for (const p of participants) {
       if (p.tokenPos) {
-        fill("#000");
+        fill(p.tokenColor);
         noStroke();
 
         ellipse(p.tokenPos.col * 50 + 25, p.tokenPos.row * 50 + 25, 50, 50);
@@ -96,7 +97,18 @@ window.draw = () => {
     fill("black");
     textAlign(CENTER);
     textSize(30);
-    text(shared.remainingTime, 200, 30);
+    text(shared.remainingTime, 100, 30);
+  }
+
+  // draw commit count
+  if (shared.state === "play" && shared.remainingTime > 0) {
+    fill("black");
+    textAlign(CENTER);
+    textSize(30);
+    const commited = participants.filter((p) => p.tokenPos).length;
+    if (commited < participants.length) {
+      text(`${commited}/${participants.length}`, 300, 30);
+    }
   }
 
   // draw round
