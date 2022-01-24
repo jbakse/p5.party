@@ -1,8 +1,12 @@
-Fixed as of 2021.11.19
+# Identity Testing
+
+This example illustrates and tests behavior related to identity testing properties of a shared object and related to the "not-equal" bug.
+
+The bug _should_ be fixed as of 2021.11.19. This example also serves as a regression test.
 
 # The identity bug. AKA The not-equal bug.
 
-When you change a property of an object in the shared object, it is often (always?) replaced with another object with the same values.
+When you change a property of an object in the shared object, it is (was) often (always?) replaced with another object with the same values.
 
 this seems like a kind of big deal problem...
 
@@ -47,6 +51,10 @@ s1 and s2 are references to the same object, both set before any changes to shar
 s3 is created after the data is changed, and so after the objects are replaced with clones.
 
 s1 points to the original value, s3 points to a clone
+
+# Does changing properties on s3 change s1?
+
+- needs to be tested and documented...
 
 # Two proxies with two different underlying objects.
 
