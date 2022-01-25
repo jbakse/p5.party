@@ -1,0 +1,12 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: p5.party
+message: >-
+  Thank you for using p5.party. You can cite it as
+  below.
+type: software
+authors:
+  - given-names: Justin
+    family-names: Bakse
