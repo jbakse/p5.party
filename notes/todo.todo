@@ -1,159 +1,93 @@
-Examples
-
--- Add particpant counter to coverup
+# Library
 
 
-Feature Requests / Enhancements
+## Bugs
 
--	Room
+
+
+
+## Enhancements
+
+- Debug View
 	--	make debug view opt in
-	--	add ping to debug view
+	--	add ping to debug view?
+
+- Records
 	-- 	add a way to clear all the shared records
 		more broadly, a full reset for rooms or apps would be good
 		during development having stale data stick around can be confusing
 		reloading a js program usually restarts it from 0, but not when you have data hanging out on the back end.
 		it could be a common pattern to have `setup->if host->reset room->init room`
 		might even automatically reset the room if its empty (not the persistant worlds question)
-		
-- 	Record 
 
-- 	Client
-	- 	reconnect after page reload
+- Client
+	-- 	reconnect after page reload?
 		consider cacheing random id in _session_ storage so reloads can reconnect as same client
 
 
-
--	Branch - Push Improvements
-	--	config auto push or manual
-		I'm not sure if this would be useful at all?
-	-- 	config record push debounce
-		Again, not sure if this would work?
+- Sync
+	--	configurable push?: auto or manual
+		Would it be useful if data was not automatically sent and the user had to call something like .flush() or .send()
+	-- 	configurable push?: debounce
+		A possible semiautomatic mode, or optimization to the automatic mode
 		The thought here is it might be good to let code make lots of little changes, but not send them until the work is done.
 		Especially in a case where the same value might get updated many times in a row. e.g. incrementing the score could happen a lot in a single draw, but we only need to send the final version
-		
+		Perhaps all updates between -predraw and -postdraw could be sent at once...
 
-Release Package
 
-	-- Should examples be distributed in zip?
+- Participants
+	-- expose participant count?: can be gotten via participants.length, only if you are "subscribed" to participant shareds
+	-- expose participant ids, id list
+	-- expose own id
+
+- Tooling
+	-- maybe jump to esbuild and/or vite?
+
+- Contribution Project Ideas
+	--	Server Admin Panel. Show connected apps/rooms/guests + stats.
+	--	Client Admin Panel. Improve
+	--	Example Games + Apps
+	--	Video Tutorials
+	--	Dorkshop
+	-- 	Eleventy Docs. Migrate docs to .md/11ty.
+	--   Identity + Visual design system.
+	--	Improve welcome page.
+		[https://skerritt.blog/make-popular-open-source-projects/]
+
+
+
+# Release Package
+	-- provide min and unmin versions?
+		compare to other p5 libraries
+		https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
+	-- Should the examples be distributed in the zip?
 	-- Should the zip even be distributed?
-	-- Review npm package.
-	-- What generates the license file?
-
-Feature Requests / Enhancements
-
--	Room
-	--	make debug view opt in
-	--	add ping to debug view
-	-- 	add a way to clear all the shared records
-		more broadly, a full reset for rooms or apps would be good
-		during development having stale data stick around can be confusing
-		reloading a js program usually restarts it from 0, but not when you have data hanging out on the back end.
-		it could be a common pattern to have `setup->if host->reset room->init room`
-		might even automatically reset the room if its empty (not the persistant worlds question)
-		
-- 	Record 
-
-- 	Client
-	- 	reconnect after page reload
-		consider cacheing random id in _session_ storage so reloads can reconnect as same client
-
-
-
--	Branch - Push Improvements
-	--	config auto push or manual
-		I'm not sure if this would be useful at all?
-	-- 	config record push debounce
-		Again, not sure if this would work?
-		The thought here is it might be good to let code make lots of little changes, but not send them until the work is done.
-		Especially in a case where the same value might get updated many times in a row. e.g. incrementing the score could happen a lot in a single draw, but we only need to send the final version
-		
-
--	Branch - Participants
-	-- expose participant count
-	-- expose participant id list 
-	-- expose my id
-
-
-
-# Contribution Project Ideas
---	Server Admin Panel. Show connected apps/rooms/guests + stats.
---	Client Admin Panel. Improve
---	Example Games + Apps
---	Video Tutorials
---	Dorkshop
--- 	Eleventy Docs. Migrate docs to .md/11ty. Visual design.
-
-
-
-# API Changes
---	rename? partyGetParticipantShared() -> partyGetMyShared()
---	rename? participants -> guests
-
-
-# Notes from from code-review
--- 	Why does the room create a participant record automatically?
-	- :Could this partyGetMyShared() just be a call like partyGetShared(myID)
-
-
-
-
-# Improvements
-
--- 	merging incoming data with shared object
-	: I wrote a custom merge function in Record, but maybe it would be better to use a library?
-	[Lodash.merge](https://lodash.com/docs/#merge)
-	mergeWidth should be flexible enough to add debug reporting and customize behavior
-	[Lodash.mergeWidth](https://lodash.com/docs/#mergeWith)
-	might be good to just study their merge and compare to the current party implementation
-	might be worth also studying the merge function in deepstream
-	https://github.com/deepstreamIO/deepstream.io/blob/892c0fea1b348cc5152e3b75cf19e3241ece3edc/src/utils/utils.ts#L77
-	to see how the approaches differ, if one is better
-
-
-
-
-
-
-
-# Tooling 
-
-- upgrade webpack? maybe jump to esbuild and/or vite?
-- consider providing min and unmin versions
-
-	https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
-	compare to other p5 libraries
-
---	can bake package version into code somehow?
-	I frequently think it would be nice if dist/lib.js had a comment at the top like /* p5.party v1.2.3 */
-	When you copy a dep into a project (rather than using npm or something) its easy forget what version it is
-
-
-
-
-
-
-	
-	
-# Docs
--	merging_is_hard
-	and party can't do it for you
-	create conceptual doc on why merging is hard, strategies to avoid conflicts
-	started in merging_is_hard.md
-
-	
-# Design Questions
--	Persistant Worlds?
-	deeptstream stores state locally in process memory, and can be connected to data store
-	currently it does not connect to a data store, and data will be lost on server/process restart
-	theoretically, this library could be used for prototyping persitent worlds right now, and with a data store would be even better, but the as a design decision we limit the scope to single-session-multiplayer for now
-
-
-# Tips
+	-- Audit npm package. is the correct stuff published?
+	-- What generates the license file in the zip package? Is it corect?
+	-- Can bake package version into code somehow?
+		I frequently think it would be nice if dist/lib.js had a comment at the top like /* p5.party v1.2.3 */
+		When you copy a dep into a project (rather than using npm or something) its easy forget what version it is
 
 # Examples
 
+	-- Add particpant counter to coverup
+
+# Doumentation
+
+	-- Make article about this: Globals are bad! p5.party basically creates something more global than globals.
 
 
+# Code Review
+	-- 	Why does the room create a participant record automatically?
+		Could this partyGetMyShared() just internally be a call like partyGetShared(myID)
 
-
-	
+	-- 	merging incoming data with shared object
+		note: the current merge seems to be working pretty well
+		so this whole note should probably wait until a concrete need arises
+		I wrote a custom merge function in Record, but maybe it would be better to use a library?
+		* [Lodash.merge](https://lodash.com/docs/#merge)
+		* [Lodash.mergeWidth](https://lodash.com/docs/#mergeWith)
+		mergeWidth should be flexible enough to add debug reporting and customize behavior
+		might be good to just study their merge and compare to the current party implementation
+		might be worth also studying the merge function in deepstream to see how the approaches differ, if one is better
+		https://github.com/deepstreamIO/deepstream.io/blob/892c0fea1b348cc5152e3b75cf19e3241ece3edc/src/utils/utils.ts#L77
