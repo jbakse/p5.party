@@ -77,6 +77,8 @@
 	-- Make article about this: Globals are bad! p5.party basically creates something more global than globals.
 
 
+	-- Article: Running a local/LAN server for low ping sync across devices on site
+
 # Code Review
 	-- 	Why does the room create a participant record automatically?
 		Could this partyGetMyShared() just internally be a call like partyGetShared(myID)
