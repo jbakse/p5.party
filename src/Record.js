@@ -46,14 +46,6 @@ export class Record {
     });
   }
 
-  // this is broken until a "deep update" is implemented
-  // allows getting a watched data for data not in shared.
-  // path needs to exist on record for this to work.
-  // getData(path) {
-  //   const deep_value = (o, p) => p.split(".").reduce((a, v) => a[v], o);
-  //   return deep_value(this.#watchedData, path);
-  // }
-
   getShared() {
     return this.#watchedShared;
   }

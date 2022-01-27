@@ -11,12 +11,12 @@ export class Room {
   #roomName;
   #emitter;
 
-  #roomDataRecord;
-  #recordList;
-  #participantRecords;
-  #participantShareds;
-  #participants;
-  #clientParticpantRecord;
+  #roomDataRecord; // ds_record {participants: [uid], host: uid}
+  #participants; // cache of #roomDataRecord.participants
+  #recordList; // ds_list records created in this room by request (not participants)
+  #participantRecords; // {uid: party_record}
+  #participantShareds; // [(watche)shared] cache of #participantRecords.getShared()s
+  #clientParticpantRecord; // party_record, participant record for currently connected client
 
   #isReady;
 
@@ -127,10 +127,10 @@ export class Room {
 
   // remove this client from the room
   leave() {
-    const newParticipants = this.#participants.filter(
+    const participants = this.#participants.filter(
       (p) => p !== this.#client.name()
     );
-    this.#roomDataRecord.set(`participants`, newParticipants);
+    this.#roomDataRecord.set(`participants`, participants);
   }
 
   // check if this client is in the room
@@ -204,7 +204,7 @@ export class Room {
     }
 
     // have only the new host set host so that multiple clients
-    // don't try to set the host at once, causing problems with DS
+    // don't try to set the host at once, causing a conflict
     if (newHost === this.#client.name()) {
       this.#roomDataRecord.set("host", newHost);
     }
@@ -225,15 +225,16 @@ export class Room {
 
     // add and remove records
     const recordWhenReadies = [];
+
     allIds.forEach((id) => {
+      // remove stale participant records
       if (participantRecordIds.includes(id) && !participantIds.includes(id)) {
-        //log.debug("remove", id);
         this.#participantRecords[id].delete();
         delete this.#participantRecords[id];
       }
-      if (participantIds.includes(id) && !participantRecordIds.includes(id)) {
-        //log.debug("add", id);
 
+      // add new participant records
+      if (participantIds.includes(id) && !participantRecordIds.includes(id)) {
         if (id === this.#client.name()) {
           this.#participantRecords[id] = this.#clientParticpantRecord;
           recordWhenReadies.push(this.#clientParticpantRecord.whenReady());

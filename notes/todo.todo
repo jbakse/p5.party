@@ -3,7 +3,7 @@
 
 ## Bugs
 
--- Getting invalid state transition when another client leaves
++-- Getting invalid state transition when another client leaves
 	state-machine.js:37 Invalid state transition.
 	Details: {"transition":13,"fromState":"DELETING"} 
 	History: 
@@ -90,8 +90,10 @@
 	-- Article: Running a local/LAN server for low ping sync across devices on site
 
 # Code Review
-	-- 	Why does the room create a participant record automatically?
-		Could this partyGetMyShared() just internally be a call like partyGetShared(myID)
+	--   client ids sometimes called "id" sometimes "name", confusing?
+	--   room has properties that are DS records and properties that are Party Records, rename properties to improve clarity?
+	-- 	should room.participants be room.participantIds
+
 
 	-- 	merging incoming data with shared object
 		note: the current merge seems to be working pretty well
