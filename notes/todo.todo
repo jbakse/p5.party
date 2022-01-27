@@ -92,7 +92,11 @@
 # Code Review
 	--   client ids sometimes called "id" sometimes "name", confusing?
 	--   room has properties that are DS records and properties that are Party Records, rename properties to improve clarity?
+	-- 	Room recordList -> userRecordList?
+	--   compare whenReady() implemenations in Room, Client, Record
 	-- 	should room.participants be room.participantIds
+		-- why use room.participants as cache of #roomDataRecord.participants
+		   might be better to just call #roomDataRecord.get on demand, removs a property, less to think about
 
 
 	-- 	merging incoming data with shared object

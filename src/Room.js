@@ -5,20 +5,26 @@ import * as log from "./log";
 // eslint-disable-next-line
 import css from "./party_debug.css";
 
-export class Room {
-  #client;
-  #appName;
-  #roomName;
-  #emitter;
+/*
+ * Room
+ *
+ * Keeps track of particpants and records related to a specific app/room.
+ */
 
-  #roomDataRecord; // ds_record {participants: [uid], host: uid}
-  #participants; // cache of #roomDataRecord.participants
-  #recordList; // ds_list records created in this room by request (not participants)
-  #participantRecords; // {uid: party_record}
-  #participantShareds; // [(watche)shared] cache of #participantRecords.getShared()s
-  #clientParticpantRecord; // party_record, participant record for currently connected client
+export class Room {
+  #client; // party.Client: currently connected client
+  #appName; // string: user provide name for the app
+  #roomName; // string: user provide name for the room
+
+  #roomDataRecord; // ds.Record: {participants: [uid], host: uid}
+  #participants; // [uid]: cache of #roomDataRecord.participants
+  #recordList; // ds.List: user records created in this room
+  #participantRecords; // {uid: party.Record}: map of particpant records for room
+  #participantShareds; // [(watched)shared] cache of #participantRecords.getShared()s
+  #clientParticpantRecord; // party.Record, participant record this client
 
   #isReady;
+  #emitter;
 
   constructor(client, appName, roomName) {
     this.#client = client;
@@ -35,10 +41,10 @@ export class Room {
     );
 
     this.#isReady = false;
-    this._connect();
+    this.#connect();
   }
 
-  async _connect() {
+  async #connect() {
     await this.#client.whenReady();
     const connectRoomData = async () => {
       // load the _room_data record
@@ -51,6 +57,7 @@ export class Room {
       this.#participants = this.#roomDataRecord.get("participants");
       if (!this.#participants) {
         this.#participants = [];
+        // @todo change next two lines to setWithAck?
         this.#roomDataRecord.set("participants", []);
         await this.#roomDataRecord.whenReady();
       }

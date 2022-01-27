@@ -2,24 +2,25 @@ import * as log from "./log";
 import onChange from "on-change";
 import { createEmitter } from "./emitter";
 
-// const customMergeStrategy = (
-//   localValue,
-//   localVersion,
-//   remoteValue,
-//   remoteVersion,
-//   callback
-// ) => {
-//   log.warn("Merge");
-//   callback(null, remoteValue);
-// };
+/*
+ * Record
+ *
+ * - creates an object `#shared`
+ * - wraps and observes `#shared` with `#watchShared` (using onChange)
+ * // https://github.com/sindresorhus/on-change
+ * - syncs changes via deepstream record `#record`
+ * - deep merges incoming changes into `#shared`
+ *
+ */
 export class Record {
-  #client;
-  #name;
-  #shared;
-  #watchedShared;
-  #emitter;
+  #client; // party.Client: currently connected client
+  #name; // string: full name of record (e.g. "appName-roomName/_recordName")
+  #shared; // {}: internal read/write object to be synced with other clients
+  #watchedShared; // Proxy: observable object wrapping #shared
+  #record; // ds.Record: the record this party.Record is managing
+
   #isReady;
-  #record;
+  #emitter;
 
   constructor(client, name) {
     this.#client = client;
@@ -27,8 +28,10 @@ export class Record {
     this.#shared = {};
     this.#watchedShared = onChange(
       this.#shared,
-      this._onClientChangedData.bind(this)
+      this.#onClientChangedData.bind(this)
     );
+    // create a reference back to this party.Record from the shared object
+    // property key is a Symbol so its unique and mostly hidden
     this.#shared[Symbol.for("Record")] = this;
     this.#emitter = createEmitter();
     this.#isReady = false;
@@ -76,14 +79,14 @@ export class Record {
   async _connect() {
     await this.#client.whenReady();
 
-    // subscribe to record
+    // get and subscribe to record
     this.#record = this.#client.getRecord(this.#name);
-    // this.#record.setMergeStrategy(customMergeStrategy);
+    this.#record.subscribe("shared", this.#onServerChangedData.bind(this));
 
-    this.#record.subscribe("shared", this._onServerChangedData.bind(this));
     await this.#record.whenReady();
-    // this.#record.delete(); // emergency clear it
 
+    // initialize shared object
+    // #todo should we use setWithAck or await #record.whenReady()?
     if (!this.#record.get("shared")) this.#record.set("shared", {});
 
     // report
@@ -93,12 +96,14 @@ export class Record {
     this.#isReady = true;
     this.#emitter.emit("ready");
   }
-  _onClientChangedData(path, newValue, oldValue) {
-    // on-change alerts us when the value actually changes
+
+  #onClientChangedData(path, newValue, oldValue) {
+    // on-change alerts us only when the value actually changes
     // so we don't need to test if newValue and oldValue are different
     this.#record.set("shared." + path, newValue);
   }
 
+  // _onServerChangedData
   // called from deepstreem. this is called when the deepstreem data store is
   // updated, even if the update was local. If the update is local
   // this.#shared === data -> true
@@ -106,14 +111,14 @@ export class Record {
   // if the change originated non-locally, than this.#shared does need to be
   // updated
 
-  _onServerChangedData(data) {
+  #onServerChangedData(data) {
     // don't replace #shared itself as #watchedShared has a reference to it
     // instead patch it to match the incoming data
     patchInPlace(this.#shared, data, "shared");
   }
 }
 
-function getType(value) {
+function getMergeType(value) {
   if (value === null) return "null";
   if (typeof value === "object") return "object";
   if (typeof value === "boolean") return "primative";
@@ -150,8 +155,8 @@ function patchInPlace(_old, _new, _keyPath = "") {
   // patch shared object and array keys
   for (const key of newKeys) {
     if (Object.prototype.hasOwnProperty.call(_old, key)) {
-      const oldType = getType(_old[key]);
-      const newType = getType(_new[key]);
+      const oldType = getMergeType(_old[key]);
+      const newType = getMergeType(_new[key]);
       if (oldType === "unsupported") {
         log.error(
           `${_keyPath}.${key} is unsupported type: ${typeof _new[key]}`
@@ -166,7 +171,6 @@ function patchInPlace(_old, _new, _keyPath = "") {
       }
       if (oldType !== "object" || newType !== "object") {
         if (_old[key] !== _new[key]) {
-          // log.debug(`update ${_keyPath}.${key}`);
           _old[key] = _new[key];
         }
         continue;

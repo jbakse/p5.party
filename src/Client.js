@@ -2,14 +2,20 @@ import { DeepstreamClient } from "@deepstream/client";
 import { createEmitter } from "./emitter";
 import * as log from "./log";
 
-/* !global DeepstreamClient */
-
+/*
+ * Client
+ *
+ * Wraps and manages a deepstream client connection.
+ * Keeps an up to date list of connected clients.
+ *
+ */
 export class Client {
-  #name;
+  #name; // uid: provided by deepstream
+  #deepstreamClient; // ds.Client: wrapped by this Client
+  #clients = []; // [uid]: currently connected clients
+
   #isReady;
   #emitter;
-  #deepstreamClient;
-  #clients = [];
 
   constructor(host) {
     this.#deepstreamClient = new DeepstreamClient(host);
@@ -20,6 +26,8 @@ export class Client {
     this.#deepstreamClient.on("connectionStateChanged", (connectionState) =>
       log.debug("connectionStateChanged", connectionState)
     );
+
+    // get current connected clients and subscribe for updates
     this.#deepstreamClient.presence.getAll((error, clients) => {
       this.#clients = clients;
     });
@@ -78,7 +86,7 @@ export class Client {
     this.#deepstreamClient.close();
   }
 
-  // @todo getter
+  // @todo getter?
   name() {
     return this.#name;
   }
