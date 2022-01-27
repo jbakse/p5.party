@@ -3,6 +3,14 @@
 
 ## Bugs
 
+-- Getting invalid state transition when another client leaves
+	state-machine.js:37 Invalid state transition.
+	Details: {"transition":13,"fromState":"DELETING"} 
+	History: 
+	From READY to DELETING via 9
+	From SUBSCRIBING to READY via 4
+	From LOADING_OFFLINE to SUBSCRIBING via 23
+	From - to LOADING_OFFLINE via -
 
 
 
@@ -39,6 +47,8 @@
 	-- expose participant count?: can be gotten via participants.length, only if you are "subscribed" to participant shareds
 	-- expose participant ids, id list
 	-- expose own id
+	-- event when new participant joins or leaves?
+
 
 - Tooling
 	-- maybe jump to esbuild and/or vite?

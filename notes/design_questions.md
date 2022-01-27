@@ -17,6 +17,9 @@
 
 - should p5.party have some kind of write locking support so you can open a shared object in read only mode, or designate the writer for an object and get warnings if someone else writes?
 
+  - it would probably be common to have particpiants be read only, but me/my be writeable
+  - maybe a "host" write only mode, that warns/blocks if non host writes
+
 - should p5.party provide an id for each participant? it does have an internal id. This might be especially helpful if we support a participant leaving and coming back via a local storage "cookie".
 
 - should we support a client levaning and coming back as the same participant (e.g. a browser reload)?
