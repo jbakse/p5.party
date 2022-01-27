@@ -8,13 +8,18 @@ const VIEW_HEIGHT = 12;
 const WALL_FLAG = 1;
 
 // shared
-let me;
-let players;
 let shared;
+let players;
+let me;
 
 // local state
-let mode = "move";
+let inputMode = "move"; // "move" || "message"
+
 const mainCamera = { x: 0, y: 0 };
+
+// The localPlayerData is a map of participants to local data
+// on each particpant. This is used to keep track of a transition position
+// when a player moves to a new square.
 const localPlayerData = new WeakMap();
 
 // message
@@ -22,18 +27,19 @@ let startMessageOnRelease = false;
 let message_input;
 let messageTimeout;
 
-// action message
+// action message is a message that is displayed on the map
+// at row, column. It is set when the user interacts with a map action.
 const actionMessage = {
   string: "",
   row: 0,
   column: 0,
 };
 
-// resources
+// assets loaded from files
 let font;
 let p8map, p8char;
 
-// p8 assets
+// assets parsed from pico 8 data
 let floorMap;
 let mapFlags;
 let sprites;
@@ -41,11 +47,11 @@ let sprites;
 function preload() {
   // get shared data
   partyConnect("wss://deepstream-server-1.herokuapp.com", "d12", "main");
-  me = partyLoadMyShared();
-  players = partyLoadParticipantShareds();
   shared = partyLoadShared("main");
-  // load resources
+  players = partyLoadParticipantShareds();
+  me = partyLoadMyShared();
 
+  // load resources
   font = loadFont("pixeldroidConsoleRegular/pixeldroidConsoleRegular.otf");
   p8map = loadStrings("p8/d12.p8");
   p8char = loadStrings("p8/d12_chars.p8");
@@ -74,7 +80,9 @@ function setup() {
 
   moveCamera(me.row * TILE_SIZE, me.col * TILE_SIZE);
 
-  shared.lightsOn = true;
+  if (partyIsHost()) {
+    shared.lightsOn = true;
+  }
 }
 
 function draw() {
@@ -260,42 +268,47 @@ function drawMessage(s, x, y, c = "#16874E") {
   pop();
 }
 
-let scanlineScroll = 0;
-function drawScanlines() {
-  push();
-  scanlineScroll += SCALEY / 24;
-  translate(0, -scanlineScroll % (SCALEY * 2));
-  for (let y = 0; y < height; y += SCALEY * 2) {
-    stroke(255, 255, 255, 10);
-    strokeWeight(SCALEY);
+// let scanlineScroll = 0;
+// function drawScanlines() {
+//   push();
+//   scanlineScroll += SCALEY / 24;
+//   translate(0, -scanlineScroll % (SCALEY * 2));
+//   for (let y = 0; y < height; y += SCALEY * 2) {
+//     stroke(255, 255, 255, 10);
+//     strokeWeight(SCALEY);
 
-    line(0, y, width, y);
-  }
-  pop();
+//     line(0, y, width, y);
+//   }
+//   pop();
 
-  // for (let y = 0; y < height; y += SCALEY) {
-  //   strokeWeight(1);
-  //   stroke(0, 0, 0, 50);
-  //   line(0, y, width, y);
-  //   stroke(0, 0, 0, 100);
-  //   line(0, y + 1, width, y + 1);
-  // }
+//   // for (let y = 0; y < height; y += SCALEY) {
+//   //   strokeWeight(1);
+//   //   stroke(0, 0, 0, 50);
+//   //   line(0, y, width, y);
+//   //   stroke(0, 0, 0, 100);
+//   //   line(0, y + 1, width, y + 1);
+//   // }
 
-  // for (let x = 0; x < width; x += SCALEX) {
-  //   stroke(50, 50, 50, 200);
-  //   strokeWeight(0.5);
-  //   line(x, 0, x, height);
-  // }
-}
+//   // for (let x = 0; x < width; x += SCALEX) {
+//   //   stroke(50, 50, 50, 200);
+//   //   strokeWeight(0.5);
+//   //   line(x, 0, x, height);
+//   // }
+// }
 
 ////////////////////////////////////////////////////////
 // INPUT
 
 function checkPressedKeys() {
-  if (mode !== "move") return;
+  if (inputMode !== "move") return;
 
   const localMe = localPlayerData.get(me);
+
+  // only accept input if we are at our own location (transition complete)
   if (!(localMe.x === me.col * 8 && localMe.y === me.row * 8)) return;
+
+  // move around randomly (debug)
+  // move(randomInt(-1, 2), randomInt(-1, 2));
 
   if (keyIsDown(LEFT_ARROW) || keyIsDown(65 /*a*/)) move(-1, 0);
   else if (keyIsDown(RIGHT_ARROW) || keyIsDown(68 /*d*/)) move(1, 0);
@@ -317,19 +330,16 @@ function move(x, y) {
 }
 
 function keyPressed() {
-  if (mode === "move") {
+  if (inputMode === "move") {
     if (key === " " || keyCode === RETURN) {
       startMessageOnRelease = true;
     }
     if (key === "q") {
       me.avatarId = ++me.avatarId % 16;
     }
-    // if (key === "f") {
-    //   performAction();
-    // }
   }
 
-  if (mode === "message") {
+  if (inputMode === "message") {
     if (keyCode === RETURN) sendMessage();
     if (keyCode === ESCAPE) cancelMessage();
   }
@@ -348,7 +358,7 @@ function startMessage() {
   message_input.attribute("autocomplete", "off");
   message_input.attribute("maxlength", "16");
   message_input.elt.focus();
-  mode = "message";
+  inputMode = "message";
 }
 
 function sendMessage() {
@@ -362,12 +372,12 @@ function sendMessage() {
     me.message = undefined;
   }, 5000);
 
-  mode = "move";
+  inputMode = "move";
 }
 
 function cancelMessage() {
   message_input.remove();
-  mode = "move";
+  inputMode = "move";
 }
 
 ////////////////////////////////////////////////////////
@@ -523,8 +533,7 @@ function randomInt(min, max) {
 window.addEventListener(
   "keydown",
   (e) => {
-    // arrow keys
-    if ([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+    if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(e.key)) {
       e.preventDefault();
     }
   },
