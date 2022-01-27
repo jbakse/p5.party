@@ -34,6 +34,7 @@ function init() {
       __room.removeDisconnectedClients();
       window.addEventListener("beforeunload", () => {
         __room.leave();
+        __client.close();
       });
     };
 
