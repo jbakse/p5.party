@@ -11,6 +11,10 @@ import { createEmitter } from "./emitter";
  * - syncs changes via deepstream record `#record`
  * - deep merges incoming changes into `#shared`
  *
+ * record.set() is async, you need to wait for whenReady before record.get() * * will reflect your change.
+ * in contrast values set on properties of the shared object
+ * should be available immediately
+ *
  */
 export class Record {
   #client; // party.Client: currently connected client
