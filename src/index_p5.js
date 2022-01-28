@@ -6,6 +6,8 @@ import { Client } from "./Client";
 import { Room } from "./Room";
 import { Record } from "./Record";
 
+import package_json from "../package.json";
+
 // @todo remove this export?
 window.party = { Client, Room, Record };
 
@@ -13,6 +15,7 @@ window.party = { Client, Room, Record };
 
 let __client, __room;
 
+log.log(`Hello, p5.party! v${package_json.version}`);
 window.p5 ? init() : log.warn("p5.js not found.");
 
 function init() {
