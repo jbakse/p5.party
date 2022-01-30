@@ -40,14 +40,14 @@ function setup() {
 
   if (partyIsHost()) {
     shared.items = [];
-    shared.items.push(initItem(new Point(100, 100), "#ffff66", "untitled"));
+    shared.items.push(initItem(new Point(100, 100), "#ffff66", "untitled 1"));
   }
 
   const createItemSubmit = document.getElementById("create-item-submit");
-  createItemSubmit.addEventListener("click", createItem);
+  createItemSubmit.addEventListener("click", onCreateItem);
 }
 
-function createItem() {
+function onCreateItem() {
   const label = document.getElementById("create-item-label").value;
   if (!label) return;
   document.getElementById("create-item-label").value = "";
@@ -118,6 +118,7 @@ function drawItem(item) {
 }
 
 function mousePressedItem(item) {
+  // @todo this probably needs a guard against two clients dragging notes at the same time, like drag2
   if (pointInRect(new Point(mouseX, mouseY), item.rect)) {
     item.inDrag = true;
     item.owner = my_id;

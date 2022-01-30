@@ -52,6 +52,8 @@
 
 - Tooling
 	-- maybe jump to esbuild and/or vite?
+	-- instead of using naming like demo_m to key eslint to use moduels
+	   could switch to using an eslint config in each example folder
 
 - Contribution Project Ideas
 	--	Server Admin Panel. Show connected apps/rooms/guests + stats.
