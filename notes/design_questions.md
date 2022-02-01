@@ -29,3 +29,21 @@
   theoretically, this library could be used for prototyping persitent worlds right now, and with a data store would be even better for that
   but as a design decision we have so far limitted the scope to single-session-multiplayer
   is it worth supporting persistant storage?
+
+- Radical design question: Should we get rid of partyIsHost. could replace it with `stepParty` which is called before draw but only on the host?
+
+- Instead of using partyIsHost in setup to determine if client is first to connect, it might make sense to check the participant list length.
+
+  ```
+  if (participants.length === 1) {
+    // initialize
+  }
+  ```
+
+  This might more clearly reflect the intention "if i'm the only one here"
+
+- When adding an unsupported type to a shared object, should we strip/null it on the LOCAL side, so that it will look the like the remote side (probably yes) see test_types example
+
+- Can we add warnings to the console if the user is doing something that is probably wrong. "It looks like you are setting values on a participant shared that isn't yours" "It looks like you have set a shared object property to a funciton..." etc
+
+- Do we need a partyDeleteShared()?
