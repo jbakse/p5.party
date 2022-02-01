@@ -125,9 +125,9 @@ export class Record {
 function getMergeType(value) {
   if (value === null) return "null";
   if (typeof value === "object") return "object";
-  if (typeof value === "boolean") return "primative";
-  if (typeof value === "number") return "primative";
-  if (typeof value === "string") return "primative";
+  if (typeof value === "boolean") return "primitive";
+  if (typeof value === "number") return "primitive";
+  if (typeof value === "string") return "primitive";
   return "unsupported";
 }
 
