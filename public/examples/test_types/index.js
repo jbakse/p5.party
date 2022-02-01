@@ -30,6 +30,8 @@ function setup() {
     shared.set = new Set([1, 2, 3]);
     shared.undefined = "temp";
     shared.undefined = undefined;
+    shared.deleted = "temp";
+    delete shared.deleted;
 
     // unsupported types
     shared.function = () => {
@@ -70,6 +72,8 @@ function setup() {
   test("color", blue(c), blue(color("red")));
 
   test("undefineds are stripped", shared.undefined, undefined);
+  test("undefineds are stripped", "undefined" in shared, false);
+  test("deleted properties are stripped", "deleted" in shared, false);
 
   console.log("");
   console.log("UNSUPPORTED");
@@ -81,9 +85,9 @@ function setup() {
 
 function test(name, value, expected) {
   if (same(value, expected)) {
-    console.log(`%c${name} passed`, "color: green", value, expected);
+    console.log(`%c${name}: passed`, "color: green", value, expected);
   } else {
-    console.log(`%c${name} failed`, "color: red", value, expected);
+    console.log(`%c${name}: failed`, "color: red", value, expected);
   }
 }
 
