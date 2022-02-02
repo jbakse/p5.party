@@ -5,7 +5,7 @@ let my;
 let participants;
 
 window.preload = () => {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "drag", "main");
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "pong", "main3");
   shared = partyLoadShared("shared");
   my = partyLoadMyShared();
   participants = partyLoadParticipantShareds();
@@ -26,7 +26,7 @@ window.setup = () => {
 };
 
 window.draw = () => {
-  if (partyIsHost()) assignPlayers();
+  assignPlayers();
   if (partyIsHost()) stepBall();
   my.y = mouseY - 50;
 
@@ -66,24 +66,27 @@ function stepBall() {
   const p1 = participants.find((p) => p.role === "player1");
   if (p1 && intersects(ball, new Rect(60, p1.y, 20, 100))) {
     ball.dX = abs(ball.dX);
-    console.log("hit");
   }
 
   // player 2
   const p2 = participants.find((p) => p.role === "player2");
   if (p2 && intersects(ball, new Rect(520, p2.y, 20, 100))) {
     ball.dX = -abs(ball.dX);
-    console.log("hit");
   }
 }
 
+// called from draw each player checks if player1 or 2 role is open
+// and takes it if currently first inline
 function assignPlayers() {
+  // if there isn't a player1
   if (!participants.find((p) => p.role === "player1")) {
+    // find the first observer
     const o = participants.find((p) => p.role === "observer");
-    if (o) o.role = "player1";
+    // if thats me, take the role
+    if (o === my) o.role = "player1";
   }
   if (!participants.find((p) => p.role === "player2")) {
     const o = participants.find((p) => p.role === "observer");
-    if (o) o.role = "player2";
+    if (o === my) o.role = "player2";
   }
 }
