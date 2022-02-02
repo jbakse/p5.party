@@ -11,7 +11,7 @@ export const log = makeLogger(
 );
 
 export const warn = makeLogger(
-  "log",
+  "warn",
   "party-warn",
   "background-color: #FF0; color: #000; padding: 2px 5px; border-radius: 2px"
 );
