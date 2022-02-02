@@ -37,9 +37,9 @@ export class Room {
 
     this.#clientParticpantRecord = new Record(
       this.#client,
-      `${this.#appName}-${this.#roomName}/_${this.#client.name()}`
+      `${this.#appName}-${this.#roomName}/_${this.#client.name()}`,
+      this.#client.name()
     );
-
     this.#isReady = false;
     this.#connect();
   }
@@ -248,8 +248,10 @@ export class Room {
         } else {
           const r = new Record(
             this.#client,
-            `${this.#appName}-${this.#roomName}/_${id}`
+            `${this.#appName}-${this.#roomName}/_${id}`,
+            id
           );
+          // todo: should we wait for this record to be ready before adding to #participantRecords?
           this.#participantRecords[id] = r;
           recordWhenReadies.push(r.whenReady());
         }

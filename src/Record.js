@@ -22,14 +22,16 @@ export class Record {
   #shared; // {}: internal read/write object to be synced with other clients
   #watchedShared; // Proxy: observable object wrapping #shared
   #record; // ds.Record: the record this party.Record is managing
-
+  #ownerId; // id of the client that "owns" this record, or null if no "owner"
+  // ownerId is used to warn if a client tries to change "someone elses" data
   #isReady;
   #emitter;
 
-  constructor(client, name) {
+  constructor(client, name, ownerId = null) {
     this.#client = client;
     this.#name = name;
     this.#shared = {};
+    this.#ownerId = ownerId;
     this.#watchedShared = onChange(
       this.#shared,
       this.#onClientChangedData.bind(this)
@@ -57,12 +59,31 @@ export class Record {
     return this.#watchedShared;
   }
 
+  // resets shared object to data
+  // warns non-owners on write
   setShared(data) {
+    if (this.#ownerId && this.#ownerId !== this.#client.name()) {
+      log.warn(
+        `setShared() 
+        changing data on shared object owned by another client
+        client: ${this.#client.name()}
+        owner: ${this.#ownerId}
+        data: ${JSON.stringify(data)}
+        `
+      );
+    }
+
+    this.#setShared(data);
+  }
+
+  // resets shared object to data
+  // does not warn non-owners on write
+  #setShared(data) {
     this.#record.set("shared", data);
   }
 
   async delete() {
-    this.setShared({});
+    this.#setShared({});
     await this.#record.whenReady();
     this.#record.delete();
   }
@@ -104,6 +125,16 @@ export class Record {
   #onClientChangedData(path, newValue, oldValue) {
     // on-change alerts us only when the value actually changes
     // so we don't need to test if newValue and oldValue are different
+
+    if (this.#ownerId && this.#ownerId !== this.#client.name()) {
+      log.warn(
+        `changing data on shared object owned by another client
+client: ${this.#client.name()}
+owner: ${this.#ownerId}
+path: ${path}
+newValue: ${JSON.stringify(newValue)}`
+      );
+    }
     this.#record.set("shared." + path, newValue);
   }
 
