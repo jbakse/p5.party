@@ -141,7 +141,7 @@ module.exports = {
     "no-useless-return": "error", //	Disallow redundant return statements
     "no-var": "error", //	Require `let` or `const` instead of `var`
     "no-void": "error", //	Disallow `void` operators
-    "no-warning-comments": "error", //	Disallow specified warning terms in comments
+    // "no-warning-comments": "error", //	Disallow specified warning terms in comments
     "object-shorthand": "error", //	Require or disallow method and property shorthand syntax for object literals
     // "one-var": "error", //	Enforce variables to be declared either together or separately in functions
     "one-var-declaration-per-line": "error", //	Require or disallow newlines around variable declarations
