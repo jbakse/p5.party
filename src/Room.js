@@ -198,10 +198,11 @@ export class Room {
     const host = this.#roomDataRecord.get("host");
     const onlineClients = await this.#client.getAllClients();
 
-    // if host is online, we don't need a new one
-    if (onlineClients.includes(host)) return;
+    // if host is onlin and in the room, we don't need a new one
+    if (onlineClients.includes(host) && this.#participants.includes(host))
+      return;
 
-    // pick the first client that is online as the new host
+    // pick the first participant that is online as the new host
     const newHost = this.#participants.find((p) => onlineClients.includes(p));
 
     // if we didn't find one, return
@@ -213,7 +214,9 @@ export class Room {
     // have only the new host set host so that multiple clients
     // don't try to set the host at once, causing a conflict
     if (newHost === this.#client.name()) {
+      // todo: can this be setWithAck?
       this.#roomDataRecord.set("host", newHost);
+      await this.#roomDataRecord.whenReady();
     }
   }
 
@@ -236,7 +239,10 @@ export class Room {
     allIds.forEach((id) => {
       // remove stale participant records
       if (participantRecordIds.includes(id) && !participantIds.includes(id)) {
-        this.#participantRecords[id].delete();
+        // only the host should delete the record
+        if (this.#client.name() === this.#roomDataRecord.get("host")) {
+          this.#participantRecords[id].delete();
+        }
         delete this.#participantRecords[id];
       }
 
@@ -302,6 +308,13 @@ export class Room {
     for (const entry of this.#recordList.getEntries()) {
       output += `<div class="record">${entry.split("/")[1]}</div>`;
     }
+
+    // output += `<div class="label">#participantRecords</div>`;
+    // // get keys from #participantRecords
+    // const keys = Object.keys(this.#participantRecords);
+    // for (const key of keys) {
+    //   output += `<div class="record">${key}</div>`;
+    // }
 
     el.innerHTML = output;
   }

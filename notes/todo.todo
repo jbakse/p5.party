@@ -1,7 +1,33 @@
 # Library
+# Docs
+- explain how/when to use rooms
 
 
 ## Bugs
+-- error on cursors example
+   reproduce:
+   - open the example in two windows
+   - move mouse in circles while reloading non-host
+   maybe the mouse event is getting called before the record is ready?
+   Uncaught TypeError: Cannot read properties of undefined (reading 'set')
+    at Record._onClientChangedData2 (Record.js:107:5)
+    at handleChange (index.js:53:1)
+    at handleChangeOnTarget (index.js:44:1)
+    at Object.set (index.js:120:1)
+    at mouseMoved (index.js:21:8)
+    at _.n.default._onmousemove (p5.min.js:3:391815)
+   actually, that looks exactly right.
+   verify this: 
+--- it looks like mouseMoved is getting called before prelaod is cleared, before setup is called?
+
++-- Getting the state transition error still, see pong example.
+   I'm not seeing htis on hello, party. I am seeing on pong.
+   reproduce:
+   - open the example in two windows
+   - navigate away on non host
+   - navigate back on non host
+   - see error in host console
+
 
 +-- Getting invalid state transition when another client leaves
 	state-machine.js:37 Invalid state transition.
@@ -93,6 +119,7 @@
 	-- Article: Running a local/LAN server for low ping sync across devices on site
 
 # Code Review
+	--   change private methods from _ to #
 	--   client ids sometimes called "id" sometimes "name", confusing?
 	--   room has properties that are DS records and properties that are Party Records, rename properties to improve clarity?
 	-- 	Room recordList -> userRecordList?

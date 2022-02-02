@@ -83,6 +83,7 @@ export class Record {
   }
 
   async delete() {
+    // todo: is below line needed? is there a need to setShared to {} before deleting a record?
     this.#setShared({});
     await this.#record.whenReady();
     this.#record.delete();
