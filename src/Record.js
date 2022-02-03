@@ -41,7 +41,7 @@ export class Record {
     this.#shared[Symbol.for("Record")] = this;
     this.#emitter = createEmitter();
     this.#isReady = false;
-    this._connect();
+    this.#connect();
   }
 
   whenReady(cb) {
@@ -102,7 +102,7 @@ export class Record {
     return onChange.target(shared)[Symbol.for("Record")];
   }
 
-  async _connect() {
+  async #connect() {
     await this.#client.whenReady();
 
     // get and subscribe to record

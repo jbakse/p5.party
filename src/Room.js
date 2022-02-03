@@ -65,8 +65,8 @@ export class Room {
       // subscribe to changes on the participans array
       this.#roomDataRecord.subscribe("participants", (data) => {
         this.#participants = data;
-        this._chooseHost();
-        this._updateParticpantRecords();
+        this.#chooseHost();
+        this.#updateParticpantRecords();
       });
     };
 
@@ -84,13 +84,13 @@ export class Room {
     await partA;
     await partB;
     await this.#clientParticpantRecord.whenReady();
-    this.#client.presenceSubscribe(this._onPresenceHandler.bind(this));
+    this.#client.presenceSubscribe(this.#onPresenceHandler.bind(this));
 
     // ready
     this.#isReady = true;
     this.#emitter.emit("ready");
 
-    setInterval(this._displayDebug.bind(this), 100);
+    setInterval(this.#displayDebug.bind(this), 100);
   }
 
   // whenReady returns a promise AND calls a callback
@@ -158,7 +158,7 @@ export class Room {
   // }
 
   getParticipantShareds(cb) {
-    cb && this._updateParticpantRecords().then(cb);
+    cb && this.#updateParticpantRecords().then(cb);
     return this.#participantShareds;
   }
 
@@ -180,21 +180,21 @@ export class Room {
   //   return new Room(this.#client, this.#appName, this.#roomName);
   // }
 
-  _onPresenceHandler(username, isLoggedIn) {
+  #onPresenceHandler(username, isLoggedIn) {
     // console.log(username, isLoggedIn ? "arrived" : "left");
     if (!this.contains(username)) return;
 
     if (isLoggedIn) {
       log.warn(`Participant ${username} reconnected.`);
-      this._chooseHost();
+      this.#chooseHost();
     }
     if (!isLoggedIn) {
       log.warn(`Participant ${username} disconnected.`);
-      this._chooseHost();
+      this.#chooseHost();
     }
   }
 
-  async _chooseHost() {
+  async #chooseHost() {
     const host = this.#roomDataRecord.get("host");
     const onlineClients = await this.#client.getAllClients();
 
@@ -220,7 +220,7 @@ export class Room {
     }
   }
 
-  async _updateParticpantRecords() {
+  async #updateParticpantRecords() {
     await this.whenReady();
     await this.#roomDataRecord.whenReady();
 
@@ -276,7 +276,8 @@ export class Room {
     // @todo currently not removing or hiding disconnected clients (ghosts)
   }
 
-  _displayDebug() {
+  // @todo: factor this out of Room?
+  #displayDebug() {
     // create element if needed
     let el = document.getElementById("party-debug");
     if (!el) {
