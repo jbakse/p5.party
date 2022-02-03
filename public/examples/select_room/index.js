@@ -5,7 +5,7 @@ console.log("room:", room);
 let shared;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "hello_party", room);
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "select_room", room);
   shared = partyLoadShared("shared");
 }
 

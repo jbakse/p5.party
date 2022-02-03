@@ -2,7 +2,7 @@ let host;
 let shared;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "arcade", "main");
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "ball_drop", "main");
   shared = partyLoadShared("shared");
   host = partyLoadShared("host");
 }

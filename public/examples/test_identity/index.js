@@ -3,7 +3,7 @@ let shared;
 function preload() {
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
-    "identity_test",
+    "teset_identity",
     "main"
   );
   shared = partyLoadShared("shared");

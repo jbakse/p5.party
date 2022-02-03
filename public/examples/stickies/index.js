@@ -25,11 +25,7 @@ const my_id = uuidv4();
 let shared;
 
 function preload() {
-  partyConnect(
-    "wss://deepstream-server-1.herokuapp.com",
-    "hello_party",
-    "main"
-  );
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "stickies", "main");
   shared = partyLoadShared("shared");
 }
 

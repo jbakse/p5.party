@@ -10,7 +10,7 @@ function setup() {
 function connectToParty() {
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
-    "hello_party",
+    "callbacks",
     "main",
     () => {
       console.log("connected!");

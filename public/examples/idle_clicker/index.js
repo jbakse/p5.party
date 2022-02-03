@@ -3,7 +3,7 @@ let me, participants;
 function preload() {
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
-    "empty_example",
+    "idle_clicker",
     "main"
   );
   participants = partyLoadParticipantShareds();
