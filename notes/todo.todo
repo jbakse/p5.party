@@ -6,26 +6,6 @@
 ## Bugs
 
 
-+-- Getting the state transition error still, see pong example.
-   I'm not seeing htis on hello, party. I am seeing on pong.
-   reproduce:
-   - open the example in two windows
-   - navigate away on non host
-   - navigate back on non host
-   - see error in host console
-
-
-+-- Getting invalid state transition when another client leaves
-	state-machine.js:37 Invalid state transition.
-	Details: {"transition":13,"fromState":"DELETING"} 
-	History: 
-	From READY to DELETING via 9
-	From SUBSCRIBING to READY via 4
-	From LOADING_OFFLINE to SUBSCRIBING via 23
-	From - to LOADING_OFFLINE via -
-
-
-
 ## Enhancements
 
 - Debug View
