@@ -16,9 +16,9 @@ export class Room {
   #appName; // string: user provide name for the app
   #roomName; // string: user provide name for the room
 
-  #roomDataRecord; // ds.Record: {participants: [uid], host: uid}
-  #participants; // [uid]: cache of #roomDataRecord.participants
-  #recordList; // ds.List: user records created in this room
+  #roomDataDsRecord; // ds.Record: {participants: [uid], host: uid}
+  #participantUids; // [uid]: cache of #roomDataRecord.participants
+  #recordDsList; // ds.List: user records created in this room
   #participantRecords; // {uid: party.Record}: map of particpant records for room
   #participantShareds; // [(watched)shared] cache of #participantRecords.getShared()s
   #clientParticpantRecord; // party.Record, participant record this client
@@ -48,23 +48,23 @@ export class Room {
     await this.#client.whenReady();
     const connectRoomData = async () => {
       // load the _room_data record
-      this.#roomDataRecord = this.#client.getRecord(
+      this.#roomDataDsRecord = this.#client.getDsRecord(
         `${this.#appName}-${this.#roomName}/_room_data`
       );
-      await this.#roomDataRecord.whenReady();
+      await this.#roomDataDsRecord.whenReady();
 
       // initialize the participants array
-      this.#participants = this.#roomDataRecord.get("participants");
-      if (!this.#participants) {
-        this.#participants = [];
+      this.#participantUids = this.#roomDataDsRecord.get("participants");
+      if (!this.#participantUids) {
+        this.#participantUids = [];
         // @todo change next two lines to setWithAck?
-        this.#roomDataRecord.set("participants", []);
-        await this.#roomDataRecord.whenReady();
+        this.#roomDataDsRecord.set("participants", []);
+        await this.#roomDataDsRecord.whenReady();
       }
 
       // subscribe to changes on the participans array
-      this.#roomDataRecord.subscribe("participants", (data) => {
-        this.#participants = data;
+      this.#roomDataDsRecord.subscribe("participants", (data) => {
+        this.#participantUids = data;
         this.#chooseHost();
         this.#updateParticpantRecords();
       });
@@ -72,10 +72,10 @@ export class Room {
 
     const connectRecordList = async () => {
       // load the record list
-      this.#recordList = this.#client.getList(
+      this.#recordDsList = this.#client.getList(
         `${this.#appName}-${this.#roomName}/_records`
       );
-      await this.#recordList.whenReady();
+      await this.#recordDsList.whenReady();
     };
 
     // let part A and part B happen in parallel
@@ -111,10 +111,10 @@ export class Room {
     const record = new Record(this.#client, name);
 
     record.whenReady(async () => {
-      await this.#recordList.whenReady();
-      const entries = this.#recordList.getEntries();
+      await this.#recordDsList.whenReady();
+      const entries = this.#recordDsList.getEntries();
       if (!entries.includes(name)) {
-        this.#recordList.addEntry(name);
+        this.#recordDsList.addEntry(name);
       }
     });
 
@@ -124,9 +124,9 @@ export class Room {
   // add this client to the room
   join() {
     const name = this.#client.getUid();
-    if (!this.#participants.includes(name)) {
-      this.#roomDataRecord.set(
-        `participants.${this.#participants.length}`,
+    if (!this.#participantUids.includes(name)) {
+      this.#roomDataDsRecord.set(
+        `participants.${this.#participantUids.length}`,
         name
       );
     }
@@ -134,19 +134,19 @@ export class Room {
 
   // remove this client from the room
   leave() {
-    const participants = this.#participants.filter(
+    const participants = this.#participantUids.filter(
       (p) => p !== this.#client.getUid()
     );
-    this.#roomDataRecord.set(`participants`, participants);
+    this.#roomDataDsRecord.set(`participants`, participants);
   }
 
   // check if this client is in the room
   contains(username) {
-    return this.#participants.includes(username);
+    return this.#participantUids.includes(username);
   }
 
   getHostName() {
-    return this.#roomDataRecord.get(`host`);
+    return this.#roomDataDsRecord.get(`host`);
   }
 
   getMyRecord() {
@@ -164,15 +164,15 @@ export class Room {
 
   async removeDisconnectedClients() {
     const online = await this.#client.getAllClients();
-    const newParticipants = this.#participants.filter((p) =>
+    const newParticipants = this.#participantUids.filter((p) =>
       online.includes(p)
     );
-    this.#roomDataRecord.set(`participants`, newParticipants);
+    this.#roomDataDsRecord.set(`participants`, newParticipants);
   }
 
   // async reset() {
   //   for (const entry of this.#recordList.getEntries()) {
-  //     const record = this.#client.getRecord(entry);
+  //     const record = this.#client.getDsRecord(entry);
   //     await record.whenReady();
   //     record.delete();
   //   }
@@ -195,19 +195,21 @@ export class Room {
   }
 
   async #chooseHost() {
-    const host = this.#roomDataRecord.get("host");
+    const host = this.#roomDataDsRecord.get("host");
     const onlineClients = await this.#client.getAllClients();
 
     // if host is onlin and in the room, we don't need a new one
-    if (onlineClients.includes(host) && this.#participants.includes(host))
+    if (onlineClients.includes(host) && this.#participantUids.includes(host))
       return;
 
     // pick the first participant that is online as the new host
-    const newHost = this.#participants.find((p) => onlineClients.includes(p));
+    const newHost = this.#participantUids.find((p) =>
+      onlineClients.includes(p)
+    );
 
     // if we didn't find one, return
     if (!newHost) {
-      log.debug("Couldn't find a host in participants:", this.#participants);
+      log.debug("Couldn't find a host in participants:", this.#participantUids);
       return;
     }
 
@@ -215,18 +217,18 @@ export class Room {
     // don't try to set the host at once, causing a conflict
     if (newHost === this.#client.getUid()) {
       // todo: can this be setWithAck?
-      this.#roomDataRecord.set("host", newHost);
-      await this.#roomDataRecord.whenReady();
+      this.#roomDataDsRecord.set("host", newHost);
+      await this.#roomDataDsRecord.whenReady();
     }
   }
 
   async #updateParticpantRecords() {
     await this.whenReady();
-    await this.#roomDataRecord.whenReady();
+    await this.#roomDataDsRecord.whenReady();
 
     // collect data
     const participantRecordIds = Object.keys(this.#participantRecords);
-    const participantIds = this.#participants;
+    const participantIds = this.#participantUids;
     const allIds = [...new Set([...participantRecordIds, ...participantIds])];
 
     //log.debug("participantRecordIds", participantRecordIds);
@@ -240,7 +242,7 @@ export class Room {
       // remove stale participant records
       if (participantRecordIds.includes(id) && !participantIds.includes(id)) {
         // only the host should delete the record
-        if (this.#client.getUid() === this.#roomDataRecord.get("host")) {
+        if (this.#client.getUid() === this.#roomDataDsRecord.get("host")) {
           this.#participantRecords[id].delete();
         }
         delete this.#participantRecords[id];
@@ -296,9 +298,9 @@ export class Room {
     output += `<div class="room">${this.#roomName}</div>`;
     output += `<div class="label">Participants</div>`;
 
-    for (const name of this.#participants) {
+    for (const name of this.#participantUids) {
       const shortName = name.substr(-4);
-      const host = this.#roomDataRecord.get(`host`) === name ? "host" : "";
+      const host = this.#roomDataDsRecord.get(`host`) === name ? "host" : "";
       const missing = onlineClients.includes(name) ? "" : "missing";
       const me = this.#client.getUid() === name ? "me" : "";
 
@@ -306,7 +308,7 @@ export class Room {
     }
 
     output += `<div class="label">Shared Objects</div>`;
-    for (const entry of this.#recordList.getEntries()) {
+    for (const entry of this.#recordDsList.getEntries()) {
       output += `<div class="record">${entry.split("/")[1]}</div>`;
     }
 

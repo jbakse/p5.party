@@ -55,9 +55,9 @@ export class Client {
     }
   }
 
-  getRecord(name) {
+  getDsRecord(name) {
     if (!this.#isReady) {
-      log.error("Client.getRecord() called before client ready.");
+      log.error("Client.getDsRecord() called before client ready.");
     }
     return this.#dsClient.record.getRecord(name);
   }

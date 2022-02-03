@@ -21,7 +21,7 @@ export class Record {
   #name; // string: full name of record (e.g. "appName-roomName/_recordName")
   #shared; // {}: internal read/write object to be synced with other clients
   #watchedShared; // Proxy: observable object wrapping #shared
-  #record; // ds.Record: the record this party.Record is managing
+  #dsRecord; // ds.Record: the record this party.Record is managing
   #ownerUid; // uid: the client that "owns" this record, or null if no "owner"
   // ownerUid is used to warn if a client tries to change "someone elses" data
   #isReady;
@@ -82,22 +82,22 @@ export class Record {
   // resets shared object to data
   // does not warn non-owners on write
   #setShared(data) {
-    this.#record.set("shared", data);
+    this.#dsRecord.set("shared", data);
   }
 
   async delete() {
     // todo: is below line needed? is there a need to setShared to {} before deleting a record?
     this.#setShared({});
-    await this.#record.whenReady();
-    this.#record.delete();
+    await this.#dsRecord.whenReady();
+    this.#dsRecord.delete();
   }
 
   async watchShared(path_or_cb, cb) {
     await this.whenReady();
     if (typeof path_or_cb === "string") {
-      this.#record.subscribe("shared." + path_or_cb, cb);
+      this.#dsRecord.subscribe("shared." + path_or_cb, cb);
     } else if (typeof path_or_cb === "function") {
-      this.#record.subscribe("shared", path_or_cb);
+      this.#dsRecord.subscribe("shared", path_or_cb);
     }
   }
 
@@ -109,14 +109,14 @@ export class Record {
     await this.#client.whenReady();
 
     // get and subscribe to record
-    this.#record = this.#client.getRecord(this.#name);
-    this.#record.subscribe("shared", this.#onServerChangedData.bind(this));
+    this.#dsRecord = this.#client.getDsRecord(this.#name);
+    this.#dsRecord.subscribe("shared", this.#onServerChangedData.bind(this));
 
-    await this.#record.whenReady();
+    await this.#dsRecord.whenReady();
 
     // initialize shared object
     // #todo should we use setWithAck or await #record.whenReady()?
-    if (!this.#record.get("shared")) this.#record.set("shared", {});
+    if (!this.#dsRecord.get("shared")) this.#dsRecord.set("shared", {});
 
     // report
     log.debug("RecordManager: Record ready.", this.#name);
@@ -139,7 +139,7 @@ path: ${path}
 newValue: ${JSON.stringify(newValue)}`
       );
     }
-    this.#record.set("shared." + path, newValue);
+    this.#dsRecord.set("shared." + path, newValue);
   }
 
   // _onServerChangedData
