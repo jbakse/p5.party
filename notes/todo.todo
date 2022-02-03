@@ -90,7 +90,7 @@
 	-- Article: Running a local/LAN server for low ping sync across devices on site
 
 # Code Review
-	--   change private methods from _ to #
+	.--   change private methods from _ to #
 	--   client ids sometimes called "id" sometimes "name", confusing?
 	--   room has properties that are DS records and properties that are Party Records, rename properties to improve clarity?
 	-- 	Room recordList -> userRecordList?

@@ -37,8 +37,8 @@ export class Room {
 
     this.#clientParticpantRecord = new Record(
       this.#client,
-      `${this.#appName}-${this.#roomName}/_${this.#client.name()}`,
-      this.#client.name()
+      `${this.#appName}-${this.#roomName}/_${this.#client.getUid()}`,
+      this.#client.getUid()
     );
     this.#isReady = false;
     this.#connect();
@@ -123,7 +123,7 @@ export class Room {
 
   // add this client to the room
   join() {
-    const name = this.#client.name();
+    const name = this.#client.getUid();
     if (!this.#participants.includes(name)) {
       this.#roomDataRecord.set(
         `participants.${this.#participants.length}`,
@@ -135,7 +135,7 @@ export class Room {
   // remove this client from the room
   leave() {
     const participants = this.#participants.filter(
-      (p) => p !== this.#client.name()
+      (p) => p !== this.#client.getUid()
     );
     this.#roomDataRecord.set(`participants`, participants);
   }
@@ -213,7 +213,7 @@ export class Room {
 
     // have only the new host set host so that multiple clients
     // don't try to set the host at once, causing a conflict
-    if (newHost === this.#client.name()) {
+    if (newHost === this.#client.getUid()) {
       // todo: can this be setWithAck?
       this.#roomDataRecord.set("host", newHost);
       await this.#roomDataRecord.whenReady();
@@ -240,7 +240,7 @@ export class Room {
       // remove stale participant records
       if (participantRecordIds.includes(id) && !participantIds.includes(id)) {
         // only the host should delete the record
-        if (this.#client.name() === this.#roomDataRecord.get("host")) {
+        if (this.#client.getUid() === this.#roomDataRecord.get("host")) {
           this.#participantRecords[id].delete();
         }
         delete this.#participantRecords[id];
@@ -248,7 +248,7 @@ export class Room {
 
       // add new participant records
       if (participantIds.includes(id) && !participantRecordIds.includes(id)) {
-        if (id === this.#client.name()) {
+        if (id === this.#client.getUid()) {
           this.#participantRecords[id] = this.#clientParticpantRecord;
           recordWhenReadies.push(this.#clientParticpantRecord.whenReady());
         } else {
@@ -300,7 +300,7 @@ export class Room {
       const shortName = name.substr(-4);
       const host = this.#roomDataRecord.get(`host`) === name ? "host" : "";
       const missing = onlineClients.includes(name) ? "" : "missing";
-      const me = this.#client.name() === name ? "me" : "";
+      const me = this.#client.getUid() === name ? "me" : "";
 
       output += `<div class="participant ${host} ${me} ${missing}">${shortName}</div>`;
     }

@@ -119,7 +119,7 @@ function init() {
       return undefined;
     }
 
-    return __room.getHostName() === __client.name();
+    return __room.getHostName() === __client.getUid();
   };
 
   ////////////////////////////////////////////////

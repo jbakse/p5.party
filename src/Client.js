@@ -10,34 +10,34 @@ import * as log from "./log";
  *
  */
 export class Client {
-  #name; // uid: provided by deepstream
-  #deepstreamClient; // ds.Client: wrapped by this Client
-  #clients = []; // [uid]: currently connected clients
+  #uid; // uid: provided by deepstream
+  #dsClient; // DeepstreamClient: wrapped by this Client
+  #clientUids = []; // [uid]: currently connected clients
 
   #isReady;
   #emitter;
 
   constructor(host) {
-    this.#deepstreamClient = new DeepstreamClient(host);
-    this.#name = this.#deepstreamClient.getUid();
-    this.#deepstreamClient.on("error", (error, event, topic) =>
+    this.#dsClient = new DeepstreamClient(host);
+    this.#uid = this.#dsClient.getUid();
+    this.#dsClient.on("error", (error, event, topic) =>
       log.error("error", error, event, topic)
     );
-    this.#deepstreamClient.on("connectionStateChanged", (connectionState) =>
+    this.#dsClient.on("connectionStateChanged", (connectionState) =>
       log.debug("connectionStateChanged", connectionState)
     );
 
     // get current connected clients and subscribe for updates
-    this.#deepstreamClient.presence.getAll((error, clients) => {
-      this.#clients = clients;
+    this.#dsClient.presence.getAll((error, usernames) => {
+      this.#clientUids = usernames;
     });
-    this.#deepstreamClient.presence.subscribe(async (username, isLoggedIn) => {
-      this.#clients = await this.#deepstreamClient.presence.getAll();
+    this.#dsClient.presence.subscribe(async (username, isLoggedIn) => {
+      this.#clientUids = await this.#dsClient.presence.getAll();
     });
 
     this.#isReady = false;
     this.#emitter = createEmitter();
-    this.#deepstreamClient.login({ username: this.#name }, () => {
+    this.#dsClient.login({ username: this.#uid }, () => {
       this.#isReady = true;
       this.#emitter.emit("ready");
     });
@@ -59,19 +59,19 @@ export class Client {
     if (!this.#isReady) {
       log.error("Client.getRecord() called before client ready.");
     }
-    return this.#deepstreamClient.record.getRecord(name);
+    return this.#dsClient.record.getRecord(name);
   }
 
   getList(name) {
     if (!this.#isReady) {
       log.error("Client.getList() called before client ready.");
     }
-    return this.#deepstreamClient.record.getList(name);
+    return this.#dsClient.record.getList(name);
   }
 
   getAllClients() {
-    const clients = [...this.#clients];
-    if (!clients.includes(this.#name)) clients.push(this.#name);
+    const clients = [...this.#clientUids];
+    if (!clients.includes(this.#uid)) clients.push(this.#uid);
     return clients;
   }
 
@@ -79,25 +79,24 @@ export class Client {
     if (!this.#isReady) {
       log.error("Client.presenceSubscribe() called before client ready.");
     }
-    this.#deepstreamClient.presence.subscribe(cb);
+    this.#dsClient.presence.subscribe(cb);
   }
 
   close() {
-    this.#deepstreamClient.close();
+    this.#dsClient.close();
   }
 
-  // @todo getter?
-  name() {
-    return this.#name;
+  getUid() {
+    return this.#uid;
   }
 
   ////////////////////////////////////////////////
   // experimental pub/sub
   subscribe(event, cb) {
-    this.#deepstreamClient.event.subscribe(event, cb);
+    this.#dsClient.event.subscribe(event, cb);
   }
 
   emit(event, data) {
-    this.#deepstreamClient.event.emit(event, data);
+    this.#dsClient.event.emit(event, data);
   }
 }

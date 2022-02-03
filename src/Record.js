@@ -62,11 +62,11 @@ export class Record {
   // resets shared object to data
   // warns non-owners on write
   setShared(data) {
-    if (this.#ownerId && this.#ownerId !== this.#client.name()) {
+    if (this.#ownerId && this.#ownerId !== this.#client.getUid()) {
       log.warn(
         `setShared() 
         changing data on shared object owned by another client
-        client: ${this.#client.name()}
+        client: ${this.#client.getUid()}
         owner: ${this.#ownerId}
         data: ${JSON.stringify(data)}
         `
@@ -127,10 +127,10 @@ export class Record {
     // on-change alerts us only when the value actually changes
     // so we don't need to test if newValue and oldValue are different
 
-    if (this.#ownerId && this.#ownerId !== this.#client.name()) {
+    if (this.#ownerId && this.#ownerId !== this.#client.getUid()) {
       log.warn(
         `changing data on shared object owned by another client
-client: ${this.#client.name()}
+client: ${this.#client.getUid()}
 owner: ${this.#ownerId}
 path: ${path}
 newValue: ${JSON.stringify(newValue)}`
