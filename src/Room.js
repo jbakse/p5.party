@@ -17,8 +17,8 @@ export class Room {
   #roomName; // string: user provide name for the room
 
   #roomDataDsRecord; // ds.Record: {participants: [uid], host: uid}
-  #participantUids; // [uid]: cache of #roomDataRecord.participants
-  #recordDsList; // ds.List: user records created in this room
+  #participantUids; // [uid]: cache of #roomDataDsRecord.participants
+  #recordDsList; // ds.List: user created records associated with this room
   #participantRecords; // {uid: party.Record}: map of particpant records for room
   #participantShareds; // [(watched)shared] cache of #participantRecords.getShared()s
   #clientParticpantRecord; // party.Record, participant record this client

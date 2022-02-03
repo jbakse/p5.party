@@ -80,7 +80,7 @@
 
 # Examples
 
-	.-- Add particpant counter to coverup
+	+-- Add particpant counter to coverup
 
 # Doumentation
 
@@ -90,17 +90,44 @@
 	-- Article: Running a local/LAN server for low ping sync across devices on site
 
 # Code Review
-	.--   change private methods from _ to #
-	--   client ids sometimes called "id" sometimes "name", confusing?
-	--   room has properties that are DS records and properties that are Party Records, rename properties to improve clarity?
-	-- 	Room recordList -> userRecordList?
+	+ --   change private methods from _ to #
+	+ --   client ids sometimes called "id" sometimes "name", confusing?
+	+ --   room has properties that are DS records and properties that are Party Records, rename properties to improve clarity?
+	.-- 	Room recordList -> userRecordList?
 	--   compare whenReady() implemenations in Room, Client, Record
-	-- 	should room.participants be room.participantIds
-		-- why use room.participants as cache of #roomDataRecord.participants
-		   might be better to just call #roomDataRecord.get on demand, removs a property, less to think about
+	+ -- 	should room.participants be room.participantIds
+	
+	-- Room remove properties?
+		- participantUids
+		- participantShareds
+		these could maybe be removed and just calculated on demand
+		- clientParticpantRecord
+		this could maybe be pulled from participantRecords by own uid?
+		also does this need to be created/loaded as a special case?
+		maybe it could be created the same way the rest of participantRecords are?
 
 
-	-- 	merging incoming data with shared object
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Wait and See
+
+	- 	merging incoming data with shared object
 		note: the current merge seems to be working pretty well
 		so this whole note should probably wait until a concrete need arises
 		I wrote a custom merge function in Record, but maybe it would be better to use a library?
