@@ -22,16 +22,16 @@ export class Record {
   #shared; // {}: internal read/write object to be synced with other clients
   #watchedShared; // Proxy: observable object wrapping #shared
   #record; // ds.Record: the record this party.Record is managing
-  #ownerId; // id of the client that "owns" this record, or null if no "owner"
-  // ownerId is used to warn if a client tries to change "someone elses" data
+  #ownerUid; // uid: the client that "owns" this record, or null if no "owner"
+  // ownerUid is used to warn if a client tries to change "someone elses" data
   #isReady;
   #emitter;
 
-  constructor(client, name, ownerId = null) {
+  constructor(client, name, ownerUid = null) {
     this.#client = client;
     this.#name = name;
     this.#shared = {};
-    this.#ownerId = ownerId;
+    this.#ownerUid = ownerUid;
     this.#watchedShared = onChange(
       this.#shared,
       this.#onClientChangedData.bind(this)
@@ -62,12 +62,12 @@ export class Record {
   // resets shared object to data
   // warns non-owners on write
   setShared(data) {
-    if (this.#ownerId && this.#ownerId !== this.#client.getUid()) {
+    if (this.#ownerUid && this.#ownerUid !== this.#client.getUid()) {
       log.warn(
         `setShared() 
         changing data on shared object owned by another client
         client: ${this.#client.getUid()}
-        owner: ${this.#ownerId}
+        owner: ${this.#ownerUid}
         data: ${JSON.stringify(data)}
         `
       );
@@ -76,6 +76,9 @@ export class Record {
     this.#setShared(data);
   }
 
+  // todo: i don't think we need to have this in a private method
+  // try pulling it into setShared.
+  // this private/public split allows record to call setShared and bypass the owner check, but thats not really needed, and it might be good to get checked
   // resets shared object to data
   // does not warn non-owners on write
   #setShared(data) {
@@ -127,11 +130,11 @@ export class Record {
     // on-change alerts us only when the value actually changes
     // so we don't need to test if newValue and oldValue are different
 
-    if (this.#ownerId && this.#ownerId !== this.#client.getUid()) {
+    if (this.#ownerUid && this.#ownerUid !== this.#client.getUid()) {
       log.warn(
         `changing data on shared object owned by another client
 client: ${this.#client.getUid()}
-owner: ${this.#ownerId}
+owner: ${this.#ownerUid}
 path: ${path}
 newValue: ${JSON.stringify(newValue)}`
       );
