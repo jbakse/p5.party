@@ -15,7 +15,7 @@ function setup() {
   // initialize this participants cursor position
   me.x = 200;
   me.y = 200;
-
+  me.ready = true;
   isSetup = true;
 }
 
@@ -31,7 +31,7 @@ function draw() {
 
   // draw each participants cursor
   for (const p of participants) {
-    if (typeof p.x !== "undefined") {
+    if (p.ready === true) {
       fill("#cc0000");
       ellipse(p.x, p.y, 20, 20);
     }
