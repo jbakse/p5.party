@@ -1,5 +1,6 @@
 let me;
 let participants;
+let isSetup = false; // flag to make sure preloading is done and setup is called
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "cursors", "main1");
@@ -14,9 +15,12 @@ function setup() {
   // initialize this participants cursor position
   me.x = 200;
   me.y = 200;
+
+  isSetup = true;
 }
 
 function mouseMoved(e) {
+  if (!isSetup) return;
   // update this participants cursor position
   me.x = mouseX;
   me.y = mouseY;
