@@ -128,7 +128,7 @@ function init() {
   p5.prototype.partySetShared = function (shared, object) {
     if (!Record.recordForShared(shared)) {
       log.warn(
-        "partySetShared() doesn't recognize provided shared object.",
+        "partySetShared() doesn't recognize the provided shared object.",
         shared
       );
       return;
