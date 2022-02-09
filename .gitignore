@@ -4,6 +4,7 @@ node_modules
 # build files
 dist
 p5.party.zip
+version.js
 
 # build meta files
 stats.json
