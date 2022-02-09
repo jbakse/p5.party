@@ -23,7 +23,7 @@
     "./src/party_debug.css"
   ],
   "engines": {
-    "node": "14.1.0"
+    "node": "16.14.0"
   },
   "repository": {
     "type": "git",
