@@ -30,18 +30,20 @@
     "url": "https://github.com/jbakse/deepstream_test.git"
   },
   "scripts": {
-    "version": "genversion --es6 --semi version.js",
-    "prebuild": "rm -f p5.party.zip && npm run version",
-    "build": "webpack --config webpack.prod.js",
-    "profile": "webpack --config webpack.profile.js",
-    "watch": "webpack --watch --config webpack.dev.js",
     "start": "webpack-dev-server --open --config webpack.dev.js",
+    "prebuild": "npm run gv",
+    "build": "webpack --config webpack.prod.js",
+    "watch": "webpack --watch --config webpack.dev.js",
+    "profile": "webpack --config webpack.profile.js",
     "serve": "PORT=${PORT:-6020} deepstream start",
     "test": "echo \"No test specified\" && exit 0",
-    "netlify": "npm run build && cp -r dist public",
-    "prerelease": "npm run build && npm run pack",
+    "gv": "genversion --es6 --semi version.js",
+    "prezip": "rm -f p5.party.zip",
+    "zip": "npm run build && ln -s public/examples && zip p5.party.zip -r dist -r examples && rm -r examples && unzip -l p5.party.zip",
+    "prerelease": "npm run build",
     "release": "np",
-    "pack": "npm run build && ln -s public/examples && zip p5.party.zip -r dist -r examples && rm -r examples && unzip -l p5.party.zip"
+    "prepublishOnly": "npm run build && npm run zip",
+    "netlify": "npm run build && cp -r dist public"
   },
   "dependencies": {
     "@deepstream/client": "^5.2.6",
