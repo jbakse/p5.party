@@ -4,7 +4,7 @@
 
 
 ## Bugs
---	Patch in place doesn't remove items from an array correctly
++ --	Patch in place doesn't remove items from an array correctly
 	tries to remove index 0, 1, 2
 	but removing index 0 shifts 1, 2 to 0, 1
 	etc.
@@ -12,6 +12,9 @@
 
 ## Enhancements
 
+- Console
+	-- 	clean up console messages
+	-- 	add version to console
 - Debug View
 	--	make debug view opt in
 	--	add ping to debug view?
@@ -141,6 +144,7 @@
 		mergeWidth might be flexible enough to customize behavior add debug reporting 
 		might be good to just study their merge and compare to the current party implementation
 		might be worth also studying the merge function in deepstream to see how the approaches differ, if one is better
+		it might remove properties given its usecase
 		https://github.com/deepstreamIO/deepstream.io/blob/892c0fea1b348cc5152e3b75cf19e3241ece3edc/src/utils/utils.ts#L77
 
 

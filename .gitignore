@@ -12,3 +12,6 @@ stats.json
 # system files
 .DS_Store
 Icon[\r]
+
+# jest test files
+coverage

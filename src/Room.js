@@ -138,6 +138,7 @@ export class Room {
       (p) => p !== this.#client.getUid()
     );
     this.#roomDataDsRecord.set(`participants`, participants);
+    // todo: return ack promise?
   }
 
   // check if this client is in the room
