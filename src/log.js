@@ -26,3 +26,11 @@ function makeLogger(type, prefix, style) {
   // eslint-disable-next-line
   return console[type].bind(window.console, `%c${prefix}`, style);
 }
+
+// eslint-disable-next-line
+export const styled = console.log.bind(
+  window.console,
+  "%cparty-log%c %c%s",
+  "background-color: #88F; color: #00ffff; padding: 2px 5px; border-radius: 2px",
+  "background: none;"
+);

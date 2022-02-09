@@ -6,6 +6,8 @@ import { Client } from "./Client";
 import { Room } from "./Room";
 import { Record } from "./Record";
 
+import { version } from "../version";
+
 // @todo remove this export?
 window.party = { Client, Room, Record };
 
@@ -16,6 +18,14 @@ let __client, __room;
 window.p5 ? init() : log.warn("p5.js not found.");
 
 function init() {
+  // test with --no publish
+
+  const version_string = p5.prototype.VERSION
+    ? `p5.js v${p5.prototype.VERSION}`
+    : "p5.js is older than 1.3.1";
+  log.styled("font-weight: bold", version_string);
+  log.styled("font-weight: bold", `p5.party v${version}`);
+
   ////////////////////////////////////////////////
   // partyConnect (preload)
 

@@ -30,7 +30,8 @@
     "url": "https://github.com/jbakse/deepstream_test.git"
   },
   "scripts": {
-    "prebuild": "rm -f p5.party.zip",
+    "version": "genversion --es6 --semi version.js",
+    "prebuild": "rm -f p5.party.zip && npm run version",
     "build": "webpack --config webpack.prod.js",
     "profile": "webpack --config webpack.profile.js",
     "watch": "webpack --watch --config webpack.dev.js",
@@ -60,6 +61,7 @@
     "css-loader": "^6.5.1",
     "eslint": "^8.6.0",
     "eslint-config-p5js": "^1.1.0",
+    "genversion": "^3.0.2",
     "np": "^7.6.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.66.0",
