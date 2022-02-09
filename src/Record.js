@@ -119,7 +119,7 @@ export class Record {
     if (!this.#dsRecord.get("shared")) this.#dsRecord.set("shared", {});
 
     // report
-    log.debug("RecordManager: Record ready.", this.#name);
+    // log.debug("RecordManager: Record ready.", this.#name);
 
     // ready
     this.#isReady = true;

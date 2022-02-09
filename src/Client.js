@@ -23,9 +23,9 @@ export class Client {
     this.#dsClient.on("error", (error, event, topic) =>
       log.error("error", error, event, topic)
     );
-    this.#dsClient.on("connectionStateChanged", (connectionState) =>
-      log.debug("connectionStateChanged", connectionState)
-    );
+    // this.#dsClient.on("connectionStateChanged", (connectionState) =>
+    //   log.debug("connectionStateChanged", connectionState)
+    // );
 
     // get current connected clients and subscribe for updates
     this.#dsClient.presence.getAll((error, usernames) => {
