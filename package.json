@@ -43,6 +43,7 @@
     "prerelease": "npm run build",
     "release": "np",
     "prepublishOnly": "npm run build && npm run zip",
+    "postpublish": "curl https://purge.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js",
     "netlify": "npm run build && cp -r dist public"
   },
   "dependencies": {
