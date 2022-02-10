@@ -43,12 +43,13 @@ export class Client {
     });
   }
 
-  whenReady(cb = () => {}) {
+  // whenReady returns a promise AND calls a callback
+  whenReady(cb) {
     if (this.#isReady) {
-      cb();
+      if (typeof cb === "function") cb();
       return Promise.resolve();
     } else {
-      this.#emitter.once("ready", cb);
+      if (typeof cb === "function") this.#emitter.once("ready", cb);
       return new Promise((resolve) => {
         this.#emitter.once("ready", resolve);
       });

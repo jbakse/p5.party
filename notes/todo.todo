@@ -8,8 +8,8 @@
 ## Enhancements
 
 - Console
-	+ -- 	clean up console messages
-	+ -- 	add version to console
+	+ --	clean up console messages
+	+ --	add version to console
 
 - Debug View
 	--	make debug view opt in
@@ -21,7 +21,7 @@
 	     the host (or new host) does this now but if the last client disconnects no one cleans up and there is nothing even keeping the name of the record, its leaked. 
 		maybe keep a list of all participant records (across all rooms) and have a cleanup function run somewhere as a garbage collector?
 
-	-- 	add a way to clear all the shared records
+	--	add a way to clear all the shared records
 		a full reset for rooms or apps would be good d
 		during development, having stale data stick around can be confusing
 		reloading a js program usually restarts it from 0, but not when you have data hanging out on the back end.
@@ -29,14 +29,14 @@
 		might even automatically reset the room if its empty (this would break persistent world apps, could be a flag on connect?)
 
 - Client
-	-- 	reconnect after page reload?
+	--	reconnect after page reload?
 		consider cacheing random id in _session_ storage so reloads can reconnect as same client
 
 
 - Sync
 	--	configurable push?: auto or manual
 		Would it be useful if data was not automatically sent and the user had to call something like .flush() or .send()
-	-- 	configurable push?: debounce
+	--	configurable push?: debounce
 		A possible semiautomatic mode, or optimization to the automatic mode
 		The thought here is it might be good to let code make lots of little changes, but not send them until the work is done.
 		Especially in a case where the same value might get updated many times in a row. e.g. incrementing the score could happen a lot in a single draw, but we only need to send the final version
@@ -44,10 +44,10 @@
 
 
 - Participants
-	--- expose participant count?: can be gotten via participants.length, only if you are "subscribed" to participant shareds
-	--- expose participant ids, id list
-	--- expose own id
-	-- event when new participant joins or leaves?
+	---	expose participant count?: can be gotten via participants.length, only if you are "subscribed" to participant shareds
+	---	expose participant ids, id list
+	---	expose own id
+	--	event when new participant joins or leaves?
 	
 
 - Tooling
@@ -62,46 +62,49 @@
 	--	Example Games + Apps
 	--	Video Tutorials
 	--	Dorkshop
-	-- 	Eleventy Docs. Migrate docs to .md/11ty.
-	--   Identity + Visual design system.
+	--	Example Cleanup
+	--	Eleventy Docs. Migrate docs to .md/11ty.
+	--	Identity + Visual design system.
 	--	Improve welcome page.
 		[https://skerritt.blog/make-popular-open-source-projects/]
 
 
 
 # Release Package
-	-- provide min and unmin versions?
+	
+	--	provide min and unmin versions?
 		compare to other p5 libraries
 		https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
-	-- Should the examples be distributed in the zip?
-	-- Should the zip even be distributed?
-	-- Audit npm package. is the correct stuff published?
-	-- What generates the license file in the zip package? Is it corect?
-	-- Can bake package version into code somehow?
+	--	Should the examples be distributed in the zip?
+	--	Should the zip even be distributed?
+	.--	Audit npm package. is the correct stuff published?
+	.--	What generates the license file in the zip package? Is it corect?
+		webpack
+	.--	Can bake package version into code somehow?
 		I frequently think it would be nice if dist/lib.js had a comment at the top like /* p5.party v1.2.3 */
 		When you copy a dep into a project (rather than using npm or something) its easy forget what version it is
 		https://www.npmjs.com/package/genversion
 
 # Examples
 
-	+-- Add particpant counter to coverup
+	+--	Add particpant counter to coverup
 
 # Doumentation
 
-	-- Make article about this: Globals are bad! p5.party basically creates something more global than globals.
+	--	Make article about this: Globals are bad! p5.party basically creates something more global than globals.
 
 
-	-- Article: Running a local/LAN server for low ping sync across devices on site
+	--	Article: Running a local/LAN server for low ping sync across devices on site
 
 # Code Review
-	+ --   change private methods from _ to #
-	+ --   client ids sometimes called "id" sometimes "name", confusing?
-	+ --   room has properties that are DS records and properties that are Party Records, rename properties to improve clarity?
-	.-- 	Room recordList -> userRecordList?
-	--   compare whenReady() implemenations in Room, Client, Record
-	+ -- 	should room.participants be room.participantIds
+	+ --	change private methods from _ to #
+	+ --	client ids sometimes called "id" sometimes "name", confusing?
+	+ --	room has properties that are DS records and properties that are Party Records, rename properties to improve clarity?
+	.--	Room recordList -> userRecordList?
+	.--	compare whenReady() implemenations in Room, Client, Record
+	+ --	should room.participants be room.participantIds
 	
-	-- Room remove properties?
+	--	Room remove properties?
 		- participantUids
 		- participantShareds
 		these could maybe be removed and just calculated on demand

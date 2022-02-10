@@ -45,6 +45,7 @@ export class Record {
     this.#connect();
   }
 
+  // whenReady returns a promise AND calls a callback
   whenReady(cb) {
     if (this.#isReady) {
       if (typeof cb === "function") cb();
