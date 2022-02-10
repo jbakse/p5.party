@@ -28,10 +28,4 @@ module.exports = {
     ],
     "no-console": 0,
   },
-  overrides: [
-    {
-      files: ["**/*_m/*.js"],
-      parserOptions: { sourceType: "module" },
-    },
-  ],
 };

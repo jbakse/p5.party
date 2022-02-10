@@ -15,6 +15,21 @@ Releases are automated using `np`.
 1. Check pre-release checkbox
 1. Click "publish"
 
+# How to use a feature branch
+
+```bash
+git branch feature-branch # create a new feature branch
+git checkout feature-branch # switch to the feature branch
+... commit changes ...
+git rebase master # rebase your changes on top of master
+git checkout master # switch back to master
+git merge -squash feature-branch # merge your changes into master via a squash
+# git won't know your branch has been merged, so...
+git branch -d feature-branch
+# ...will warn you and tell you you need to ...
+git branch -D feature-branch
+```
+
 # How to update your local fork with upstream changes
 
 You have forked p5.party and cloned it to your own machine.
