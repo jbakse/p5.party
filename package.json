@@ -20,7 +20,7 @@
   "main": "src/index_p5.js",
   "sideEffects": [
     "./src/index.p5.js",
-    "./src/party_debug.css"
+    "./src/InfoPanel.css"
   ],
   "engines": {
     "node": "16.14.0"

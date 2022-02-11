@@ -11,9 +11,11 @@
 	+ --	clean up console messages
 	+ --	add version to console
 
-- Debug View
-	--	make debug view opt in
-	--	add ping to debug view?
+
+- Info View
+	.--	make view disableable
+	--	add ping?
+	--	look into using something like reef or https://preactjs.com/? 
 
 - Records
 	--	records leak

@@ -148,7 +148,7 @@ module.exports = {
     "operator-assignment": "error", //	Require or disallow assignment operator shorthand where possible
     "prefer-arrow-callback": "error", //	Require using arrow functions for callbacks
     "prefer-const": "error", //	Require `const` declarations for variables that are never reassigned after declared
-    "prefer-destructuring": "error", //	Require destructuring from arrays and/or objects
+    // "prefer-destructuring": "error", //	Require destructuring from arrays and/or objects
     "prefer-exponentiation-operator": "error", //	Disallow the use of `Math.pow` in favor of the `**` operator
     "prefer-named-capture-group": "error", //	Enforce using named capture group in regular expression
     "prefer-numeric-literals": "error", //	Disallow `parseInt()` and `Number.parseInt()` in favor of binary, octal, and hexadecimal literals

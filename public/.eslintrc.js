@@ -14,6 +14,7 @@ module.exports = {
     partyLoadParticipantShareds: "readonly",
     partySubscribe: "readonly",
     partyEmit: "readonly",
+    partyToggleInfo: "readonly",
   },
   rules: {
     "prefer-destructuring": "off",

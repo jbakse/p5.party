@@ -5,6 +5,7 @@ import * as log from "./log";
 import { Client } from "./Client";
 import { Room } from "./Room";
 import { Record } from "./Record";
+import { InfoPanel } from "./InfoPanel";
 
 import { version } from "../version";
 
@@ -14,6 +15,9 @@ window.party = { Client, Room, Record };
 /* globals p5 */
 
 let __client, __room;
+
+// eslint-disable-next-line no-unused-private-class-members
+let __infoPanel; // InfoPanel for this room
 
 window.p5 ? init() : log.warn("p5.js not found.");
 
@@ -50,6 +54,8 @@ function init() {
 
     connect().then(() => {
       log.log("partyConnect done!");
+
+      this.partyToggleInfo();
       cb && cb();
       this._decrementPreload();
     });
@@ -68,7 +74,7 @@ function init() {
     const record = __room.getRecord(record_id);
 
     record.whenReady(() => {
-      log.log("partyLoadShared done!", record_id);
+      log.log(`partyLoadShared "${record_id}" done!`);
       cb && cb(record.getShared());
       this._decrementPreload();
     });
@@ -168,5 +174,18 @@ function init() {
 
   p5.prototype.partyEmit = function (event, data) {
     __client.emit(event, data);
+  };
+
+  p5.prototype.partyToggleInfo = function (show) {
+    if (!__room.isReady) {
+      log.warn(
+        "partyToggleInfo() called before partyConnect() was done.\n\nIf you are calling partyToggleInfo() from preload(), you should call it from setup() instead."
+      );
+      return;
+    }
+    if (!__infoPanel) {
+      __infoPanel = new InfoPanel(__client, __room);
+    }
+    __infoPanel.toggle(show);
   };
 }

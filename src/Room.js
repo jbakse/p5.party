@@ -1,9 +1,7 @@
 import { createEmitter } from "./emitter";
 import { Record } from "./Record";
-import * as log from "./log";
 
-// eslint-disable-next-line
-import css from "./party_debug.css";
+import * as log from "./log";
 
 /*
  * Room
@@ -41,7 +39,19 @@ export class Room {
       this.#client.getUid()
     );
     this.#isReady = false;
+
     this.#connect();
+  }
+
+  _panelData() {
+    return {
+      appName: this.#appName,
+      roomName: this.#roomName,
+      participantUids: this.#participantUids,
+      roomDataDsRecord: this.#roomDataDsRecord,
+      recordDsList: this.#recordDsList,
+      participantRecords: this.#participantRecords,
+    };
   }
 
   async #connect() {
@@ -89,8 +99,6 @@ export class Room {
     // ready
     this.#isReady = true;
     this.#emitter.emit("ready");
-
-    setInterval(this.#displayDebug.bind(this), 100);
   }
 
   // whenReady returns a promise AND calls a callback
@@ -104,6 +112,10 @@ export class Room {
         this.#emitter.once("ready", resolve);
       });
     }
+  }
+
+  get isReady() {
+    return this.#isReady;
   }
 
   getRecord(id) {
@@ -277,49 +289,5 @@ export class Room {
     });
 
     // @todo currently not removing or hiding disconnected clients (ghosts)
-  }
-
-  // @todo: factor this out of Room?
-  #displayDebug() {
-    // create element if needed
-    let el = document.getElementById("party-debug");
-    if (!el) {
-      el = document.createElement("div");
-      el.id = "party-debug";
-      document.body.appendChild(el);
-    }
-
-    // collect info
-    const onlineClients = this.#client.getAllClients();
-
-    // generate output
-    let output = "";
-    output += '<div class="label">p5.party debug</div>';
-    output += `<div class="app">${this.#appName}</div>`;
-    output += `<div class="room">${this.#roomName}</div>`;
-    output += `<div class="label">Participants</div>`;
-
-    for (const name of this.#participantUids) {
-      const shortName = name.substr(-4);
-      const host = this.#roomDataDsRecord.get(`host`) === name ? "host" : "";
-      const missing = onlineClients.includes(name) ? "" : "missing";
-      const me = this.#client.getUid() === name ? "me" : "";
-
-      output += `<div class="participant ${host} ${me} ${missing}">${shortName}</div>`;
-    }
-
-    output += `<div class="label">Shared Objects</div>`;
-    for (const entry of this.#recordDsList.getEntries()) {
-      output += `<div class="record">${entry.split("/")[1]}</div>`;
-    }
-
-    // output += `<div class="label">#participantRecords</div>`;
-    // // get keys from #participantRecords
-    // const keys = Object.keys(this.#participantRecords);
-    // for (const key of keys) {
-    //   output += `<div class="record">${key}</div>`;
-    // }
-
-    el.innerHTML = output;
   }
 }

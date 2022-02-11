@@ -1,4 +1,4 @@
-#party-debug {
+#party-info {
   font-family: monospace;
   font-size: 12px;
 
@@ -6,35 +6,46 @@
   position: absolute;
   right: 0;
   top: 0;
+
+  display: none;
 }
-#party-debug div {
+
+#party-info.show {
+  display: block;
+}
+
+#party-info div {
   padding: 10px;
 }
-#party-debug .app {
+#party-info .app {
   background-color: #ffffcc;
 }
-#party-debug .room {
+#party-info .room {
   background-color: #ffffcc;
 }
-#party-debug .participant {
+#party-info .id {
+  background-color: #ffffcc;
+}
+
+#party-info .participant {
   background-color: #ccccff;
 }
-#party-debug .host::after {
+#party-info .host::after {
   content: " « host";
 }
-#party-debug .me::after {
+#party-info .me::after {
   content: " « me";
 }
-#party-debug .host.me::after {
+#party-info .host.me::after {
   content: " « host+me";
 }
-#party-debug .missing {
+#party-info .missing {
   color: rgba(0, 0, 0, 0.3);
 }
 
-#party-debug .label {
+#party-info .label {
   background-color: #ccffcc;
 }
-#party-debug .record {
+#party-info .record {
   background-color: #ccffff;
 }
