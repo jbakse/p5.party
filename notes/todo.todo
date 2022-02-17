@@ -15,6 +15,9 @@
 - Info View
 	.--	make view disableable
 	--	add ping?
+	-- 	don't update hidden info panel
+	--   remove hidden info panel entirely?
+	--   and send/receive lights
 	--	look into using something like reef or https://preactjs.com/? 
 
 - Records
