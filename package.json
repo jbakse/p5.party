@@ -30,6 +30,7 @@
     "url": "https://github.com/jbakse/deepstream_test.git"
   },
   "scripts": {
+    "prestart": "npm run gv",
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "prebuild": "npm run gv",
     "build": "webpack --config webpack.prod.js",
