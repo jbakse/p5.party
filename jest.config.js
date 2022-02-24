@@ -2,6 +2,7 @@
 const config = {
   testEnvironment: "jsdom",
   collectCoverage: true,
+  coverageReporters: ["json-summary"],
   moduleFileExtensions: ["js"],
   transform: {
     "^.+\\.js$": "babel-jest",

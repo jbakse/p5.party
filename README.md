@@ -1,35 +1,44 @@
-<!-- PROJECT LOGO -->
+<div align="center">
+
+![p5.party logo](assets/p5_party_logo.jpg)
+
+<!-- ![Netlify](https://img.shields.io/netlify/8ab7413c-e95d-42b8-8988-5d930954a3f1) -->
+<!-- ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jbakse/p5.party) -->
+<!-- ![GitHub contributors](https://img.shields.io/github/contributors/jbakse/p5.party) -->
+<!-- ![GitHub all releases](https://img.shields.io/github/downloads/jbakse/p5.party/total) -->
+
+![NPM](https://img.shields.io/npm/l/p5.party)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/jbakse/p5.party)
+
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/jbakse/p5.party)
+![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/npm/hy/p5.party)
+[![Website](https://img.shields.io/website?down_message=offline&label=documentation&up_message=online&url=https%3A%2F%2Fwww.notion.so%2Fp5-party-Documentation-887564cad8ec455e9bee994362322f2e)](https://www.notion.so/p5-party-Documentation-887564cad8ec455e9bee994362322f2e)
+[![Website](https://img.shields.io/website?down_message=offline&label=examples&up_message=online&url=https%3A%2F%2Fp5party.netlify.app%2F)](http://p5party.netlify.app)
+
 <!--
-<p align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
 
-  <h3 align="center">Best-README-Template</h3>
+Test Coverage:
 
-  <p align="center">
-    An awesome README template to jumpstart your projects!
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
-  </p>
-</p> -->
+![Statements](https://img.shields.io/badge/statements-85.37%25-yellow.svg?style=flat)
+![Branches](https://img.shields.io/badge/branches-75.42%25-red.svg?style=flat)
+![Functions](https://img.shields.io/badge/functions-81.81%25-yellow.svg?style=flat)
+![Lines](https://img.shields.io/badge/lines-86.44%25-yellow.svg?style=flat)
 
-## About p5.party!
+ -->
 
-p5.party is a library for easily creating multiuser sketches with p5.js. With p5.party you can quickly prototype ideas for multiplayer games, realtime multiuser apps, and multi-computer art projects.
+</div>
 
-[p5.party Documentation](https://www.notion.so/p5-party-Documentation-887564cad8ec455e9bee994362322f2e)
+## Multi-player Games with p5.js
 
-[p5.party Demos](https://p5party.netlify.app/)
+p5.party is a library for easily prototyping online multi-user sketches with p5.js. With p5.party you can quickly test ideas for multiplayer games, realtime multi-user apps, and multi-computer art projects.
 
-:warning: p5.party is very new alpha release. Expect rough edges and bugs!
+[Documentation](https://www.notion.so/p5-party-Documentation-887564cad8ec455e9bee994362322f2e)
+
+[Demos + Examples](https://p5party.netlify.app/)
+
+[Discussion](https://github.com/jbakse/p5.party/discussions)
+
+:warning: &nbsp; p5.party is is still in pre-release. Expect rough edges, API changes, and bugs!
 
 ## What is it good for?
 
@@ -55,7 +64,7 @@ p5.party is designed for prototypes. As your project grows, you'll need to look 
 
 Sketches built with p5.party are insecure. p5.party has no method to authenticate or authorize users. Multiple apps share a server and can read, write, and delete each other's data.
 
-**Fast-Action**
+**Fast-Action Games**
 
 Fast-action multiplayer games are inherently complex. Compensating for network latency requires [prediction and reconciliation](https://www.gabrielgambetta.com/client-server-game-architecture.html) strategies which are somewhat application specific and outside the scope of p5.party.
 
@@ -63,7 +72,7 @@ Fast-action multiplayer games are inherently complex. Compensating for network l
 
 **Shared Data Objects**
 
-With p5.party you can easily create a shared data object that is automatically synchronized between instances of your sketch. You can write to and read from these objects just like local variables.
+With p5.party you can easily create a shared data object that is automatically synchronized between instances of your sketch. You can assign and read properties on these objects just like a plain old local javascript object.
 
 **Multiple Apps and Rooms**
 
@@ -73,15 +82,62 @@ A single p5.party server can support many apps and each app can group users into
 
 p5.party automatically designates one (and only one) guest in each room as the host. Your code can easily check if it is the host and take care of running the party. This lets you avoid writing server-side code and makes prototyping faster.
 
-## How does it work?
+## Show Me Some Code!
 
-[p5.party](http://p5.party) builds on [deepstream.io](http://deepstream.io) and [sindresorhus/on-change](https://github.com/sindresorhus/on-change). Deepstream is a realtime data-sync server that can be easily self hosted on services like [heroku](heroku.com) or [aws](https://aws.amazon.com/free). p5.party uses Deepstream to communicate between connected clients. on-change uses javascript [proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) to make a fully observable object. p5.party uses on-change to watch for changes to shared data objects and then communicates these changes to deepstream.
+<img src="assets/hello_p5party_opt.gif" align="right"/>
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/p5@latest/lib/p5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js"></script>
+```
+
+```javascript
+let shared;
+
+function preload() {
+  // connect to server
+  partyConnect("...", "hello_party", "main");
+
+  // load a shared data object
+  shared = partyLoadShared("shared");
+}
+
+function setup() {
+  createCanvas(400, 400);
+  noStroke();
+  fill("red");
+
+  // set initial values
+  shared.x ??= width * 0.5;
+  shared.y ??= height * 0.5;
+}
+
+function mousePressed() {
+  // write shared data
+  shared.x = mouseX;
+  shared.y = mouseY;
+}
+
+function draw() {
+  background("white");
+  // read shared data
+  ellipse(shared.x, shared.y, 100, 100);
+}
+```
 
 ## Installation and Quickstart
 
-Download the latest build of p5.party and the example apps from the [releases page on Github](https://github.com/jbakse/p5.party/releases). For details getting started see the Hello, p5.party! tutorial.
+The quickest way to get started with p5.party is to load it from a CDN.
 
-[Hello, p5.party!](https://www.notion.so/Hello-p5-party-c4c0f94127c1408e9d6dd51f91ac8414)
+```
+https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js
+```
+
+Visit the [P5 Web Editor Quick Start Guide](https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js) to get started using p5.party in the p5.js web editor.
+
+You can also download the latest release of p5.party and the example apps from the [releases page on Github](https://github.com/jbakse/p5.party/releases).
+
+Visit the [VS Code Quick Start Guide](https://www.notion.so/Hello-p5-party-c4c0f94127c1408e9d6dd51f91ac8414) to get started using p5.party in locally with VS Code.
 
 ## Server Installation
 
@@ -89,16 +145,9 @@ You can set up a server in a few minutes using Heroku and a clone of the p5.part
 
 [Server Setup](https://www.notion.so/Server-Setup-d039a4be3a044878bd5ad0931f1c93bd)
 
-<!--
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request -->
+We welcome new contibuters. Please feel free to start a [discusion](https://github.com/jbakse/p5.party/discussions), [post issues](https://github.com/jbakse/p5.party/issues), or [request features](https://github.com/jbakse/p5.party/issues). If you want to help with writing code or documentation, you can start by indicating your interest on an open issue or by creating your own.
 
 ## License
 
@@ -106,7 +155,8 @@ Distributed under the MIT License. See `license` for more information.
 
 ## Acknowledgements
 
-- [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
+p5.party builds on [deepstream.io](http://deepstream.io) and [sindresorhus/on-change](https://github.com/sindresorhus/on-change). Deepstream is a realtime data-sync server that can be easily self hosted on services like [heroku](heroku.com) or [aws](https://aws.amazon.com/free). on-change uses javascript [proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) to make a fully observable object. p5.party uses on-change to watch for changes to shared data objects and then communicates these changes to deepstream. p5.party also depends on a number of other great [packages](package.json).
+
 - [deepstream.io](http://deepstream.io)
 - [sindresorhus/on-change](https://github.com/sindresorhus/on-change)
 
