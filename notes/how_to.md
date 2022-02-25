@@ -24,6 +24,9 @@ git checkout feature-branch # switch to the feature branch
 git rebase master # rebase your changes on top of master
 git checkout master # switch back to master
 git merge --squash feature-branch # merge your changes into master via a squash
+
+commit ALL the changes as one commit.
+
 # git won't know your branch has been merged, so...
 git branch -d feature-branch
 # ...will warn you and tell you you need to ...
