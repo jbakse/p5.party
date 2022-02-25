@@ -107,7 +107,7 @@ function setup() {
   noStroke();
   fill("red");
 
-  // set initial values
+  // set initial values if they are not set*
   shared.x ??= width * 0.5;
   shared.y ??= height * 0.5;
 }
@@ -124,6 +124,8 @@ function draw() {
   ellipse(shared.x, shared.y, 100, 100);
 }
 ```
+
+\*using the newish [ES2020 ??= Operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_nullish_assignment)
 
 ## Installation and Quickstart
 
