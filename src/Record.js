@@ -94,14 +94,32 @@ export class Record {
     this.#dsRecord.delete();
   }
 
-  async watchShared(path_or_cb, cb) {
-    await this.whenReady();
-    if (typeof path_or_cb === "string") {
-      this.#dsRecord.subscribe("shared." + path_or_cb, cb);
-    } else if (typeof path_or_cb === "function") {
-      this.#dsRecord.subscribe("shared", path_or_cb);
+  // takes [path], cb, [triggerNow]
+
+  async watchShared(a, b, c) {
+    let path, cb, triggerNow;
+    if (typeof a === "string") {
+      path = "shared." + a;
+      cb = b;
+      triggerNow = c ?? false;
+    } else {
+      path = "shared";
+      cb = a;
+      triggerNow = b ?? false;
     }
+
+    await this.whenReady();
+    this.#dsRecord.subscribe(path, cb, triggerNow);
   }
+
+  // async watchShared(path_or_cb, cb) {
+  //   await this.whenReady();
+  //   if (typeof path_or_cb === "string") {
+  //     this.#dsRecord.subscribe("shared." + path_or_cb, cb);
+  //   } else if (typeof path_or_cb === "function") {
+  //     this.#dsRecord.subscribe("shared", path_or_cb);
+  //   }
+  // }
 
   static recordForShared(shared) {
     return onChange.target(shared)[Symbol.for("Record")];

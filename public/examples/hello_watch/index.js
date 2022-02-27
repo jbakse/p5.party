@@ -6,7 +6,6 @@ function preload() {
     "main"
   );
   shared = partyLoadShared("shared");
-  partyWatchShared(shared, onDataChange);
 }
 
 function setup() {
@@ -19,6 +18,9 @@ function setup() {
 
   // don't draw every frame
   noLoop();
+
+  // subscribe to data changes, and draw when they happen
+  partyWatchShared(shared, onDataChange, true);
 }
 
 function mousePressed(e) {
@@ -34,7 +36,8 @@ function draw() {
   ellipse(shared.x, shared.y, 100, 100);
 }
 
-function onDataChange() {
+function onDataChange(newValue) {
+  console.log("onDataChange", newValue);
   // draw when the circle moves
   draw();
 }

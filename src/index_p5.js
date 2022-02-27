@@ -154,8 +154,8 @@ function init() {
 
   ////////////////////////////////////////////////
   // partyWatchShared
-
-  p5.prototype.partyWatchShared = function (shared, path, cb) {
+  // takes [path], cb, [triggerNow = false]
+  p5.prototype.partyWatchShared = function (shared, path, cb, triggerNow) {
     if (!Record.recordForShared(shared)) {
       log.warn(
         "partyWatchShared() doesn't recognize provided shared object.",
@@ -163,7 +163,7 @@ function init() {
       );
       return;
     }
-    Record.recordForShared(shared).watchShared(path, cb);
+    Record.recordForShared(shared).watchShared(path, cb, triggerNow);
   };
 
   ////////////////////////////////////////////////
