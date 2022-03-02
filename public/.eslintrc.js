@@ -15,6 +15,7 @@ module.exports = {
     partySubscribe: "readonly",
     partyEmit: "readonly",
     partyToggleInfo: "readonly",
+    loadSound: "readonly",
   },
   rules: {
     "prefer-destructuring": "off",

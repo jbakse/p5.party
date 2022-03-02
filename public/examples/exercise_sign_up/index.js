@@ -63,6 +63,8 @@ function onNameInput() {
 /**
  * Q+A
  *
+ * In the code above...
+ *
  * 1) Is the object refrenced by `my` in the `participants` array?
  *
  * 2) Does more than one client write to the same shared object?
