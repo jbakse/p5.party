@@ -38,7 +38,7 @@
     "profile": "webpack --config webpack.profile.js",
     "serve": "PORT=${PORT:-6020} deepstream start",
     "test": "jest --coverage",
-    "posttest": "istanbul-badges-readme",
+    "!posttest": "istanbul-badges-readme",
     "gv": "genversion --es6 --semi version.js",
     "prezip": "rm -f p5.party.zip",
     "zip": "npm run build && ln -s public/examples && zip p5.party.zip -r dist -r examples && rm -r examples && unzip -l p5.party.zip",
