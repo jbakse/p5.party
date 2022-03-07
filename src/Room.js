@@ -153,6 +153,24 @@ export class Room {
     // todo: return ack promise?
   }
 
+  subscribe(event, cb) {
+    this.#client.subscribe(event, (payload) => {
+      // reject improperly formatted messages (sent by old version of p5.party)
+      if (typeof payload !== "object") return;
+      // reject messages from other rooms
+      if (payload.room !== `${this.#appName}-${this.#roomName}`) return;
+      cb(payload.data);
+    });
+  }
+
+  emit(event, data) {
+    const payload = {
+      room: `${this.#appName}-${this.#roomName}`,
+      data,
+    };
+    this.#client.emit(event, payload);
+  }
+
   // check if this client is in the room
   contains(username) {
     return this.#participantUids.includes(username);

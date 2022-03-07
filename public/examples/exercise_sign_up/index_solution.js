@@ -43,18 +43,7 @@ function onNameInput() {
 
 // Place these comments in the right places in the code above.
 
-// the input field user types into
-// array of shared objects, one for each connected client
-// a shared object for this client
-// connect to p5.party server
-// load shared objects for all connected clients, including this one
-// load shared object for this connected client
-// create a <input> elment on the page
-// set the function to be called when the input field is changed
-// loop through all the shared objects in participants array
-// draw the name of the participant to the canvas
-// declare and define handler that is called when the input field is changed
-// update the name value in this client's shared object
+// [see above]
 
 /**
  * Q+A

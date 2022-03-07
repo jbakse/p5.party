@@ -169,11 +169,11 @@ function init() {
   ////////////////////////////////////////////////
   // experimental pub/sub
   p5.prototype.partySubscribe = function (event, cb) {
-    __client.subscribe(event, cb);
+    __room.subscribe(event, cb);
   };
 
   p5.prototype.partyEmit = function (event, data) {
-    __client.emit(event, data);
+    __room.emit(event, data);
   };
 
   p5.prototype.partyToggleInfo = function (show) {
