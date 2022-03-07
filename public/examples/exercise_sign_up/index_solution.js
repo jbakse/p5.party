@@ -35,7 +35,7 @@ function draw() {
   }
 }
 
-// handler that is called when the input field is changed
+// declare and define handler that is called when the input field is changed
 function onNameInput() {
   // update the name value in this client's shared object
   my.name = nameInput.value();
@@ -53,11 +53,13 @@ function onNameInput() {
 // set the function to be called when the input field is changed
 // loop through all the shared objects in participants array
 // draw the name of the participant to the canvas
-// handler that is called when the input field is changed
+// declare and define handler that is called when the input field is changed
 // update the name value in this client's shared object
 
 /**
  * Q+A
+ *
+ * In the code above:
  *
  * 1) Is the object refrenced by `my` in the `participants` array?
  *

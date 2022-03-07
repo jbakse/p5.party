@@ -50,7 +50,7 @@ function onNameInput() {
 // loop through all the shared objects in participants array
 // set the function to be called when the input field is changed
 // a shared object for this client
-// handler that is called when the input field is changed
+// declare and define handler that is called when the input field is changed
 // the input field user types into
 // array of shared objects, one for each connected client
 // load shared object for this connected client
@@ -62,6 +62,8 @@ function onNameInput() {
 
 /**
  * Q+A
+ *
+ * In the code above:
  *
  * 1) Is the object refrenced by `my` in the `participants` array?
  *
