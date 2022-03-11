@@ -3,6 +3,9 @@ module.exports = {
   parserOptions: {
     sourceType: "script",
   },
+  env: {
+    es2020: true,
+  },
   globals: {
     party: "readonly",
     partyConnect: "readonly",

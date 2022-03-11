@@ -2,7 +2,7 @@ import * as log from "./log";
 import onChange from "on-change";
 import { createEmitter } from "./emitter";
 import { patchInPlace } from "./patch";
-
+import { validateSerializable } from "./validate";
 /*
  * Record
  *
@@ -19,7 +19,7 @@ import { patchInPlace } from "./patch";
  */
 export class Record {
   #client; // party.Client: currently connected client
-  #name; // string: full name of record (e.g. "appName-roomName/_recordName")
+  #name; // string: full name of record (e.g. "appName-roomName/recordName")
   #shared; // {}: internal read/write object to be synced with other clients
   #watchedShared; // Proxy: observable object wrapping #shared
   #dsRecord; // ds.Record: the record this party.Record is managing
@@ -35,7 +35,10 @@ export class Record {
     this.#ownerUid = ownerUid;
     this.#watchedShared = onChange(
       this.#shared,
-      this.#onClientChangedData.bind(this)
+      this.#onClientChangedData.bind(this),
+      {
+        onValidate: this.#onValidateClientData.bind(this),
+      }
     );
     // create a reference back to this party.Record from the shared object
     // property key is a Symbol so its unique and mostly hidden
@@ -81,6 +84,7 @@ export class Record {
   // todo: i don't think we need to have this in a private method
   // try pulling it into setShared.
   // this private/public split allows record to call setShared and bypass the owner check, but thats not really needed, and it might be good to get checked
+
   // resets shared object to data
   // does not warn non-owners on write
   #setShared(data) {
@@ -146,6 +150,15 @@ export class Record {
     this.#emitter.emit("ready");
   }
 
+  #onValidateClientData(path, newValue, oldValue) {
+    const valid = validateSerializable(
+      this.#name.split("/")[1],
+      path,
+      newValue
+    );
+
+    return valid;
+  }
   #onClientChangedData(path, newValue, oldValue) {
     // on-change alerts us only when the value actually changes
     // so we don't need to test if newValue and oldValue are different
@@ -155,10 +168,11 @@ export class Record {
         `changing data on shared object owned by another client
 client: ${this.#client.getUid()}
 owner: ${this.#ownerUid}
-path: ${path}
+property: ${path}
 newValue: ${JSON.stringify(newValue)}`
       );
     }
+
     this.#dsRecord.set("shared." + path, newValue);
   }
 

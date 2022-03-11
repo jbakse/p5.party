@@ -2,15 +2,28 @@ import { Client } from "../src/Client";
 import { Room } from "../src/Room";
 import { Record } from "../src/Record";
 
-/* global  test expect describe beforeAll afterAll*/
+import * as log from "../src/log";
+
+/* global jest test expect describe beforeAll afterAll BigInt*/
 
 // set long timeout for using interctive debugger
 // jest.setTimeout(1000 * 60 * 5);
+
+class PointData {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
 
 let client1;
 let client2;
 
 beforeAll(async () => {
+  global.p5 = {};
+  global.p5.Color = function () {};
+  global.p5.Vector = function () {};
+
   client1 = await connect();
   client2 = await connect();
   await millis(100);
@@ -50,6 +63,7 @@ describe("basic", () => {
     client1.shared.string = "hello";
     client1.shared.array = [1, 2, 3];
     client1.shared.object = { x: 1, y: 1 };
+    client1.shared.point = new PointData(1, 1);
 
     expect(client1.shared.null).toBeNull();
     expect(client1.shared.boolean).toBe(true);
@@ -57,6 +71,7 @@ describe("basic", () => {
     expect(client1.shared.string).toBe("hello");
     expect(client1.shared.array).toEqual([1, 2, 3]);
     expect(client1.shared.object).toEqual({ x: 1, y: 1 });
+    expect(client1.shared.point).toEqual({ x: 1, y: 1 });
 
     await millis(100);
     expect(client2.shared.null).toBeNull();
@@ -65,24 +80,52 @@ describe("basic", () => {
     expect(client2.shared.string).toBe("hello");
     expect(client2.shared.array).toEqual([1, 2, 3]);
     expect(client2.shared.object).toEqual({ x: 1, y: 1 });
+    expect(client2.shared.point).toEqual({ x: 1, y: 1 });
   });
 
   test("unsupported types", async () => {
+    /* globals global */
+
+    const spy = jest.spyOn(log, "error").mockImplementation(() => {});
+    client1.record.setShared({});
+
     client1.shared.function = () => {};
     client1.shared.symbol = Symbol("hello");
+    client1.shared.bigint = BigInt(1);
+    client1.shared.object = { a: () => "hello" };
+    client1.shared.array = [() => "hello"];
+
+    // these will look like the real thing as they were constructed with
+    // fake p5.Color and p5.Vector
+    client1.shared.color = new global.p5.Color();
+    client1.shared.vector = new global.p5.Vector();
     client1.shared.infinity = Infinity;
     client1.shared.nan = NaN;
 
     expect(client1.shared.function).toBeUndefined();
     expect(client1.shared.symbol).toBeUndefined();
+    expect(client1.shared.bigint).toBeUndefined();
+    expect(client1.shared.object).toBeUndefined();
+    expect(client1.shared.array).toBeUndefined();
+    expect(client1.shared.color).toBeUndefined();
+    expect(client1.shared.vector).toBeUndefined();
     expect(client1.shared.infinity).toBeNull();
     expect(client1.shared.nan).toBeNull();
 
     await millis(100);
     expect(client2.shared.function).toBeUndefined();
     expect(client2.shared.symbol).toBeUndefined();
+    expect(client2.shared.bigint).toBeUndefined();
+    expect(client2.shared.object).toBeUndefined();
+    expect(client2.shared.array).toBeUndefined();
+    expect(client2.shared.color).toBeUndefined();
+    expect(client2.shared.vector).toBeUndefined();
+    expect(spy).toHaveBeenCalledTimes(7);
+
     expect(client2.shared.infinity).toBeNull();
     expect(client2.shared.nan).toBeNull();
+
+    spy.mockRestore();
   });
 
   test("setShared-add and remove properties", async () => {

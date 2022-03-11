@@ -52,6 +52,7 @@
     "@deepstream/client": "^5.2.6",
     "@deepstream/server": "^5.2.6",
     "core-js": "^3.20.2",
+    "dedent": "^0.7.0",
     "on-change": "^4.0.0",
     "regenerator-runtime": "^0.13.9"
   },

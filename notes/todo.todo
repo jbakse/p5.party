@@ -32,7 +32,17 @@
 		reloading a js program usually restarts it from 0, but not when you have data hanging out on the back end.
 		it could be a common pattern to have `setup->if host->reset room->init room`
 		might even automatically reset the room if its empty (this would break persistent world apps, could be a flag on connect?)
+	
+	-- type validation and errors
+		+ - factor out of the Record.js
+		+ - use "dedent"?
+		+ - don't just warn, refuse to accept objects we know won't work?
+		.- make warning only happen once?
+			no, they are errors now, and the data isn't accepted, should error to console every time.
+		+ - add tests
+		- do a x = JSON.parse(JSON.stringify(x)) check to see if object is serializable. this might be a good first or last step in the friendly warnings. would need a deepEquals function.
 
+	-- should we use `ignoreDetached` option of on-change?
 - Client
 	--	reconnect after page reload?
 		consider cacheing random id in _session_ storage so reloads can reconnect as same client
