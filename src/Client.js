@@ -70,7 +70,7 @@ export class Client {
     return this.#dsClient.record.getList(name);
   }
 
-  getAllClients() {
+  getOnlineClientUids() {
     const clients = [...this.#clientUids];
     if (!clients.includes(this.#uid)) clients.push(this.#uid);
     return clients;

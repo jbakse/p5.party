@@ -33,6 +33,20 @@ git branch -d feature-branch
 git branch -D feature-branch
 ```
 
+# How to update dependencies
+
+```bash
+# check to see whats out of date
+npm outdated
+
+# update all the things (just minor and patch versions)
+npm update
+
+# update a specific package to latest major version
+npm install xxx@latest
+
+```
+
 # How to update your local fork with upstream changes
 
 You have forked p5.party and cloned it to your own machine.

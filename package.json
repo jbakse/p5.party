@@ -54,6 +54,7 @@
     "core-js": "^3.20.2",
     "dedent": "^0.7.0",
     "on-change": "^4.0.0",
+    "reefjs": "^11.0.1",
     "regenerator-runtime": "^0.13.9"
   },
   "devDependencies": {

@@ -38,6 +38,7 @@ function setup() {
 }
 
 function mouseReleased() {
+  if (mouseX < 0 || mouseX >= width || mouseY < 0 || mouseY >= height) return;
   console.log("mouseReleased");
   // find the grid location of the click
   const grid_x = floor(mouseX / col_width);

@@ -1,17 +1,39 @@
+import Reef from "reefjs";
+import * as log from "./log";
+
 // eslint-disable-next-line
 import css from "./InfoPanel.css";
 
 const UPDATE_MS = 100;
 
 export class InfoPanel {
-  #client;
-  #room;
-  #el;
-
+  #client; // currently connected client
+  #room; // current room
+  #el; // the element used to display the info
+  #reef; // reef component https://reefjs.com/
   constructor(client, room) {
     this.#client = client;
     this.#room = room;
     this.#el = createInfoPanelElement();
+
+    this.#reef = new Reef(this.#el, {
+      data: {},
+      template,
+      listeners: {
+        logParticipant: (e) => {
+          const participantShareds = this.#room._getParticipantSharedsObject();
+          const shared = participantShareds[e.target.dataset.uid];
+          log.debug(shared);
+        },
+        logShared: async (e) => {
+          const name = e.target.dataset.name.split("/")[1];
+          const record = this.#room.getRecord(name);
+          const shared = record.getShared();
+          await record.whenReady();
+          log.debug(shared);
+        },
+      },
+    });
 
     this.#room.whenReady(this.#startUpdates.bind(this));
   }
@@ -25,61 +47,13 @@ export class InfoPanel {
   }
 
   #update() {
-    // collect info
-    const onlineClients = this.#client.getAllClients();
-    const data = this.#room._panelData();
-    const isHost = this.#room.getHostName() === this.#client.getUid();
-
-    // generate output
-    // const output = "";
-    this.#el.innerHTML = "";
-
-    const appendDiv = (content, ...classes) => {
-      const el = document.createElement("div");
-      const cleaned_classes = classes.filter((n) => n); // remove empty strings
-      el.classList.add(...cleaned_classes);
-      el.innerHTML = content;
-      this.#el.appendChild(el);
-      return el;
+    this.#reef.data = {
+      onlineClientUids: this.#client.getOnlineClientUids(),
+      myUid: this.#client.getUid(),
+      ...this.#room._panelData(),
     };
-
-    // header info
-    appendDiv("p5.party info", "label");
-    appendDiv(data.appName, "app");
-    appendDiv(data.roomName, "room");
-    const shortName = this.#client.getUid().substr(-4);
-    const host = isHost ? "host" : "";
-    appendDiv(shortName, "id", host);
-
-    // participant info
-    appendDiv("Participants", "label");
-    for (const name of data.participantUids) {
-      const shortName = name.substr(-4);
-      const host = this.#room.getHostName() === name ? "host" : "";
-      const missing = onlineClients.includes(name) ? "" : "missing";
-      const me = this.#client.getUid() === name ? "me" : "";
-      appendDiv(shortName, "participant", host, missing, me);
-    }
-
-    // shared objects
-    appendDiv("Shared Objects", "label");
-    for (const entry of data.recordDsList.getEntries()) {
-      const name = entry.split("/")[1];
-      appendDiv(`"${name}"`, "record");
-    }
-
-    // output += `<div class="label">#participantRecords</div>`;
-    // // get keys from #participantRecords
-    // const keys = Object.keys(data.participantRecords);
-    // for (const key of keys) {
-    //   output += `<div class="record">${key}</div>`;
-    // }
-
-    // this.#el.innerHTML = output;
   }
 }
-
-// add a child div to parent with provided classes and content
 
 function createInfoPanelElement() {
   let el = document.getElementById("party-info");
@@ -89,4 +63,42 @@ function createInfoPanelElement() {
     document.body.appendChild(el);
   }
   return el;
+}
+
+function template(data) {
+  const participantDivs = [];
+  for (const uid of data.participantUids ?? []) {
+    const shortName = uid.substr(-4);
+    const me = data.myUid === uid ? "me" : "";
+    const host = data.hostUid === uid ? "host" : "";
+    const missing = data.onlineClientUids.includes(uid) ? "" : "missing";
+    participantDivs.push(
+      `<div class="participant ${host} ${missing} ${me}">
+        <a onclick="logParticipant()" data-uid="${uid}">${shortName}</a>
+      </div>`
+    );
+  }
+
+  const sharedRecordDivs = [];
+  for (const sharedRecordName of data.sharedRecordNames ?? []) {
+    const shortName = sharedRecordName.split("/")[1];
+    sharedRecordDivs.push(
+      `<div  class="record">
+        <a onclick="logShared()" data-name="${sharedRecordName}">${shortName}</a>
+      </div>`
+    );
+  }
+
+  const isHost = data.myUid === data.hostUid ? "host" : "";
+  const myShortname = data.myUid.substr(-4);
+  return `
+          <div class="label">p5.party info</div>
+          <div class="app">${data.appName}</div>
+          <div class="room">${data.roomName}</div>
+          <!-- <div class="id ${isHost}">${myShortname}</div> -->
+          <div class="label">Participants</div>
+          ${participantDivs.join("")}
+          <div class="label">Shared Objects</div>
+          ${sharedRecordDivs.join("")}
+        `;
 }

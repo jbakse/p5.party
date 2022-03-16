@@ -56,7 +56,7 @@ function stepBullet(b) {
   b.y += b.dY;
 
   // remove out of bounds bullets
-  if (!pointInRect(b, new Rect(0, 0, 400, 400))) {
+  if (!pointInRect(b, new Rect(0, 0, 500, 400))) {
     const i = shared.bullets.indexOf(b);
     shared.bullets.splice(i, 1);
   }

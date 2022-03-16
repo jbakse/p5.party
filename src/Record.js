@@ -116,15 +116,6 @@ export class Record {
     this.#dsRecord.subscribe(path, cb, triggerNow);
   }
 
-  // async watchShared(path_or_cb, cb) {
-  //   await this.whenReady();
-  //   if (typeof path_or_cb === "string") {
-  //     this.#dsRecord.subscribe("shared." + path_or_cb, cb);
-  //   } else if (typeof path_or_cb === "function") {
-  //     this.#dsRecord.subscribe("shared", path_or_cb);
-  //   }
-  // }
-
   static recordForShared(shared) {
     return onChange.target(shared)[Symbol.for("Record")];
   }
@@ -134,7 +125,11 @@ export class Record {
 
     // get and subscribe to record
     this.#dsRecord = this.#client.getDsRecord(this.#name);
-    this.#dsRecord.subscribe("shared", this.#onServerChangedData.bind(this));
+    this.#dsRecord.subscribe(
+      "shared",
+      this.#onServerChangedData.bind(this),
+      true
+    );
 
     await this.#dsRecord.whenReady();
 
@@ -187,6 +182,7 @@ newValue: ${JSON.stringify(newValue)}`
   #onServerChangedData(data) {
     // don't replace #shared itself as #watchedShared has a reference to it
     // instead patch it to match the incoming data
+    if (!data) return;
     patchInPlace(this.#shared, data, "shared");
   }
 }

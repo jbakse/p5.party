@@ -135,7 +135,7 @@ function init() {
       return undefined;
     }
 
-    return __room.getHostName() === __client.getUid();
+    return __room.getHostUid() === __client.getUid();
   };
 
   ////////////////////////////////////////////////

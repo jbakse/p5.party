@@ -49,3 +49,9 @@
 #party-info .record {
   background-color: #ccffff;
 }
+
+#party-info a {
+  text-decoration: underline;
+  cursor: pointer;
+  user-select: none;
+}

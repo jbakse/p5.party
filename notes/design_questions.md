@@ -1,7 +1,5 @@
 # Design Questions
 
-- Should the cannonical variable name for current participant shared object be "me" or "my"?
-
 - can p5.party function names be improved?
 
   - should p5.party functions start with party? eg. partySetShared
@@ -9,18 +7,21 @@
 
 - Currently shared properties are initialized in setup(), but this does potentially lead to a race condition. Would it be better to have an init-object argument on partyLoadShared()?
 
-  - in the examples are the `shared.x = share.x || 0` style inits confusing? should they be changed to another style? link to idiom?
+  - Is there a race condition?
+    - First clients connect at same time.
+    - One is designated host.
+    - Host inits shared in setup().
+    - Secon client setup()s before init state arrives.
 
 - does setting `shared.x = 3` send a message even if shared.x is already 3?
 
-  - Test this and document answer!
+  - checked. no, it doesn't
 
-- should p5.party have some kind of write locking support so you can open a shared object in read only mode, or designate the writer for an object and get warnings if someone else writes?
+- p5.party now warns if if you set property on another clients participan shared.
 
-  - it would probably be common to have particpiants be read only, but me/my be writeable
-  - maybe a "host" write only mode, that warns/blocks if non host writes
+  - should there be "host" only write mode, that warns/blocks if non host writes to community shared objects?
 
-- should p5.party provide an id for each participant? it does have an internal id. This might be especially helpful if we support a participant leaving and coming back via a local storage "cookie".
+- should p5.party provide an id for each participant to user code? it does have an internal id. This might be especially helpful if we support a participant leaving and coming back via a local storage "cookie".
 
 - should we support a client levaning and coming back as the same participant (e.g. a browser reload)?
 
@@ -30,7 +31,7 @@
   but as a design decision we have so far limitted the scope to single-session-multiplayer
   is it worth supporting persistant storage?
 
-- Radical design question: Should we get rid of partyIsHost. could replace it with `stepParty` which is called before draw but only on the host?
+- Radical design question: Should we get rid of partyIsHost. could replace it with `setupParty` and `stepParty` which is called before setup and draw but only on the host?
 
 - Instead of using partyIsHost in setup to determine if client is first to connect, it might make sense to check the participant list length.
 
@@ -44,6 +45,12 @@
 
 - When adding an unsupported type to a shared object, should we strip/null it on the LOCAL side, so that it will look the like the remote side (probably yes) see test_types example
 
+  - this is done now.
+
 - Can we add warnings to the console if the user is doing something that is probably wrong. "It looks like you are setting values on a participant shared that isn't yours" "It looks like you have set a shared object property to a funciton..." etc
 
+  - this now happens in some cases.
+
 - Do we need a partyDeleteShared()?
+
+- Major change idea: don't use proxies. Could check shared objects after draw() to see if they have changed. Would also need to check after event callbacks (mousePressed, etc). Would also need to poll in case user modifies the shared object in setInterval or something. could maybe provide a function like `partySync()` that user could call if they were updating "out of band"

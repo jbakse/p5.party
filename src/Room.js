@@ -45,13 +45,20 @@ export class Room {
 
   _panelData() {
     return {
-      appName: this.#appName,
-      roomName: this.#roomName,
-      participantUids: this.#participantUids,
-      roomDataDsRecord: this.#roomDataDsRecord,
-      recordDsList: this.#recordDsList,
-      participantRecords: this.#participantRecords,
+      appName: this.#appName ?? "unknown",
+      roomName: this.#roomName ?? "unknown",
+      hostUid: this.getHostUid() ?? "unknown",
+      participantUids: [...this.#participantUids] ?? [],
+      sharedRecordNames: this.#recordDsList?.getEntries() ?? [],
     };
+  }
+
+  _getParticipantSharedsObject() {
+    const participantShareds = {};
+    for (const key of Object.getOwnPropertyNames(this.#participantRecords)) {
+      participantShareds[key] = this.#participantRecords[key].getShared();
+    }
+    return participantShareds;
   }
 
   async #connect() {
@@ -135,11 +142,11 @@ export class Room {
 
   // add this client to the room
   join() {
-    const name = this.#client.getUid();
-    if (!this.#participantUids.includes(name)) {
+    const uid = this.#client.getUid();
+    if (!this.#participantUids.includes(uid)) {
       this.#roomDataDsRecord.set(
         `participants.${this.#participantUids.length}`,
-        name
+        uid
       );
     }
   }
@@ -172,11 +179,11 @@ export class Room {
   }
 
   // check if this client is in the room
-  contains(username) {
-    return this.#participantUids.includes(username);
+  contains(uid) {
+    return this.#participantUids.includes(uid);
   }
 
-  getHostName() {
+  getHostUid() {
     return this.#roomDataDsRecord.get(`host`);
   }
 
@@ -194,7 +201,7 @@ export class Room {
   }
 
   async removeDisconnectedClients() {
-    const online = await this.#client.getAllClients();
+    const online = await this.#client.getOnlineClientUids();
     const newParticipants = this.#participantUids.filter((p) =>
       online.includes(p)
     );
@@ -227,7 +234,7 @@ export class Room {
 
   async #chooseHost() {
     const host = this.#roomDataDsRecord.get("host");
-    const onlineClients = await this.#client.getAllClients();
+    const onlineClients = await this.#client.getOnlineClientUids();
 
     // if host is onlin and in the room, we don't need a new one
     if (onlineClients.includes(host) && this.#participantUids.includes(host))
@@ -290,6 +297,7 @@ export class Room {
             `${this.#appName}-${this.#roomName}/_${id}`,
             id
           );
+
           // todo: should we wait for this record to be ready before adding to #participantRecords?
           this.#participantRecords[id] = r;
           recordWhenReadies.push(r.whenReady());
