@@ -1,9 +1,7 @@
-# tic tac toe
+# Tic Tac Toe
 
-This example shows a multiplayer tic-tac-toe game; users can choose a team and play in turn with others.
+A playable tic-tac-toe game, using only the p5.party level 1 basics:
 
-- **pick** a team from the select menu
-- **click** to add a mark on your turn
-- **clear** the board
-
-> Open this example in two browser windows at once!
+- `partyConnect()`
+- `partyGetShared()`
+- `partySetShared()`

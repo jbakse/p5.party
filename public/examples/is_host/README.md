@@ -1,4 +1,4 @@
-# partyIsHost
+# Is Host
 
 This example is similar to the _click_history_ example, but clears the history automatically every 10 seconds. It uses `partyIsHost()` to designate one client to do the clearing.
 

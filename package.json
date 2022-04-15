@@ -31,7 +31,7 @@
   },
   "scripts": {
     "prestart": "npm run gv",
-    "start": "webpack-dev-server --open --config webpack.dev.js",
+    "start": "webpack serve --open --config webpack.dev.js",
     "prebuild": "npm run gv",
     "build": "webpack --config webpack.prod.js",
     "watch": "webpack --watch --config webpack.dev.js",

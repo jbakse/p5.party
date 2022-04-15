@@ -1,240 +1,198 @@
-// Tic Tac Toe
-//
-// Multi-player Tic Tac Toe game created as an example for p5.party
-//
-// Written by Isabel Anguera
+// location of each square on the board
+// used to determine which square was clicked
+// and where to draw marks
+const squares = [
+  { x: 50, y: 50, w: 100, h: 100 },
+  { x: 150, y: 50, w: 100, h: 100 },
+  { x: 250, y: 50, w: 100, h: 100 },
+  { x: 50, y: 150, w: 100, h: 100 },
+  { x: 150, y: 150, w: 100, h: 100 },
+  { x: 250, y: 150, w: 100, h: 100 },
+  { x: 50, y: 250, w: 100, h: 100 },
+  { x: 150, y: 250, w: 100, h: 100 },
+  { x: 250, y: 250, w: 100, h: 100 },
+];
 
-let shared; // p5.party shared object
-let my; // p5.party shared record of user's own data
-let participants; // p5.party shared record of all participant's data
-
-const gridSize = 150;
-
-let blueTeamColor;
-let yellowTeamColor;
+let shared;
 
 function preload() {
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
     "tic_tac_toe",
-    "default"
+    "main"
   );
-  shared = partyLoadShared("globals");
-  my = partyLoadMyShared();
-  participants = partyLoadParticipantShareds();
+  shared = partyLoadShared("shared");
 }
 
 function setup() {
-  const boardExtension = 50;
-  createCanvas(10 + gridSize * 3, gridSize * 3 + boardExtension);
+  createCanvas(400, 450);
 
-  blueTeamColor = color(60, 98, 181);
-  yellowTeamColor = color(255, 220, 82);
-
-  // Init shared
-  // boardState describes what is each cell of the board
-  // 0 - empty, 1 - blue token, 2 - yellow token
-  shared.boardState = shared.boardState || [0, 0, 0, 0, 0, 0, 0, 0, 0];
-  shared.currentTurn = shared.currentTurn || "Blue";
-
-  // Make a select menu
-  const teamDropDownMenu = createSelect();
-  teamDropDownMenu.option("Choose a Team");
-  teamDropDownMenu.disable("Choose a Team");
-  teamDropDownMenu.option("Blue");
-  teamDropDownMenu.option("Yellow");
-  teamDropDownMenu.option("Observer");
-
-  // When an option is chosen, assign it to my.selectedTeam
-  teamDropDownMenu.changed(() => {
-    my.selectedTeam = teamDropDownMenu.value();
-  });
-
-  // Make the clear button
-  createButton("clear").mousePressed(() => {
-    if (my.selectedTeam !== "Observer") {
-      partySetShared(shared, {
-        boardState: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        currentTurn: "Blue",
-      });
-    }
-  });
+  // this will reset the board anytime a new client joins
+  // partyIsHost() can be used to reset the board only
+  // if the room is empty
+  resetBoard();
 }
 
 function draw() {
-  background("red");
-  noStroke();
+  background(50);
 
-  // Draw board
-  push();
-  fill("white");
-  stroke("red");
-  strokeWeight(10);
-  for (let i = 0; i < 3; i++) {
-    for (let j = 0; j < 3; j++) {
-      rect(5 + i * gridSize, 5 + j * gridSize, gridSize, gridSize);
-    }
-  }
-  pop();
+  drawGrid();
+  drawMarks();
 
-  // Draw tokens
-  push();
-  for (let i = 0; i < 9; i++) {
-    const grid_col = i % 3;
-    const grid_row = Math.floor(i / 3);
-
-    if (shared.boardState[i] === 0) continue;
-    if (shared.boardState[i] === 1) fill(blueTeamColor);
-    if (shared.boardState[i] === 2) fill(yellowTeamColor);
-
-    ellipse(
-      grid_col * gridSize + 0.5 * gridSize,
-      grid_row * gridSize + 0.5 * gridSize,
-      gridSize / 3,
-      gridSize / 3
-    );
-  }
-  pop();
-
-  // Display current turn
-  if (shared.currentTurn !== "nobody") {
-    push();
-    fill("white");
-    textSize(22);
-    textFont("Gill Sans");
-    text(shared.currentTurn + " team's turn!", 12, 482);
-
-    // Display num players on each team
-    textSize(16);
-
-    const blueTeamCount = participants.filter(
-      (participant) => participant.selectedTeam === "Blue"
-    ).length;
-
-    const yellowTeamCount = participants.filter(
-      (participant) => participant.selectedTeam === "Yellow"
-    ).length;
-
-    text(
-      `Players on Blue: ${blueTeamCount}, Yellow ${yellowTeamCount}`,
-      260,
-      482
-    );
-    pop();
-  }
-
-  showOutcome();
+  drawWinner();
 }
 
 function mousePressed() {
-  if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) return;
-  if (my.selectedTeam !== shared.currentTurn) return;
-
-  const col = Math.floor(mouseX / gridSize);
-  const row = Math.floor(mouseY / gridSize);
-  const index = row * 3 + col;
-
-  // return if cell already marked
-  if (shared.boardState[index] > 0) return;
-
-  shared.boardState[index] = my.selectedTeam === "Blue" ? 1 : 2;
-
-  if (shared.currentTurn === "Blue") {
-    shared.currentTurn = "Yellow";
-  } else {
-    shared.currentTurn = "Blue";
+  // if the game is already over, reset the board
+  if (checkWin("x") || checkWin("o") || checkDraw()) {
+    resetBoard();
+    return;
   }
-}
 
-function checkCombo(a, b, c) {
-  return (
-    shared.boardState[a] > 0 &&
-    shared.boardState[a] === shared.boardState[b] &&
-    shared.boardState[b] === shared.boardState[c]
+  // find the square that was clicked, if any
+  const index = squares.findIndex((square) =>
+    pointInRect({ x: mouseX, y: mouseY }, square)
   );
+
+  // if no square was clicked, bail
+  if (index === -1) return;
+
+  // if the square is already filled, bail
+  if (shared.board[index] !== "empty") return;
+
+  // an empty square was clicked, set it according to the current turn
+  shared.board[index] = shared.turn;
+
+  // switch turns
+  if (shared.turn === "x") {
+    shared.turn = "o";
+  } else {
+    shared.turn = "x";
+  }
 }
 
-function showOutcome() {
+function drawWinner() {
   push();
-  stroke(30);
-  strokeWeight(10);
+  fill("#fff");
+  textSize(25);
+  textAlign(CENTER, CENTER);
 
-  let winner = false;
-
-  // top row
-  if (checkCombo(0, 1, 2)) {
-    winner = shared.boardState[0] === 1 ? "Blue" : "Yellow";
-    line(40, 75, 410, 75);
-  }
-
-  // middle row
-  if (checkCombo(3, 4, 5)) {
-    winner = shared.boardState[3] === 1 ? "Blue" : "Yellow";
-    line(40, 225, 410, 225);
-  }
-
-  // bottom row
-  if (checkCombo(6, 7, 8)) {
-    winner = shared.boardState[6] === 1 ? "Blue" : "Yellow";
-    line(40, 375, 410, 375);
-  }
-
-  // left column
-  if (checkCombo(0, 3, 6)) {
-    winner = shared.boardState[0] === 1 ? "Blue" : "Yellow";
-    line(75, 40, 75, 410);
-  }
-
-  // middle column
-  if (checkCombo(1, 4, 7)) {
-    winner = shared.boardState[1] === 1 ? "Blue" : "Yellow";
-    line(225, 40, 225, 410);
-  }
-
-  // right column
-  if (checkCombo(2, 5, 8)) {
-    winner = shared.boardState[2] === 1 ? "Blue" : "Yellow";
-    line(375, 40, 375, 410);
-  }
-
-  // diagonal \
-  if (checkCombo(0, 4, 8)) {
-    winner = shared.boardState[0] === 1 ? "Blue" : "Yellow";
-    line(40, 40, 410, 410);
-  }
-
-  // diagonal /
-  if (checkCombo(2, 4, 6)) {
-    winner = shared.boardState[2] === 1 ? "Blue" : "Yellow";
-    line(40, 410, 410, 40);
-  }
-
-  // show "draw" message
-  if (!winner && shared.boardState.every((cellState) => cellState > 0)) {
-    shared.currentTurn = "nobody";
-
-    push();
-    fill("white");
-    noStroke();
-    textSize(22);
-    textFont("Gill Sans");
-    text("Tie Game!", 182, 482);
-    pop();
-  }
-
-  // show winer message
-  if (winner) {
-    shared.currentTurn = "nobody";
-
-    push();
-    fill("white");
-    noStroke();
-    textSize(22);
-    textFont("Gill Sans");
-    textAlign(CENTER);
-    text(`${winner} Team Wins!`, width * 0.5, 482);
-    pop();
+  if (checkWin("x")) {
+    text("x wins!", width * 0.5, height - 40);
+  } else if (checkWin("o")) {
+    text("o wins!", width * 0.5, height - 40);
+  } else if (checkDraw()) {
+    text("draw!", width * 0.5, height - 40);
   }
 
   pop();
+}
+
+function drawGrid() {
+  push();
+  noFill();
+  stroke("#888");
+  strokeWeight(2);
+
+  // draw lines
+  line(150, 50, 150, 350);
+  line(250, 50, 250, 350);
+  line(50, 150, 350, 150);
+  line(50, 250, 350, 250);
+  pop();
+}
+
+function drawMarks() {
+  push();
+  noFill();
+  stroke("white");
+  strokeWeight(8);
+  ellipseMode(CORNER);
+
+  // loop through each square in the grid
+  squares.forEach((square, index) => {
+    // inset the square to size the x and o
+    const s = insetRect(square, 20);
+
+    // check the shared board state to see if and which mark to draw
+    if (shared.board[index] === "x") {
+      line(s.x, s.y, s.x + s.w, s.y + s.h);
+      line(s.x + s.w, s.y, s.x, s.y + s.h);
+    }
+    if (shared.board[index] === "o") {
+      ellipse(s.x, s.y, s.w, s.h);
+    }
+  });
+  pop();
+}
+
+function resetBoard() {
+  partySetShared(shared, {
+    // prettier-ignore
+    board: [
+      "empty", "empty", "empty",
+      "empty", "empty", "empty",
+      "empty", "empty", "empty"
+    ],
+    turn: "x",
+  });
+}
+
+// checks to see if the game has ended in a win for `mark`
+function checkWin(mark) {
+  const winCombos = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  // find which squares have the provided mark
+  const xIndexes = getIndexes(shared.board, mark);
+
+  // check if mark is inall the squares in any win combo
+  const xWin = winCombos.find(
+    (combo) =>
+      xIndexes.includes(combo[0]) &&
+      xIndexes.includes(combo[1]) &&
+      xIndexes.includes(combo[2])
+  );
+
+  return Boolean(xWin);
+}
+
+// checks if the game has ended in a draw
+function checkDraw() {
+  if (checkWin("x") || checkWin("o")) return false;
+  return shared.board.every((square) => square !== "empty");
+}
+
+// returns the indexes of all items in array matching value
+function getIndexes(a, value) {
+  const indexes = [];
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] === value) {
+      indexes.push(i);
+    }
+  }
+  return indexes;
+}
+
+// checks if point p {x, y} is in rect r {x, y, w, h}
+function pointInRect(p, r) {
+  return p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h;
+}
+
+// returns a new rect {x, y, w, h} based on rect r and inset by amount
+function insetRect(r, amount) {
+  return {
+    x: r.x + amount,
+    y: r.y + amount,
+    w: r.w - amount * 2,
+    h: r.h - amount * 2,
+  };
 }

@@ -1,4 +1,4 @@
-# Excersize: Sign Up
+# Exercise: Sign Up
 
 1. Try the example!
 1. Study the code!

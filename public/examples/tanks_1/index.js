@@ -20,7 +20,7 @@ let me;
 let participants;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "tanks", "main");
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "tanks_1", "main");
   shared = partyLoadShared("shared");
   new_bullets = partyLoadShared("new_bullets");
   me = partyLoadMyShared();

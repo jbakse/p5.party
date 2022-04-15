@@ -1,4 +1,4 @@
-# setPartyShared
+# set_shared
 
 This example demonstrates the use of `partySetShared()`.
 

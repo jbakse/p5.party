@@ -1,4 +1,4 @@
-# coverup
+# Cover Up
 
 A game for many players.
 

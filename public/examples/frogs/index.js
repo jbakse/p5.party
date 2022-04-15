@@ -147,7 +147,7 @@ function preload() {
   soundLib.intro = loadSound(`./assets/frogger_sfx_intro.wav`);
   soundLib.title = loadSound(`./assets/frogger_sfx_title.wav`);
 
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "frogger", "main");
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "frogs", "main");
   shared = partyLoadShared("shared");
   my = partyLoadMyShared();
   participants = partyLoadParticipantShareds();

@@ -12,7 +12,7 @@ let stats;
 let shared, my, participants;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "tanks_emit", "main");
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "tanks_2", "main");
   shared = partyLoadShared("shared");
   my = partyLoadMyShared();
   participants = partyLoadParticipantShareds();

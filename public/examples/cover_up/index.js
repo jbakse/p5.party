@@ -8,7 +8,7 @@ let my;
 let participants;
 
 window.preload = () => {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "coverup", "main");
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "cover_up", "main");
   shared = partyLoadShared("shared");
   my = partyLoadMyShared();
   participants = partyLoadParticipantShareds();

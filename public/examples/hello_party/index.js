@@ -1,11 +1,15 @@
 let shared;
 
 function preload() {
+  // connect to the party server
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
     "hello_party",
     "main"
   );
+
+  // begin loading shared object
+  // setup() won't be called until the shared object is loaded
   shared = partyLoadShared("shared");
 }
 
@@ -14,8 +18,10 @@ function setup() {
   noStroke();
 
   // set defaults on shared data
-  shared.x = shared.x || 0;
-  shared.y = shared.y || 0;
+  shared.x ??= 0;
+  shared.y ??= 0;
+
+  // see: http://mdn.io/nullish-assign
 }
 
 function mousePressed() {
@@ -27,6 +33,7 @@ function mousePressed() {
 function draw() {
   background("#ffcccc");
   fill("#000066");
+
   // read shared data
   ellipse(shared.x, shared.y, 100, 100);
 }

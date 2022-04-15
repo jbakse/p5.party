@@ -13,11 +13,15 @@ function setup() {
   createCanvas(400, 400);
   noStroke();
 
-  // set defaults on shared data
-  shared.x = shared.x || 0;
-  shared.y = shared.y || 0;
-  shared.color = shared.color || "white";
-  shared.clickHistory = shared.clickHistory || [];
+  // set default values on the shared object
+  if (partyIsHost()) {
+    partySetShared(shared, {
+      x: 0,
+      y: 0,
+      color: "white",
+      clickHistory: [],
+    });
+  }
 }
 
 function draw() {

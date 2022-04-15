@@ -9,7 +9,11 @@ let overlay_checkbox, road_checkbox;
 let shared;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "tilemapper", "main");
+  partyConnect(
+    "wss://deepstream-server-1.herokuapp.com",
+    "tile_mapper",
+    "main"
+  );
   shared = partyLoadShared("globals");
 
   road_set = loadImage("./road.png");

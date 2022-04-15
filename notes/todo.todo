@@ -4,18 +4,18 @@
 	+ - late loaded shared objects not created with up to date data
 		- they are fixed up when server data change come in
 		- should fully sync up on creation
-     
-- Tests 
+
+- Tests
 	- test more things
 
 - ?
     -	Show Cursors
         	A way to show participant cursors. probably just over the canvas, and using divs so it doesn't impact the actual canvas content. This can be done on the application level, but it might be worth putting into the library because it common + complexish
-        
+
 - Console
     -	Server Connect Message
         	Allow server to send a message to the console on connect.
-        
+
     -	how can we make `console.log(shared)` better
     		1. it doesn't look like anything can be done on the proxy to make logging it nicer.
         	2. could probably extend console.log, but i don't think that is a good idea
@@ -28,12 +28,12 @@
 	-    and send/receive lights
 	-- 	don't update hidden info panel
 	--   remove hidden info panel entirely?
-	---	look into using something like reef or https://preactjs.com/? 
+	---	look into using something like reef or https://preactjs.com/?
 
 - Records
 	-	records leak
 		when a client disconnects we need to drop their participant record
-	     the host (or new host) does this now but if the last client disconnects no one cleans up and there is nothing even keeping the name of the record, its leaked. 
+	     the host (or new host) does this now but if the last client disconnects no one cleans up and there is nothing even keeping the name of the record, its leaked.
 		maybe keep a list of all participant records (across all rooms) and have a cleanup function run somewhere as a garbage collector?
 
     -	Clear Room/App
@@ -41,7 +41,7 @@
 		Having stale data stick around can be confusing reloading a js program usually restarts it from 0, but not when you have data hanging out on the back end.
 		it could be a common pattern to have `setup->if host->reset room->init room`
 		might even automatically reset the room if its empty (this would break persistent world apps, could be a flag on connect?)
-	
+
 	- 	type validation and errors
 		+ - factor out of the Record.js
 		+ - use "dedent"?
@@ -74,10 +74,10 @@
 		--	expose participant count?: can be gotten via participants.length, only if you are "subscribed" to participant shareds
 		--	expose participant ids, id list
 		--	expose own id
-	
+
 	-	Participant change event API
         	Something like onParticipantJoin(shared) + onParticipantLeave(shared)
-        
+
      -	Boot participants
         	Add way to remove connected clients from room/app. Maybe both remove and trigger reload/reconnect. Especially useful in development.
 
@@ -104,7 +104,7 @@
 	-	is it creating needless chatter that could be reduced by adding app/room prefix to emits under the hood?
 
 # Release Package
-	
+
 	-	provide min and unmin versions?
 		compare to other p5 libraries
 		https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
@@ -123,7 +123,7 @@
 	.--	Room recordList -> userRecordList?
 	.--	compare whenReady() implemenations in Room, Client, Record
 	+ --	should room.participants be room.participantIds
-	
+
 	--	Room remove properties?
 		- participantUids
 		- participantShareds
@@ -160,8 +160,8 @@
 		I wrote a custom merge function in Record, but maybe it would be better to use a library?
 		* [Lodash.merge](https://lodash.com/docs/#merge)
 		* [Lodash.mergeWidth](https://lodash.com/docs/#mergeWith)
-		these probably don't work, because they don't _remove_ properties 
-		mergeWidth might be flexible enough to customize behavior add debug reporting 
+		these probably don't work, because they don't _remove_ properties
+		mergeWidth might be flexible enough to customize behavior add debug reporting
 		might be good to just study their merge and compare to the current party implementation
 		might be worth also studying the merge function in deepstream to see how the approaches differ, if one is better
 		it might remove properties given its usecase

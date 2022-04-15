@@ -2,6 +2,10 @@
 const room = new URLSearchParams(location.search).get("room");
 console.log("room:", room);
 
+if (room) {
+  document.getElementById("room").value = room;
+}
+
 let shared;
 
 function preload() {
