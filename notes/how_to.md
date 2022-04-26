@@ -31,6 +31,12 @@ commit ALL the changes as one commit.
 git branch -d feature-branch
 # ...will warn you and tell you you need to ...
 git branch -D feature-branch
+
+
+# and remove from origin (e.g. github)
+git push origin :branch1
+
+
 ```
 
 # How to update dependencies

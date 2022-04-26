@@ -30,6 +30,12 @@
 	--   remove hidden info panel entirely?
 	---	look into using something like reef or https://preactjs.com/?
 
+
+- Shared objects
+	- 	currently it is often necessary to check if a property exists
+		before using it (especially on an object the current client doesn't "own" like another object on the participant array. sometimes, i've been putting a `ready` flag on such objects to show that its been initialized.
+		Would it be possible to ensure that the `setup` funciton has run before listing the participant shared?
+		Would it make sense to have a new method like `partySetupMe`?
 - Records
 	-	records leak
 		when a client disconnects we need to drop their participant record
@@ -58,6 +64,8 @@
 	-	reconnect after page reload?
 		consider cacheing random id in _session_ storage so reloads can reconnect as same client
 
+	-	Should there be a way to disconnect without unloading the sketch? #62
+	- 	Should there be a way to get info about a room (like number of clients) without connecting to it? #62
 
 - Sync
 	-	configurable push?: auto or manual
