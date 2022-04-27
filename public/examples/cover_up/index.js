@@ -4,13 +4,13 @@
 const roundLength = 10000;
 const drawCursors = false;
 let shared;
-let my;
+let me;
 let participants;
 
 window.preload = () => {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "cover_up", "main");
   shared = partyLoadShared("shared");
-  my = partyLoadMyShared();
+  me = partyLoadMyShared();
   participants = partyLoadParticipantShareds();
 };
 
@@ -22,15 +22,15 @@ window.setup = () => {
     startRound(1);
   }
 
-  my.id = random();
-  my.tokenPos = false;
-  my.cursorPos = false;
-  my.tokenColor = "black";
+  me.id = random();
+  me.tokenPos = false;
+  me.cursorPos = false;
+  me.tokenColor = "black";
 };
 
 window.draw = () => {
   if (partyIsHost()) stepHost();
-  my.cursorPos = { x: mouseX, y: mouseY };
+  me.cursorPos = { x: mouseX, y: mouseY };
 
   // draw background
   background("#9f9");
@@ -58,9 +58,9 @@ window.draw = () => {
   // draw token
   if (shared.state === "play") {
     noStroke();
-    if (my.tokenPos) {
-      fill(my.tokenColor);
-      ellipse(my.tokenPos.col * 50 + 25, my.tokenPos.row * 50 + 25, 50, 50);
+    if (me.tokenPos) {
+      fill(me.tokenColor);
+      ellipse(me.tokenPos.col * 50 + 25, me.tokenPos.row * 50 + 25, 50, 50);
     } else {
       const pos = getMouseSquare();
       fill("#090");
@@ -83,7 +83,7 @@ window.draw = () => {
   // draw cursors
   if (drawCursors) {
     for (const p of participants) {
-      if (p.id !== my.id && p.cursorPos) {
+      if (p.id !== me.id && p.cursorPos) {
         fill("#000");
         stroke("#fff");
         strokeWeight(1.5);
@@ -131,8 +131,8 @@ window.draw = () => {
 };
 
 window.mouseClicked = () => {
-  if (shared.state === "play" && !my.tokenPos) {
-    my.tokenPos = getMouseSquare();
+  if (shared.state === "play" && !me.tokenPos) {
+    me.tokenPos = getMouseSquare();
   }
 };
 

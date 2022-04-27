@@ -5,7 +5,7 @@
 // Written by Isabel Anguera
 
 let shared; // p5.party shared object
-let my; // p5.party shared record of user's own data
+let me; // p5.party shared record of user's own data
 let participants; // p5.party shared record of all participant's data
 
 const gridSize = 150;
@@ -20,7 +20,7 @@ function preload() {
     "default"
   );
   shared = partyLoadShared("globals");
-  my = partyLoadMyShared();
+  me = partyLoadMyShared();
   participants = partyLoadParticipantShareds();
 }
 
@@ -47,12 +47,12 @@ function setup() {
 
   // When an option is chosen, assign it to my.selectedTeam
   teamDropDownMenu.changed(() => {
-    my.selectedTeam = teamDropDownMenu.value();
+    me.selectedTeam = teamDropDownMenu.value();
   });
 
   // Make the clear button
   createButton("clear").mousePressed(() => {
-    if (my.selectedTeam !== "Observer") {
+    if (me.selectedTeam !== "Observer") {
       partySetShared(shared, {
         boardState: [0, 0, 0, 0, 0, 0, 0, 0, 0],
         currentTurn: "Blue",
@@ -128,7 +128,7 @@ function draw() {
 
 function mousePressed() {
   if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) return;
-  if (my.selectedTeam !== shared.currentTurn) return;
+  if (me.selectedTeam !== shared.currentTurn) return;
 
   const col = Math.floor(mouseX / gridSize);
   const row = Math.floor(mouseY / gridSize);
@@ -137,7 +137,7 @@ function mousePressed() {
   // return if cell already marked
   if (shared.boardState[index] > 0) return;
 
-  shared.boardState[index] = my.selectedTeam === "Blue" ? 1 : 2;
+  shared.boardState[index] = me.selectedTeam === "Blue" ? 1 : 2;
 
   if (shared.currentTurn === "Blue") {
     shared.currentTurn = "Yellow";

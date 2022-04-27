@@ -1,6 +1,6 @@
 let nameInput; // the input field user types into
 let participants; // array of shared objects, one for each connected client
-let my; // a shared object for this client
+let me; // a shared object for this client
 
 function preload() {
   // connect to p5.party server
@@ -10,7 +10,7 @@ function preload() {
   participants = partyLoadParticipantShareds();
 
   // load shared object for this connected client
-  my = partyLoadMyShared();
+  me = partyLoadMyShared();
 }
 
 function setup() {
@@ -38,7 +38,7 @@ function draw() {
 // declare and define handler that is called when the input field is changed
 function onNameInput() {
   // update the name value in this client's shared object
-  my.name = nameInput.value();
+  me.name = nameInput.value();
 }
 
 // Place these comments in the right places in the code above.

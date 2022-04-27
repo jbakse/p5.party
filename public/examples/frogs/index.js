@@ -110,7 +110,7 @@ let shared;
 // written by host only
 // lanes[x].pos: current position of the lanes used to sync traffics
 
-let my;
+let me;
 let participants;
 // role: "player1" | "player2" | "observer"
 // x, y, direction, state: frog state data
@@ -149,7 +149,7 @@ function preload() {
 
   partyConnect("wss://deepstream-server-1.herokuapp.com", "frogs", "main");
   shared = partyLoadShared("shared");
-  my = partyLoadMyShared();
+  me = partyLoadMyShared();
   participants = partyLoadParticipantShareds();
 }
 
@@ -169,7 +169,7 @@ function setup() {
       ],
     });
   }
-  partySetShared(my, {
+  partySetShared(me, {
     role: "observer",
   });
 
@@ -261,15 +261,15 @@ function stepLocal() {
       cars.find((r) => intersectRect(r, insetRect(frog, 4)))
     );
     if (collision) {
-      my.state = "dead";
+      me.state = "dead";
       broadcastSound("hit");
       setTimeout(() => broadcastSound("die"), 300);
       setTimeout(() => watchGame(), 3000);
     }
   };
 
-  if (my.role === "player1") checkCollisions(frogs[0]);
-  if (my.role === "player2") checkCollisions(frogs[1]);
+  if (me.role === "player1") checkCollisions(frogs[0]);
+  if (me.role === "player2") checkCollisions(frogs[1]);
 }
 
 function drawTitleScreen() {
@@ -334,8 +334,8 @@ function drawBadge() {
   ) {
     i = imageLib.badge_join;
   }
-  if (my.role === "player1") i = imageLib.badge_p1;
-  if (my.role === "player2") i = imageLib.badge_p2;
+  if (me.role === "player1") i = imageLib.badge_p1;
+  if (me.role === "player2") i = imageLib.badge_p2;
   image(i, (width - i.width) * 0.5, height - i.height * 1.5);
   pop();
 }
@@ -343,9 +343,9 @@ function drawBadge() {
 function drawLegend() {
   push();
 
-  if (my.role === "player1")
+  if (me.role === "player1")
     translate(frogs[0].spawnX + 4, frogs[0].spawnY + 32);
-  if (my.role === "player2")
+  if (me.role === "player2")
     translate(frogs[1].spawnX + 4, frogs[1].spawnY + 32);
 
   if (frameCount % 120 < 60) {
@@ -437,13 +437,13 @@ function drawBackground() {
 
 function keyPressed() {
   // try to join if not a player
-  if (my.role !== "player1" && my.role !== "player2") {
+  if (me.role !== "player1" && me.role !== "player2") {
     joinGame();
     return;
   }
 
   // reject input if dead
-  if (my.state === "dead") return;
+  if (me.state === "dead") return;
 
   // try to move if move keys are pressed
   if (keyCode === LEFT_ARROW || keyCode === 65) tryMove(-BLOCK_SIZE, 0); // left
@@ -464,7 +464,7 @@ function tryMove(x, y) {
   legendVisible = false;
 
   // constrain frog to play area
-  const targetLocation = { x: my.x + x, y: my.y + y };
+  const targetLocation = { x: me.x + x, y: me.y + y };
   const bounds = { x: 0, y: 0, w: width - 32, h: height - 32 };
   if (!pointInRect(targetLocation, bounds)) {
     soundLib.hit.play();
@@ -472,42 +472,42 @@ function tryMove(x, y) {
   }
 
   // move frog
-  my.x += x;
-  my.y += y;
+  me.x += x;
+  me.y += y;
 
   // face frog in direction of movement
-  if (x < 0) my.direction = "left";
-  if (x > 0) my.direction = "right";
-  if (y < 0) my.direction = "up";
-  if (y > 0) my.direction = "down";
+  if (x < 0) me.direction = "left";
+  if (x > 0) me.direction = "right";
+  if (y < 0) me.direction = "up";
+  if (y > 0) me.direction = "down";
 
   broadcastSound("jump");
 }
 
 function joinGame() {
   // don't let current players double join
-  if (my.role === "player1" || my.role === "player2") return;
+  if (me.role === "player1" || me.role === "player2") return;
 
   if (!participants.find((p) => p.role === "player1")) {
     spawn(frogs[0]);
-    my.role = "player1";
+    me.role = "player1";
     return;
   }
   if (!participants.find((p) => p.role === "player2")) {
     spawn(frogs[1]);
-    my.role = "player2";
+    me.role = "player2";
   }
 }
 
 function watchGame() {
-  my.role = "observer";
+  me.role = "observer";
 }
 
 function spawn(frog) {
-  my.x = frog.spawnX;
-  my.y = frog.spawnY;
-  my.direction = "up";
-  my.state = "alive";
+  me.x = frog.spawnX;
+  me.y = frog.spawnY;
+  me.direction = "up";
+  me.state = "alive";
   broadcastSound("spawn");
 
   legendVisible = true;

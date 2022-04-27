@@ -1,13 +1,13 @@
 import { Rect, intersects } from "./shape.js";
 
 let shared;
-let my;
+let me;
 let participants;
 
 window.preload = () => {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "pong", "main3");
   shared = partyLoadShared("shared");
-  my = partyLoadMyShared();
+  me = partyLoadMyShared();
   participants = partyLoadParticipantShareds();
 };
 
@@ -21,14 +21,14 @@ window.setup = () => {
     shared.ball.dY = 4;
   }
 
-  my.role = "observer";
-  my.y = 20;
+  me.role = "observer";
+  me.y = 20;
 };
 
 window.draw = () => {
   assignPlayers();
   if (partyIsHost()) stepBall();
-  my.y = mouseY - 50;
+  me.y = mouseY - 50;
 
   fill("#fee");
 
@@ -48,7 +48,7 @@ window.draw = () => {
 
   // draw role
   textAlign(CENTER);
-  text(my.role, 300, 380);
+  text(me.role, 300, 380);
 };
 
 function stepBall() {
@@ -83,10 +83,10 @@ function assignPlayers() {
     // find the first observer
     const o = participants.find((p) => p.role === "observer");
     // if thats me, take the role
-    if (o === my) o.role = "player1";
+    if (o === me) o.role = "player1";
   }
   if (!participants.find((p) => p.role === "player2")) {
     const o = participants.find((p) => p.role === "observer");
-    if (o === my) o.role = "player2";
+    if (o === me) o.role = "player2";
   }
 }

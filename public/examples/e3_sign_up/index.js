@@ -1,6 +1,6 @@
 let nameInput; // ?
 let participants; // ?
-let my; // ?
+let me; // ?
 
 function preload() {
   // ?
@@ -10,7 +10,7 @@ function preload() {
   participants = partyLoadParticipantShareds();
 
   // ?
-  my = partyLoadMyShared();
+  me = partyLoadMyShared();
 }
 
 function setup() {
@@ -23,7 +23,7 @@ function setup() {
   nameInput.input(onNameInput);
 
   // ?
-  my.name = "?";
+  me.name = "?";
 }
 
 function draw() {
@@ -41,7 +41,7 @@ function draw() {
 // ?
 function onNameInput() {
   // ?
-  my.name = nameInput.value();
+  me.name = nameInput.value();
 }
 
 // Place these comments in the right places in the code above.

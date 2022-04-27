@@ -1,4 +1,4 @@
-# Exercise: Sound Board
+# Exercise: Sync Letter
 
 1. Try the example!
 1. Study the code!
@@ -6,4 +6,4 @@
 1. Answer the questions!
 1. Check your work!
 
-[Sounds](http://ccmixter.org/files/carbonmonoxidemusic/23425) by CM Music
+[solutions](/examples/e1_sync_letter/index_solution.js)

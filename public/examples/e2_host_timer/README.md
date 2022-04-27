@@ -1,4 +1,4 @@
-# Exercise: Sign Up
+# Exercise: Host Timer
 
 1. Try the example!
 1. Study the code!
@@ -6,4 +6,4 @@
 1. Answer the questions!
 1. Check your work!
 
-[solutions](/examples/exercise_sign_up/index_solution.js)
+[solutions](/examples/e2_host_timer/index_solution.js)
