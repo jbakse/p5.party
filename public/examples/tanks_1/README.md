@@ -1,4 +1,4 @@
-# tanks
+# Tanks
 
 - **asdw** move tank
 - **space** to fire
