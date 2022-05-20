@@ -34,7 +34,7 @@ git branch -D feature-branch
 
 
 # and remove from origin (e.g. github)
-git push origin :branch1
+git push origin :feature-branch
 
 
 ```

@@ -1,142 +1,158 @@
 # Library
-
-- Bugs
-	+ - late loaded shared objects not created with up to date data
-		- they are fixed up when server data change come in
-		- should fully sync up on creation
-
-- Tests
-	- test more things
-
-- ?
-    -	Show Cursors
-        	A way to show participant cursors. probably just over the canvas, and using divs so it doesn't impact the actual canvas content. This can be done on the application level, but it might be worth putting into the library because it common + complexish
-
-- Console
-    -	Server Connect Message
-        	Allow server to send a message to the console on connect.
-
-    -	how can we make `console.log(shared)` better
-    		1. it doesn't look like anything can be done on the proxy to make logging it nicer.
-        	2. could probably extend console.log, but i don't think that is a good idea
-        	3. could provide a partyLog() function that works like console log and handles shareds better
-        	4. could provide a partyLogShared() function that logs just shared, and complains about other types received.
-        	5. this [discussion](https://stackoverflow.com/questions/51096547/how-to-get-the-target-of-a-javascript-proxy) of installing a get trap to access target could be helpful.
-- Logging
-- Info View
-	-	add ping?
-	-    and send/receive lights
-	-- 	don't update hidden info panel
-	--   remove hidden info panel entirely?
-	---	look into using something like reef or https://preactjs.com/?
+@critical
+@high
+@low
+@today
 
 
-- Shared objects
-	- 	currently it is often necessary to check if a property exists
-		before using it (especially on an object the current client doesn't "own" like another object on the participant array. sometimes, i've been putting a `ready` flag on such objects to show that its been initialized.
-		Would it be possible to ensure that the `setup` funciton has run before listing the participant shared?
-		Would it make sense to have a new method like `partySetupMe`?
-- Records
-	-	records leak
+//todo Start with tag and branch
+
+Bugs:
+	-  late loaded shared objects not created with up to date data
+		□ they are fixed up when server data changes come in
+		☐ should fully sync up on creation 
+Docs:
+	☐ add return types to the function signatures in the docs
+	☐ add a note about working on p5 web editor and the problems with it not live reloading ALL clients automatically. Which causes clients with mismatched state and code. Working locally in VSCode with live server is much nicer.
+	. document that setting `shared.x = 3` when shared is 3 is okay and doesn't generate net traffic
+	
+
+Tests:
+	☐ general: increase test coverage
+
+?:
+	☐ Show Cursors
+		A way to show participant cursors. probably just over the canvas, and using divs so it doesn't impact the actual canvas content. This can be done on the application level, but it might be worth putting into the library because it common + complexish
+
+		probably better to do this as an example and copyable code unit
+
+Console:
+	☐ Server Connect Message
+		Allow server to send a message to the console on connect.
+
+	☐ how can we make `console.log(shared)` better
+		1. it doesn't look like anything can be done on the proxy to make logging it nicer.
+		2. could probably extend console.log, but i don't think that is a good idea
+		3. could provide a partyLog() function that works like console log and handles shareds better
+		4. could provide a partyLogShared() function that logs just shared, and complains about other types received.
+		5. this [discussion](https://stackoverflow.com/questions/51096547/how-to-get-the-target-of-a-javascript-proxy) of installing a gettrap to access target could be helpful. Logging Info View
+
+Info Panel:
+	☐ add ping?
+	    ☐ and send/receive lights
+	☐ don't update hidden info panel
+	☐ remove hidden info panel entirely?
+	✔ look into using something like reef or https://preactjs.com/? @done(22-05-12 13:20)
+
+Shared objects:
+	☐ Wait for object init before sharing
+		Currently it is often necessary to check if a property exists before using it (especially on an object the current client doesn't "own" like another object on the participant array). Sometimes, i've been putting a `ready` flag on such objects to show that its been initialized.
+		
+		Would it be possible to ensure that the `setup` function has run before listing the participant shared?
+
+		Or some other way to mark the object as ready before its made available to other clients? This might be possible for "host owned" or "participant array" objects that have a clear owner, not sure if it would make sense for general shared objects.
+
+
+	Would it make sense to have a new method like `partySetupMe`? Records:
+	☐ records leak
 		when a client disconnects we need to drop their participant record
-	     the host (or new host) does this now but if the last client disconnects no one cleans up and there is nothing even keeping the name of the record, its leaked.
+		 the host (or new host) does this now but if the last client disconnects no one cleans up and there is nothing even keeping the name of the record, its leaked.
 		maybe keep a list of all participant records (across all rooms) and have a cleanup function run somewhere as a garbage collector?
 
-    -	Clear Room/App
-        	Useful in normal, emergency, and dev situations. A way to clear all the records in a room or app
+	☐ Clear Room/App
+			Useful in normal, emergency, and dev situations. A way to clear all the records in a room or app
 		Having stale data stick around can be confusing reloading a js program usually restarts it from 0, but not when you have data hanging out on the back end.
 		it could be a common pattern to have `setup->if host->reset room->init room`
 		might even automatically reset the room if its empty (this would break persistent world apps, could be a flag on connect?)
 
-	- 	type validation and errors
-		+ - factor out of the Record.js
-		+ - use "dedent"?
-		+ - don't just warn, refuse to accept objects we know won't work?
-		.- make warning only happen once?
+	☐ type validation and errors
+		✔ factor out of the Record.js @done(22-05-12 13:41)
+		✔ use "dedent"? @done(22-05-12 13:41)
+		✔ don't just warn, refuse to accept objects we know won't work? @done(22-05-12 13:42)
+		✘ make warning only happen once? @cancelled(22-05-12 13:43)
 			no, they are errors now, and the data isn't accepted, should error to console every time.
-		+ - add tests
-		- do a x = JSON.parse(JSON.stringify(x)) check to see if object is serializable. this might be a good first or last step in the friendly warnings. would need a deepEquals function.
+		☐ add tests
+		☐ do a x = JSON.parse(JSON.stringify(x)) check to see if object is serializable?
+			this might be a good first or last step in the friendly warnings. would need a deepEquals function.
 
-	- should we use `ignoreDetached` option of on-change?
+	☐ should we use `ignoreDetached` option of on-change?
 
-
-- Client
-	-	reconnect after page reload?
+Client:
+	☐ reconnect after page reload?
 		consider cacheing random id in _session_ storage so reloads can reconnect as same client
 
-	-	Should there be a way to disconnect without unloading the sketch? #62
-	- 	Should there be a way to get info about a room (like number of clients) without connecting to it? #62
+	☐ Should there be a way to disconnect without unloading the sketch? #62
+	☐ Should there be a way to get info about a room (like number of clients) without connecting to it? #62
 
-- Sync
-	-	configurable push?: auto or manual
+Sync:
+	☐ configurable push?: auto or manual
 		Would it be useful if data was not automatically sent and the user had to call something like .flush() or .send()
-	-	configurable push?: debounce
+	☐ configurable push?: debounce
 		A possible semiautomatic mode, or optimization to the automatic mode
 		The thought here is it might be good to let code make lots of little changes, but not send them until the work is done.
 		Especially in a case where the same value might get updated many times in a row. e.g. incrementing the score could happen a lot in a single draw, but we only need to send the final version
 		Perhaps all updates between -predraw and -postdraw could be sent at once...
 
+Participants:
+	☐ provide participant info?
+		☐ expose participant count?: can be gotten via participants.length, only if you are in the room and "subscribed" to participant shareds
+		☐ expose participant ids, id list
+		☐ expose own id
+			some user's have asked for p5.party provided ids
+			you can create your own id pretty easily, e.g.: my.ed = random();
 
-- Participants
-	- 	provide participant info
-		--	expose participant count?: can be gotten via participants.length, only if you are "subscribed" to participant shareds
-		--	expose participant ids, id list
-		--	expose own id
+	☐ expose Participant change event API?
+			Something like onParticipantJoin(shared) + onParticipantLeave(shared)
 
-	-	Participant change event API
-        	Something like onParticipantJoin(shared) + onParticipantLeave(shared)
-
-     -	Boot participants
-        	Add way to remove connected clients from room/app. Maybe both remove and trigger reload/reconnect. Especially useful in development.
-
-- Tooling
-	-	maybe jump to esbuild and/or vite?
+	 ☐ Boot participants?
+			Add way to remove connected clients from room/app. Maybe both remove and trigger reload/reconnect. Especially useful in development.
+Tooling:
+	☐ maybe jump to esbuild and/or vite?
 		this is probably a bigger deal now with Jest
-	.--	instead of using naming like demo_m to key eslint to use modules
+	✔ instead of using naming like demo_m to key eslint to use modules @done(22-05-12 13:50)
 		could switch to using an eslint config in each example folder
 
-- Contribution Project Ideas
-	-	Server Admin Panel. Show connected apps/rooms/guests + stats.
-	-	Client Admin Panel. Improve
-	-	Example Games + Apps
-	-	Video Tutorials
-	-	Dorkshop
-	-	Example Cleanup
-	-	Eleventy Docs. Migrate docs to .md/11ty.
-	-	Identity + Visual design system.
-	-	Improve welcome page.
+Contribution Project Ideas:
+	☐ Server Admin Panel. Show connected apps/rooms/guests + stats.
+	☐ Client Admin Panel. Improve
+	☐ Example Games + Apps
+	☐ Video Tutorials
+	☐ Dorkshop
+	☐ Example Cleanup
+	☐ Eleventy Docs. Migrate docs to .md/11ty.
+	☐ Identity + Visual design system.
+	☐ Improve welcome page.
 		[https://skerritt.blog/make-popular-open-source-projects/]
 
-- Emit Subscribe
-	-	Check to see how the emit/subscribe room scoping is working right now
-	-	is it creating needless chatter that could be reduced by adding app/room prefix to emits under the hood?
+Emit Subscribe:
+	☐ Check to see how the emit/subscribe room scoping is working right now
+	☐ is it creating needless chatter that could be reduced by adding app/room prefix to emits under the hood?
 
-# Release Package
-
-	-	provide min and unmin versions?
+Release Package:
+	☐ provide min and unmin versions?
 		compare to other p5 libraries
 		https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
-	-	Should the examples be distributed in the zip?
-	-	Should the zip even be distributed?
+	☐ Should the examples be distributed in the zip?
+	☐ Should the zip even be distributed?
 
-# Examples
-
-
+Examples:
 
 
-# Code Review
-	+ --	change private methods from _ to #
-	+ --	client ids sometimes called "id" sometimes "name", confusing?
-	+ --	room has properties that are DS records and properties that are Party Records, rename properties to improve clarity?
-	.--	Room recordList -> userRecordList?
-	.--	compare whenReady() implemenations in Room, Client, Record
-	+ --	should room.participants be room.participantIds
 
-	--	Room remove properties?
-		- participantUids
-		- participantShareds
+
+Code Review:
+	☐ change private methods from _ to #
+	☐ client ids sometimes called "id" sometimes "name", confusing?
+	☐ room has properties that are DS records and properties that are Party Records, rename properties to improve clarity?
+	☐ Room recordList -> userRecordList?
+	☐ compare whenReady() implemenations in Room, Client, Record
+	☐ should room.participants be room.participantIds
+
+	☐ Room remove properties?
+		☐ participantUids
+		☐ participantShareds
 		these could maybe be removed and just calculated on demand
-		- clientParticpantRecord
+		☐ clientParticpantRecord
 		this could maybe be pulled from participantRecords by own uid?
 		also does this need to be created/loaded as a special case?
 		maybe it could be created the same way the rest of participantRecords are?
