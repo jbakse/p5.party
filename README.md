@@ -165,3 +165,9 @@ p5.party builds on [deepstream.io](http://deepstream.io) and [sindresorhus/on-ch
 ## Contributors
 
 p5.party was created by Justin Bakse, Munro Hoberman, and Isabel Anguera.
+
+contributions by Tanvi Mishra, Apurv Rayate, Hyacinth Weng
+
+## Thanks To
+
+Jessie Han, An Kong, Kevin Lin, Malin Mabika, Tanvi Mishra, Brittany Price, Apurv Rayate, Beatriz Ribeiro Dos Santos, Tong Shao, Hyacinth Weng, Winnie Yuxiang Zhai, Joan Jingwen Zhang
