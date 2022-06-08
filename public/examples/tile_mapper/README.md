@@ -4,4 +4,4 @@ This example was adapted from an interactive figure in the [the tile map chapter
 
 - **click** to toggle the state of a tile on the map
 
-> Open this example in two browser windows at once!
+> Try this example in two browser windows at once!

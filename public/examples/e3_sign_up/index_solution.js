@@ -1,5 +1,5 @@
 let nameInput; // the input field user types into
-let participants; // array of shared objects, one for each connected client
+let guests; // array of shared objects, one for each connected client
 let me; // a shared object for this client
 
 function preload() {
@@ -7,7 +7,7 @@ function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "sign_up", "main");
 
   // load shared objects for all connected clients, including this one
-  participants = partyLoadParticipantShareds();
+  guests = partyLoadGuestShareds();
 
   // load shared object for this connected client
   me = partyLoadMyShared();
@@ -26,9 +26,9 @@ function setup() {
 function draw() {
   background(220);
 
-  // loop through all the shared objects in participants array
-  for (let i = 0; i < participants.length; i++) {
-    const p = participants[i];
+  // loop through all the shared objects in guests array
+  for (let i = 0; i < guests.length; i++) {
+    const p = guests[i];
 
     // draw the name of the participant to the canvas
     text(p.name, 10, i * 20 + 20);
@@ -50,7 +50,7 @@ function onNameInput() {
  *
  * In the code above:
  *
- * 1) Is the object refrenced by `my` in the `participants` array?
+ * 1) Is the object refrenced by `my` in the `guests` array?
  *
  * Yes.
  * The participant array has one shared object for each connected client
@@ -62,11 +62,11 @@ function onNameInput() {
  *
  * 3) Does more than one client read from the same shared object?
  *
- * Yes. Every client reads from every object in `participants`.
+ * Yes. Every client reads from every object in `guests`.
  *
- * 4) Do all the clients have the same objects in their `participants` arrays?
+ * 4) Do all the clients have the same objects in their `guests` arrays?
  *
- * Yes. The `participants` array is kept in sync by p5.party.
+ * Yes. The `guests` array is kept in sync by p5.party.
  *
  * 5) Do all the clients have the same `my` object?
  *
@@ -77,12 +77,12 @@ function onNameInput() {
  *
  * No. `my` will be empty when setup() is called.
  *
- * 7) Is it possible that some of the objects in `participants` will have a
+ * 7) Is it possible that some of the objects in `guests` will have a
  *    `name` set before setup() is called?
  *
  * Yes. Yes other clients might set their name before this client connects.
  *
- * 8) How many shared objects will be in the `participants` array when setup()
+ * 8) How many shared objects will be in the `guests` array when setup()
  *    is called?
  *
  * At least 1: the shared object for this client. The total number will depend

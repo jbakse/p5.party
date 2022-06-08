@@ -6,4 +6,4 @@ This example shows how to connect to a party server, load a shared data object, 
 
 - **click** to move the dot
 
-> Open this example in two browser windows at once!
+> Try this example in two browser windows at once!

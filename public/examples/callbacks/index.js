@@ -1,7 +1,11 @@
 let shared = false;
-function preload() {}
+function preload() {
+  // nothing in preload, this example connects later and uses callbacks
+  // to know when the connection is ready
+}
 
 function setup() {
+  console.log("setup");
   createCanvas(400, 400);
   createButton("connect").mousePressed(connectToParty);
 }
@@ -15,7 +19,7 @@ function connectToParty() {
       console.log("connected!");
     }
   );
-  partyLoadShared("shared", (s) => {
+  partyLoadShared("shared", { x: 0, y: 0 }, (s) => {
     console.log("shared object loaded!");
     shared = s;
   });
@@ -25,8 +29,6 @@ function mousePressed() {
   if (shared) {
     shared.x = mouseX;
     shared.y = mouseY;
-  } else {
-    console.log("mouse pressed before shared object loaded!");
   }
 }
 
@@ -34,7 +36,7 @@ function draw() {
   if (!shared) {
     background("#ffcccc");
     fill("black");
-    text("shared not loaded", 10, 20);
+    text("click 'connect' button", 10, 20);
     return;
   }
 

@@ -3,7 +3,7 @@ let gameState = "waiting"; // "waiting" or "playing"
 let roundStart;
 let recording; // recording[frame] = {x, y}
 
-let participants;
+let guests;
 let me;
 // {
 //   "x": 100,
@@ -18,7 +18,7 @@ let me;
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "ghosts", "main");
   me = partyLoadMyShared();
-  participants = partyLoadParticipantShareds();
+  guests = partyLoadGuestShareds();
 }
 
 /////////////////////////////////////////////////
@@ -139,7 +139,7 @@ function drawGame() {
   background(220);
 
   // draw all the ghosts
-  for (const p of participants) {
+  for (const p of guests) {
     if (!p.ready) continue;
     for (const round of p.history) {
       const current_frame = frameCount - roundStart;
@@ -149,7 +149,7 @@ function drawGame() {
   }
 
   // draw all the avatars
-  for (const p of participants) {
+  for (const p of guests) {
     if (!p.ready) continue;
     drawAvatar(p, p.color);
   }

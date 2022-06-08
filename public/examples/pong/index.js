@@ -2,13 +2,13 @@ import { Rect, intersects } from "./shape.js";
 
 let shared;
 let me;
-let participants;
+let guests;
 
 window.preload = () => {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "pong", "main3");
   shared = partyLoadShared("shared");
-  me = partyLoadMyShared();
-  participants = partyLoadParticipantShareds();
+  me = partyLoadMyShared({ role: "observer", y: 20 });
+  guests = partyLoadGuestShareds();
 };
 
 window.setup = () => {
@@ -20,9 +20,6 @@ window.setup = () => {
     shared.ball.dX = 4;
     shared.ball.dY = 4;
   }
-
-  me.role = "observer";
-  me.y = 20;
 };
 
 window.draw = () => {
@@ -39,11 +36,11 @@ window.draw = () => {
   rect(shared.ball.l, shared.ball.t, shared.ball.w, shared.ball.h);
 
   // draw player 1
-  const p1 = participants.find((p) => p.role === "player1");
+  const p1 = guests.find((p) => p.role === "player1");
   if (p1) rect(60, p1.y, 20, 100);
 
   // draw player 2
-  const p2 = participants.find((p) => p.role === "player2");
+  const p2 = guests.find((p) => p.role === "player2");
   if (p2) rect(520, p2.y, 20, 100);
 
   // draw role
@@ -63,13 +60,13 @@ function stepBall() {
   if (ball.b > height) ball.dY = -abs(ball.dY);
 
   // player 1
-  const p1 = participants.find((p) => p.role === "player1");
+  const p1 = guests.find((p) => p.role === "player1");
   if (p1 && intersects(ball, new Rect(60, p1.y, 20, 100))) {
     ball.dX = abs(ball.dX);
   }
 
   // player 2
-  const p2 = participants.find((p) => p.role === "player2");
+  const p2 = guests.find((p) => p.role === "player2");
   if (p2 && intersects(ball, new Rect(520, p2.y, 20, 100))) {
     ball.dX = -abs(ball.dX);
   }
@@ -79,14 +76,16 @@ function stepBall() {
 // and takes it if currently first inline
 function assignPlayers() {
   // if there isn't a player1
-  if (!participants.find((p) => p.role === "player1")) {
+  if (!guests.find((p) => p.role === "player1")) {
+    console.log("need player1");
     // find the first observer
-    const o = participants.find((p) => p.role === "observer");
+    const o = guests.find((p) => p.role === "observer");
+    console.log("found", o, me, o === me);
     // if thats me, take the role
     if (o === me) o.role = "player1";
   }
-  if (!participants.find((p) => p.role === "player2")) {
-    const o = participants.find((p) => p.role === "observer");
+  if (!guests.find((p) => p.role === "player2")) {
+    const o = guests.find((p) => p.role === "observer");
     if (o === me) o.role = "player2";
   }
 }

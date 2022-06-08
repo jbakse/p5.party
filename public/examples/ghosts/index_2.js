@@ -1,10 +1,10 @@
-// let participants;
+// let guests;
 // let me;
 
 // function preload() {
 //   partyConnect("wss://deepstream-server-1.herokuapp.com", "ghosts", "main");
 //   me = partyLoadMyShared();
-//   participants = partyLoadParticipantShareds();
+//   guests = partyLoadGuestShareds();
 // }
 
 const ROUND_LENGTH = 60; //frames

@@ -1,0 +1,64 @@
+Docs:
+    □ make note about empty {} not being in guests[]
+        □ if you want everyone to be in there as soon as they connect, add a placehold prop `partyGetMyShared({placeholder: true})`
+
+    Restore Features:
+    ✓ test p5.party loading callbacks @done(22-06-01 21:04)
+    ✓ partySetShared() @done(22-06-01 23:23)
+    ✓ partyIsHost @done(22-06-01 22:28)
+    ✓ partyLoadMyShared(); @done(22-06-03 11:18)
+    ✓ partyLoadGuestShareds(); @done(22-06-03 11:18)
+    ✓ partyWatchShared() @done(22-06-06 14:50)
+    ✓ partyEmit() partySubscribe() @done(22-06-06 14:59)
+    □ ? partyToggleInfo() - panel
+
+    ✓ pong example doesn't work because guests[] doesn't contain the same object as me. (it has a different copy of the record/shared object) @done(22-06-07 21:55)
+    ✓ D12 is breaking for same reason! @done(22-06-07 21:55)
+    
+    ✓ ghosts does not work because guests[].length can't be used to determine join order any more. (can be fixed by putting a property on getMyShared()) @done(22-06-07 21:55)
+
+Code Review:
+    □ check what is public/private
+    □ order class members (is there an extension for this)
+    □ hacky #updateGuestShareds
+        instead of current hacky #updateGuestShareds, maybe try keeping 
+        two arrays: `#guestShareds` and `#nonemptyGuestShareds`
+
+Intermission: 
+    □ check test coverage
+    □ compare SLOC
+    □ compare export size (try more modern es version target?)
+    □ extension is "better comments" better than "highlight"
+
+Deploy:
+    □ create a branch for 0.7
+    □ add student credit to readme
+    □ bump tsc version, remove ts suffix in code
+    □ squash tsc to main
+    □ push to github, verify netlify
+    □ release
+
+
+Examples:
+    □ move multifile examples to modules
+    □ remove bad examples (tanks 1, drag 1)
+    ✓ remove ! examples @done(22-06-07 13:05)
+    ✓  fix live server injecting into html displayed on example pages? @done(22-06-07 21:59)
+
+
+Clean up: 
+    ✓ remove .js files @done(22-06-06 23:37)
+    ✓ remove old dev deps @done(22-06-06 23:37)
+    ✓ update npm scripts now that js dev deps are gone @done(22-06-07 11:14)
+    
+
+Add Features:
+    □ overwrite on reopening room
+        partyLoadShared takes an initobject which is only used if the record doesn't exist yet. Might be better to set default to overwriting record contents if connector is host?
+
+    □ "owned" record warnings/errors
+        □ actually, it might be best to just make guests[] locked
+    □ record tracking, garbage collect, room reset
+    □ room.deleteRecord
+    □ tsc javadocs?
+

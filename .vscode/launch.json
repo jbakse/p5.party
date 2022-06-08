@@ -5,6 +5,14 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/.bin/jest",
+      "cwd": "${workspaceRoot}"
+    },
+
+    {
       "name": "Launch localhost",
       "type": "chrome",
       "request": "launch",

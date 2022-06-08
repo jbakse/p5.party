@@ -2,29 +2,25 @@
 
 // project utils
 
-// @todo, witch to modules, would clean up global declartions below
+// @todo: switch to modules, would clean up global declartions below
 
 /* global Rect pointInRect */
 /* global StatTracker */
 /* global debugShow */
 
 let stats;
-let shared, my, participants;
+let shared, my, guests;
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "tanks_2", "main");
-  shared = partyLoadShared("shared");
+  shared = partyLoadShared("shared", { bullets: [] });
   my = partyLoadMyShared();
-  participants = partyLoadParticipantShareds();
+  guests = partyLoadGuestShareds();
 }
 
 function setup() {
   createCanvas(500, 400).parent("canvas-wrap");
   stats = new StatTracker();
-
-  if (partyIsHost()) {
-    shared.bullets = [];
-  }
 
   my.tank = { x: random(width), y: random(height), a: random(2 * PI), spin: 0 };
 
@@ -40,7 +36,7 @@ function draw() {
   stats.tick();
   debugShow({
     stats,
-    participants,
+    guests: guests,
   });
 }
 
@@ -115,7 +111,7 @@ function drawScene() {
   noStroke();
   background("#cc6666");
   shared.bullets.forEach(drawBullet);
-  for (const p of participants) {
+  for (const p of guests) {
     if (p.tank) drawTank(p.tank);
   }
 }

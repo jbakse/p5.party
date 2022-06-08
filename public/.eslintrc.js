@@ -14,7 +14,8 @@ module.exports = {
     partyWatchShared: "readonly",
     partyIsHost: "readonly",
     partyLoadMyShared: "readonly",
-    partyLoadParticipantShareds: "readonly",
+    // partyLoadParticipantShareds: "readonly",
+    partyLoadGuestShareds: "readonly",
     partySubscribe: "readonly",
     partyEmit: "readonly",
     partyToggleInfo: "readonly",
@@ -23,6 +24,15 @@ module.exports = {
   rules: {
     "prefer-destructuring": "off",
     "no-unused-vars": [
+      "error",
+      {
+        vars: "all",
+        args: "none",
+        varsIgnorePattern:
+          "\\b(preload|setup|draw|keyPressed|keyReleased|keyTyped|mouseMoved|mouseDragged|mousePressed|mouseReleased|mouseClicked|doubleClicked|mouseWheel|touchStarted|touchMoved|touchEnded)\\b",
+      },
+    ],
+    "@typescript-eslint/no-unused-vars": [
       "error",
       {
         vars: "all",

@@ -1,0 +1,77 @@
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&display=fallback");
+
+@import url("highlight.css");
+:root {
+  --accent-color: #066;
+}
+html {
+  font-family: "Josefin Sans", sans-serif;
+
+  font-weight: 100;
+  font-size: 24px;
+  line-height: 1.5;
+}
+
+a,
+a:visited {
+  color: var(--accent-color);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--accent-color);
+}
+
+canvas {
+  display: block;
+  user-select: none;
+}
+
+body {
+  /* display: flex; */
+  flex-direction: column;
+  margin: 1em;
+  
+}
+
+#readme,
+#source {
+  order: 1000;
+}
+
+#readme {
+  /* padding: 10px; */
+}
+
+
+#readme h1 {
+  /* font-size: 1em; */
+  margin-bottom: 0.5em;
+}
+
+#readme > * {
+  box-sizing: border-box;
+  max-width: 40rem;
+}
+
+#readme code {
+  font-family: "Courier New", Courier, monospace;
+  background: #eeeeee;
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+#readme blockquote {
+  margin: 0;
+  background: #ccffcc;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+#readme blockquote p {
+  margin: 0;
+}
+
+
+
+iframe {
+  width: 100%;
+  overflow: auto;
+}

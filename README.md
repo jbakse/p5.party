@@ -15,16 +15,12 @@
 [![Website](https://img.shields.io/website?down_message=offline&label=documentation&up_message=online&url=https%3A%2F%2Fwww.notion.so%2Fp5-party-Documentation-887564cad8ec455e9bee994362322f2e)](https://www.notion.so/p5-party-Documentation-887564cad8ec455e9bee994362322f2e)
 [![Website](https://img.shields.io/website?down_message=offline&label=examples&up_message=online&url=https%3A%2F%2Fp5party.netlify.app%2F)](http://p5party.netlify.app)
 
-<!--
-
 Test Coverage:
 
-![Statements](https://img.shields.io/badge/statements-85.37%25-yellow.svg?style=flat)
-![Branches](https://img.shields.io/badge/branches-75.42%25-red.svg?style=flat)
-![Functions](https://img.shields.io/badge/functions-81.81%25-yellow.svg?style=flat)
-![Lines](https://img.shields.io/badge/lines-86.44%25-yellow.svg?style=flat)
-
- -->
+![Statements](https://img.shields.io/badge/statements-99.62%25-brightgreen.svg?style=flat)
+![Branches](https://img.shields.io/badge/branches-94.21%25-brightgreen.svg?style=flat)
+![Functions](https://img.shields.io/badge/functions-97.91%25-brightgreen.svg?style=flat)
+![Lines](https://img.shields.io/badge/lines-99.59%25-brightgreen.svg?style=flat)
 
 </div>
 

@@ -5,13 +5,13 @@ const roundLength = 10000;
 const drawCursors = false;
 let shared;
 let me;
-let participants;
+let guests;
 
 window.preload = () => {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "cover_up", "main");
   shared = partyLoadShared("shared");
   me = partyLoadMyShared();
-  participants = partyLoadParticipantShareds();
+  guests = partyLoadGuestShareds();
 };
 
 window.setup = () => {
@@ -70,7 +70,7 @@ window.draw = () => {
 
   // draw results
   if (shared.state === "reveal") {
-    for (const p of participants) {
+    for (const p of guests) {
       if (p.tokenPos) {
         fill(p.tokenColor);
         noStroke();
@@ -82,7 +82,7 @@ window.draw = () => {
 
   // draw cursors
   if (drawCursors) {
-    for (const p of participants) {
+    for (const p of guests) {
       if (p.id !== me.id && p.cursorPos) {
         fill("#000");
         stroke("#fff");
@@ -105,9 +105,9 @@ window.draw = () => {
     fill("black");
     textAlign(CENTER);
     textSize(30);
-    const commited = participants.filter((p) => p.tokenPos).length;
-    if (commited < participants.length) {
-      text(`${commited}/${participants.length}`, 300, 30);
+    const commited = guests.filter((p) => p.tokenPos).length;
+    if (commited < guests.length) {
+      text(`${commited}/${guests.length}`, 300, 30);
     }
   }
 
@@ -149,7 +149,7 @@ function stepHost() {
     if (elapsed > roundLength) {
       startReveal();
     }
-    if (participants.every((p) => p.tokenPos)) {
+    if (guests.every((p) => p.tokenPos)) {
       startReveal();
     }
   }
@@ -160,9 +160,7 @@ function startReveal() {
 
   // check if every square has a paticipant's token on it.
   const win = shared.squares.every((s) =>
-    participants.find(
-      (p) => p.tokenPos.col === s.col && p.tokenPos.row === s.row
-    )
+    guests.find((p) => p.tokenPos.col === s.col && p.tokenPos.row === s.row)
   );
 
   // set win/lose message
@@ -184,7 +182,7 @@ function startRound(round) {
   }
 
   // place squares
-  const difficulty = min(shared.round, participants.length);
+  const difficulty = min(shared.round, guests.length);
   shared.squares = [];
   for (let i = 0; i < difficulty; i++) {
     shared.squares.push({
@@ -193,8 +191,8 @@ function startRound(round) {
     });
   }
 
-  // reset participants
-  participants.forEach((p) => (p.tokenPos = false));
+  // reset guests
+  guests.forEach((p) => (p.tokenPos = false));
 
   // start the timer
   shared.startTime = new Date();

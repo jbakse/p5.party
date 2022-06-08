@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "sourceMap": true,
+    "allowJs": true
+  },
+
+  "include": ["src/**/*", "test/**/*"],
+  "typeRoots": ["./node_modules/deepstream.io-client.js/src/client.d.ts"]
+}

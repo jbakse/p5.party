@@ -22,4 +22,4 @@ Try [this example on the p5 web editor.](https://editor.p5js.org/jbakse/sketches
 
 - **click** to move the dot
 
-> Open this example in two browser windows at once!
+> Try this example in two browser windows at once!

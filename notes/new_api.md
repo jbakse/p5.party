@@ -1,26 +1,33 @@
 # Connecting
 
+!
+
 old: `partyConnect(server, app_name, room_name, [callback])`
 new: `party.connect(server, app_name, room_name, [clear = true], [callback]clear: option to clear the room if it currently has no connected guests
-!!!
 
 # Loading Shared Objects (Preloadable Functions)
 
+!done
 old: `partyLoadShared(id, [callback])`
 new: `party.loadShared(id, [default = {}], [callback])`
 maybe: `party.getShared(...)`
 default: properties to assign to shared object if it does not exist
 
+!done
 old: `partyLoadMyShared([callback])`
 new: `party.loadMyShared([default = {}], [callback])`
 maybe: `party.getMyShared(...)`
 default: properties to assign to shared object if it does not exist
 
-maybe: only add a shared object to guests array if loadMyShared is called. this would allow observers to see the guests array but not be in it? con, this already sounds confusing.
-
+!done
 old: `partyLoadParticipantShareds([callback])`
 new: `party.loadGuestShareds([callback])`
 maybe: `party.getGuestsShareds(...)`
+
+no: only add a shared object to guests array if loadMyShared is called. this would allow observers to see the guests array but not be in it? con, this already sounds confusing.
+
+!done
+maybe: only add to guestShareds[] if the shared is non-empty.
 
 # Working with Shared Objects
 

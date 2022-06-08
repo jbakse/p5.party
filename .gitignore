@@ -8,6 +8,7 @@ version.js
 
 # build meta files
 stats.json
+meta.json
 
 # system files
 .DS_Store

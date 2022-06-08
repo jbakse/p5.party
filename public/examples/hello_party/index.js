@@ -5,23 +5,18 @@ function preload() {
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
     "hello_party",
-    "main"
+    "main2"
   );
 
   // begin loading shared object
   // setup() won't be called until the shared object is loaded
-  shared = partyLoadShared("shared");
+  // provide default values for shared data
+  shared = partyLoadShared("shared", { x: 100, y: 100 });
 }
 
 function setup() {
   createCanvas(400, 400);
   noStroke();
-
-  // set defaults on shared data
-  shared.x ??= 0;
-  shared.y ??= 0;
-
-  // see: http://mdn.io/nullish-assign
 }
 
 function mousePressed() {

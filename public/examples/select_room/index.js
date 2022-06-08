@@ -9,18 +9,19 @@ if (room) {
 let shared;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "select_room", room);
-  shared = partyLoadShared("shared");
+  if (room) {
+    partyConnect(
+      "wss://deepstream-server-1.herokuapp.com",
+      "select_room",
+      room
+    );
+    shared = partyLoadShared("shared", { x: 0, y: 0 });
+  }
 }
 
 function setup() {
   createCanvas(400, 400);
   noStroke();
-
-  if (room) {
-    shared.x = shared.x || 0;
-    shared.y = shared.y || 0;
-  }
 }
 
 function draw() {
@@ -38,6 +39,8 @@ function draw() {
 }
 
 function mousePressed() {
+  if (!room) return;
+
   shared.x = mouseX;
   shared.y = mouseY;
 }

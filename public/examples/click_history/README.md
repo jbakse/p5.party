@@ -9,4 +9,4 @@ By using `partyIsHost()` in setup we can determine if this client is the only/fi
 - **click** to move the dot and add to the click history
 - **press space** to clear the history
 
-> Open this example in two browser windows at once!
+> Try this example in two browser windows at once!

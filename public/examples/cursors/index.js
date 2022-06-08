@@ -1,27 +1,27 @@
+console.log("%c Reload! \n ", "background: #f00; color: #fff");
+
 let me;
-let participants;
-let isSetup = false; // flag to make sure preloading is done and setup is called
+let guests;
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "cursors", "main1");
-  me = partyLoadMyShared();
-  participants = partyLoadParticipantShareds();
+  me = partyLoadMyShared({ x: 200, y: 200 });
+  guests = partyLoadGuestShareds();
 }
 
 function setup() {
   createCanvas(400, 400);
   noStroke();
 
-  // initialize this participants cursor position
-  me.x = 200;
-  me.y = 200;
-  me.ready = true;
-  isSetup = true;
+  // initialize this guests cursor position
+  console.log("me", JSON.stringify(me));
+  console.log("guests", JSON.stringify(guests));
+  console.log("am i host?", partyIsHost());
+
+  // partyToggleInfo(true);
 }
 
 function mouseMoved(e) {
-  if (!isSetup) return;
-  // update this participants cursor position
   me.x = mouseX;
   me.y = mouseY;
 }
@@ -29,15 +29,13 @@ function mouseMoved(e) {
 function draw() {
   background("#ffcccc");
 
-  // draw each participants cursor
-  for (const p of participants) {
-    if (p.ready === true) {
-      fill("#cc0000");
-      ellipse(p.x, p.y, 20, 20);
-    }
+  // draw each guests cursor
+  for (const p of guests) {
+    fill("#cc0000");
+    ellipse(p.x, p.y, 20, 20);
   }
 
-  // mark this participants cursor
+  // mark this guests cursor
   fill("#ffffff");
   ellipse(me.x, me.y, 15, 15);
 }

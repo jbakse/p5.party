@@ -10,7 +10,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(400, 100);
 
   partySetShared(shared, {});
 
@@ -60,6 +60,11 @@ function setup() {
   console.log(JSON.stringify(shared, null, 2));
 
   noLoop();
+}
+
+function draw() {
+  background("#ffcccc");
+  text("Look in the console for the errors.", 20, 20);
 }
 
 class ClassWithoutMethods {

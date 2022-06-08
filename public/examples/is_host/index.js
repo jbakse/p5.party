@@ -26,11 +26,13 @@ function draw() {
   if (partyIsHost()) {
     const elapsed = new Date() - new Date(shared.startTime);
     if (elapsed > 10000) {
-      shared.startTime = new Date();
-      shared.clicks = [];
+      partySetShared(shared, {
+        startTime: new Date(),
+        clicks: [],
+      });
     }
 
-    // out put some debuggin info
+    // out put some debugging info
     fill(255);
     textSize(24);
     textFont("Courier New");

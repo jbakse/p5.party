@@ -6,4 +6,4 @@ p5.party is better suited to slower paced games and apps, but this app shows wha
 
 - **click** to move the obsticle
 
-> Open this example in two browser windows at once!
+> Try this example in two browser windows at once!

@@ -1,15 +1,12 @@
 let shared;
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "set_shared", "main");
-  shared = partyLoadShared("shared");
+  shared = partyLoadShared("shared", {});
 }
 
 function setup() {
   createCanvas(400, 400);
   noStroke();
-
-  // remove all properties from shared
-  partySetShared(shared, {});
 }
 
 function mousePressed(e) {

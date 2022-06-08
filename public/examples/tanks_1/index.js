@@ -17,14 +17,14 @@ const bounds = new Rect(0, 0, 400, 400);
 let shared;
 let new_bullets;
 let me;
-let participants;
+let guests;
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "tanks_1", "main");
   shared = partyLoadShared("shared");
   new_bullets = partyLoadShared("new_bullets");
   me = partyLoadMyShared();
-  participants = partyLoadParticipantShareds();
+  guests = partyLoadGuestShareds();
 }
 
 function setup() {
@@ -68,7 +68,7 @@ function showData() {
 function drawScene() {
   background("#cc6666");
   shared.bullets.forEach(drawBullet);
-  for (const p of participants) {
+  for (const p of guests) {
     if (p.tank) drawTank(p.tank);
   }
 }

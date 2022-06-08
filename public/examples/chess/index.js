@@ -1,3 +1,15 @@
+/**
+ * Chess
+ * This example stores the board state in a shared object.
+ * The property `board` is an 8x8 array.
+ * Technically, an array of 8 arrays, each with 8 elements.
+ * Each element is an array of two elements: [color, piece].
+ *
+ * Initializing this array is done in setup, rather than
+ * providing a object literal to partyLoadShared.
+ *
+ */
+
 const WHITE = 0;
 const BLACK = 1;
 
@@ -28,7 +40,7 @@ window.setup = () => {
     shared.board = [];
     for (let row = 0; row < 8; row++) {
       shared.board[row] = new Array(8).fill().map(() => [WHITE, NONE]);
-      // curous about the line above?
+      // curious about the line above?
       // https://medium.com/@wisecobbler/4-ways-to-populate-an-array-in-javascript-836952aea79f
     }
     shared.board[0][0] = [WHITE, ROOK];

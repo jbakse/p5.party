@@ -6,7 +6,7 @@ let recording;
 // recording layout
 // [ {x, y}, {x, y}, ... ]
 
-let participants;
+let guests;
 let me;
 
 // particpant shared object layout
@@ -58,8 +58,8 @@ function keyReleased() {
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "ghosts", "main");
-  me = partyLoadMyShared();
-  participants = partyLoadParticipantShareds();
+  me = partyLoadMyShared({ initialized: true });
+  guests = partyLoadGuestShareds();
 }
 
 function setup() {
@@ -69,27 +69,27 @@ function setup() {
   partySubscribe("startRound", startRound);
 
   // choose spawn point and color based on number join order
-  if (participants.length === 1) {
+  if (guests.length === 1) {
     me.spawnX = 100;
     me.spawnY = 100;
     me.color = "red";
   }
-  if (participants.length === 2) {
+  if (guests.length === 2) {
     me.spawnX = width - 100;
     me.spawnY = 100;
     me.color = "blue";
   }
-  if (participants.length === 3) {
+  if (guests.length === 3) {
     me.spawnX = 100;
     me.spawnY = height - 100;
     me.color = "orange";
   }
-  if (participants.length === 4) {
+  if (guests.length === 4) {
     me.spawnX = width - 100;
     me.spawnY = height - 100;
     me.color = "green";
   }
-  if (participants.length > 4) {
+  if (guests.length > 4) {
     me.spawnX = random(width);
     me.spawnY = random(height);
     me.color = random(["red", "blue", "orange", "green"]);
@@ -178,7 +178,7 @@ function drawGame() {
   background(220);
 
   // draw all the ghosts
-  for (const p of participants) {
+  for (const p of guests) {
     if (!p.ready) continue;
     for (const round of p.history) {
       const current_frame = frameCount - roundStart;
@@ -188,7 +188,7 @@ function drawGame() {
   }
 
   // draw all the avatars
-  for (const p of participants) {
+  for (const p of guests) {
     if (!p.ready) continue;
     drawAvatar(p, p.color);
   }

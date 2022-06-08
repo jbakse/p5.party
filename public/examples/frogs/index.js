@@ -2,20 +2,16 @@
 // require https://cdn.jsdelivr.net/npm/p5@latest/lib/addons/p5.sound.js
 // require https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js
 
-/* global sketch_directory */
-/* global partyConnect partyLoadShared partyIsHost partySetShared partyLoadMyShared partyLoadParticipantShareds partySubscribe partyEmit*/
-/* global loadSound outputVolume */
-
-/* exported preload setup draw keyPressed mouseReleased*/
+/* global outputVolume */
 
 /**
  * General Approach
  * Host: moves the traffic, writes a position for each lane to shared{}
  * Players: move themselves, check themselves for collisions, write to my{}
- * Local: copies data from shared{} and participants{} to local state, and draws scene.
+ * Local: copies data from shared{} and guests{} to local state, and draws scene.
  *
  * Accepted Issues
- * Its possible (very unlikely) for two clients to join as player1 or player2 at
+ * Its possible (but unlikely) for two clients to join as player1 or player2 at
  * the same time if they tie trying to join.
  *
  * tools used to create images and sounds
@@ -41,7 +37,7 @@ const large_gap = { sprite: false, collides: false, length: 8 * SPRITE_SIZE };
 // lanes defines the traffic pattern
 const lanes = [
   {
-    y: BLOCK_SIZE * 3, // top of the lane
+    y: BLOCK_SIZE * 3, // tog of the lane
     speed: 1.5, // how fast the lane moves, pixels per frame
     pattern: [truck, large_gap], // repeated pattern of cars and gaps
   },
@@ -81,7 +77,7 @@ const lanes = [
 const frogs = [
   {
     x: -32, // left of grid block containing frog
-    y: 0, // top of block
+    y: 0, // tog of block
     direction: "up", // up | down | left | right: direction of last movement
     w: BLOCK_SIZE,
     h: BLOCK_SIZE,
@@ -111,7 +107,7 @@ let shared;
 // lanes[x].pos: current position of the lanes used to sync traffics
 
 let me;
-let participants;
+let guests;
 // role: "player1" | "player2" | "observer"
 // x, y, direction, state: frog state data
 
@@ -148,35 +144,26 @@ function preload() {
   soundLib.title = loadSound(`./assets/frogger_sfx_title.wav`);
 
   partyConnect("wss://deepstream-server-1.herokuapp.com", "frogs", "main");
-  shared = partyLoadShared("shared");
-  me = partyLoadMyShared();
-  participants = partyLoadParticipantShareds();
+  shared = partyLoadShared("shared", {
+    lanes: [
+      { pos: 0 },
+      { pos: 0 },
+      { pos: 0 },
+      { pos: 0 },
+      { pos: 0 },
+      { pos: 0 },
+    ],
+  });
+
+  me = partyLoadMyShared({ role: "observer" });
+  guests = partyLoadGuestShareds();
 }
 
 function setup() {
   createCanvas(BLOCK_SIZE * 12, BLOCK_SIZE * 13);
 
-  // init shared data
-  if (partyIsHost()) {
-    partySetShared(shared, {
-      lanes: [
-        { pos: 0 },
-        { pos: 0 },
-        { pos: 0 },
-        { pos: 0 },
-        { pos: 0 },
-        { pos: 0 },
-      ],
-    });
-  }
-  partySetShared(me, {
-    role: "observer",
-  });
-
   // set up messages
   partySubscribe("playSound", playSound);
-
-  partyToggleInfo(false);
 
   // configure p5
   angleMode(DEGREES);
@@ -214,8 +201,8 @@ function stepLocal() {
   });
 
   // find the current players, if they exist
-  const p1 = participants.find((p) => p.role === "player1");
-  const p2 = participants.find((p) => p.role === "player2");
+  const p1 = guests.find((p) => p.role === "player1");
+  const p2 = guests.find((p) => p.role === "player2");
 
   // hide frogs if they are not in the game
   if (!p1) frogs[0].x = -32;
@@ -329,8 +316,8 @@ function drawBadge() {
   push();
   let i = imageLib.badge_watching;
   if (
-    !participants.find((p) => p.role === "player1") ||
-    !participants.find((p) => p.role === "player2")
+    !guests.find((p) => p.role === "player1") ||
+    !guests.find((p) => p.role === "player2")
   ) {
     i = imageLib.badge_join;
   }
@@ -488,12 +475,12 @@ function joinGame() {
   // don't let current players double join
   if (me.role === "player1" || me.role === "player2") return;
 
-  if (!participants.find((p) => p.role === "player1")) {
+  if (!guests.find((p) => p.role === "player1")) {
     spawn(frogs[0]);
     me.role = "player1";
     return;
   }
-  if (!participants.find((p) => p.role === "player2")) {
+  if (!guests.find((p) => p.role === "player2")) {
     spawn(frogs[1]);
     me.role = "player2";
   }

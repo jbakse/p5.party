@@ -39,7 +39,10 @@ function draw() {
 
 function keyPressed() {
   // write shared data
-  if (key === " ") shared.clickHistory = [];
+  if (key === " ") {
+    shared.clickHistory = [];
+    return false;
+  }
 }
 
 function mousePressed(e) {

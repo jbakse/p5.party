@@ -4,4 +4,4 @@ This example is similar to the _click_history_ example, but clears the history a
 
 - **click** to add to the click history
 
-> Open this example in two browser windows at once!
+> Try this example in two browser windows at once!

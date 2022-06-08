@@ -11,4 +11,4 @@ A game for many players.
 
 - **click** to place a token.
 
-> Open this example in two browser windows at once!
+> Try this example in two browser windows at once!

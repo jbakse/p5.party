@@ -8,7 +8,7 @@ Welcome to long table online!
 - **space** to talk
 - **q** to change character
 
-> Open this example in two browser windows at once!
+> Try this example in two browser windows at once!
 
 <style>
 #readme code {

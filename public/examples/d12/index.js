@@ -17,7 +17,7 @@ let inputMode = "move"; // "move" || "message"
 
 const mainCamera = { x: 0, y: 0 };
 
-// The localPlayerData is a map of participants to local data
+// The localPlayerData is a map of guests to local data
 // on each particpant. This is used to keep track of a transition position
 // when a player moves to a new square.
 const localPlayerData = new WeakMap();
@@ -48,7 +48,7 @@ function preload() {
   // get shared data
   partyConnect("wss://deepstream-server-1.herokuapp.com", "d12", "main");
   shared = partyLoadShared("main");
-  players = partyLoadParticipantShareds();
+  players = partyLoadGuestShareds();
   me = partyLoadMyShared();
 
   // load resources
@@ -98,13 +98,13 @@ function draw() {
   }
 
   // step + draw
-  input();
+  checkInput();
   step();
   drawGame();
   // drawScanlines();
 }
 
-function input() {
+function checkInput() {
   checkPressedKeys();
 }
 
@@ -310,14 +310,14 @@ function checkPressedKeys() {
   // move around randomly (debug)
   // move(randomInt(-1, 2), randomInt(-1, 2));
 
-  if (keyIsDown(LEFT_ARROW) || keyIsDown(65 /*a*/)) move(-1, 0);
-  else if (keyIsDown(RIGHT_ARROW) || keyIsDown(68 /*d*/)) move(1, 0);
-  else if (keyIsDown(UP_ARROW) || keyIsDown(87 /*w*/)) move(0, -1);
-  else if (keyIsDown(DOWN_ARROW) || keyIsDown(83 /*s*/)) move(0, 1);
+  if (keyIsDown(LEFT_ARROW) || keyIsDown(65 /*a*/)) moveCharacter(-1, 0);
+  else if (keyIsDown(RIGHT_ARROW) || keyIsDown(68 /*d*/)) moveCharacter(1, 0);
+  else if (keyIsDown(UP_ARROW) || keyIsDown(87 /*w*/)) moveCharacter(0, -1);
+  else if (keyIsDown(DOWN_ARROW) || keyIsDown(83 /*s*/)) moveCharacter(0, 1);
   else me.keysReleasedSinceAction = true;
 }
 
-function move(x, y) {
+function moveCharacter(x, y) {
   const col = me.col + x;
   const row = me.row + y;
   if (me.keysReleasedSinceAction) {
@@ -354,6 +354,7 @@ function keyReleased() {
 
 function startMessage() {
   message_input = createInput("");
+  message_input.parent(document.querySelector("main"));
   message_input.id("message-input");
   message_input.attribute("autocomplete", "off");
   message_input.attribute("maxlength", "16");

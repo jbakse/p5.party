@@ -4,4 +4,4 @@ This example shows how to wait for `partyConnect()` and `partyLoadShared()` usin
 
 - **click** to move the dot
 
-> Open this example in two browser windows at once!
+> Try this example in two browser windows at once!

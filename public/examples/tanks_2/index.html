@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="../sketch.css" />
     <style>
       body {
         display: flex;
@@ -17,20 +16,27 @@
     </style>
   </head>
   <body>
-    <div id="canvas-wrap"></div>
+    <main></main>
 
-    <div id="debug"></div>
+    <div id="readme"></div>
+
+    <h2>index.js</h2>
+    <div id="source-javascript"></div>
+
+    <h2>index.html</h2>
+    <div id="source-html"></div>
 
     <script src="https://unpkg.com/uuid@latest/dist/umd/uuidv4.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
-
     <script src="/dist/p5.party.js"></script>
-
     <script src="shape.js"></script>
     <script src="stats.js"></script>
     <script src="debug.js"></script>
-
     <script src="index.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
+    <link rel="stylesheet" href="/examples.css" />
+    <script src="/examples.js" type="module"></script>
   </body>
 </html>
