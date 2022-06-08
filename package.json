@@ -34,6 +34,7 @@
     "-------------": "--",
     "prestart": "npm run genversion",
     "posttest": "istanbul-badges-readme",
+    "prenetlify": "npm run genversion",
     "prebuild": "npm run genversion",
     "build": "npm run esbuild -- --outfile=dist/p5.party.js",
     "prerelease": "npm run build",
