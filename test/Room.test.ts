@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { JSONObject } from "@deepstream/client/dist/src/constants";
+import onChange from "on-change";
 
 import { Room } from "../src/Room";
 
@@ -10,13 +11,13 @@ describe("Room", () => {
 
   it("connects", async () => {
     r = new Room(HOST, "test", "test");
-    await r.connect();
+    await r.whenConnected;
     expect(r._isConnected()).toBe(true);
   });
 
   it("double connects", async () => {
-    await r.connect();
-    await r.connect(); // tripple even
+    await r.whenConnected;
+    await r.whenConnected; // tripple even
     expect(r._isConnected()).toBe(true);
   });
 
@@ -32,9 +33,9 @@ describe("Room", () => {
 
   it("waits for whenConnected", async () => {
     const r2 = new Room(HOST, "test", "test");
-    void r2.connect();
-    await r2.whenConnected(); // should wait
-    await r2.whenConnected(); // should be instant
+    void r2.whenConnected;
+    await r2.whenConnected; // should wait
+    await r2.whenConnected; // should be instant
     expect(r2._isConnected()).toBe(true);
     r2.disconnect();
   });
@@ -45,7 +46,7 @@ describe("getRecord", () => {
 
   beforeAll(async () => {
     r1 = new Room(HOST, "test", "test");
-    await Promise.all([r1.connect()]);
+    await Promise.all([r1.whenConnected]);
     expect(r1._isConnected()).toBe(true);
   });
 
@@ -70,7 +71,7 @@ describe("Subscribe + Emit", () => {
     r1 = new Room(HOST, "test", "test");
     r2 = new Room(HOST, "test", "test");
     r3 = new Room(HOST, "test", "test2");
-    await Promise.all([r1.connect(), r2.connect(), r3.connect()]);
+    await Promise.all([r1.whenConnected, r2.whenConnected, r3.whenConnected]);
     expect(r1._isConnected()).toBe(true);
     expect(r2._isConnected()).toBe(true);
     expect(r3._isConnected()).toBe(true);
@@ -172,7 +173,7 @@ describe("Guests", () => {
     r1 = new Room(HOST, "test", "test");
     r2 = new Room(HOST, "test", "test");
     r3 = new Room(HOST, "test", "test2");
-    await Promise.all([r1.connect(), r2.connect(), r3.connect()]);
+    await Promise.all([r1.whenConnected, r2.whenConnected, r3.whenConnected]);
 
     expect(r1._isConnected()).toBe(true);
     expect(r2._isConnected()).toBe(true);
@@ -200,13 +201,14 @@ describe("Guests", () => {
 });
 
 describe("Guest Shareds", () => {
-  it("contains a shared created immediately", async () => {
+  it("local guestShareds contains my (immediate)", async () => {
     const r1 = new Room(HOST, "test", "test");
-    const c = r1.connect();
+    void r1.whenConnected;
     const rec1 = r1.myGuestRecord;
-    await r1.whenConnected();
-    await rec1.load({ a: Math.random() });
-    await c;
+
+    await r1.whenConnected;
+    await rec1.whenLoaded;
+    await rec1.initData({ a: Math.random() });
 
     const my = rec1.shared;
     const guests = r1.guestShareds;
@@ -217,17 +219,18 @@ describe("Guest Shareds", () => {
     r1.disconnect();
   });
 
-  it("remote contains a shared created immediately", async () => {
+  it("remote guestShares contains my (immediate)", async () => {
     const r1 = new Room(HOST, "test", "test");
-    const c = r1.connect();
+    void r1.whenConnected;
     const rec1 = r1.myGuestRecord;
-    await r1.whenConnected();
-    await rec1.load({ a: 1 });
-    await c;
+    await r1.whenConnected;
+    await rec1.whenLoaded;
+    await rec1.initData({ a: 1 });
+
     const my = rec1.shared;
 
     const r2 = new Room(HOST, "test", "test");
-    await r2.connect();
+    await r2.whenConnected;
     const guestShareds = r2.guestShareds;
 
     await millis(500);
@@ -239,12 +242,12 @@ describe("Guest Shareds", () => {
     r2.disconnect();
   });
 
-  it("contains a shared created after a delay", async () => {
+  it("local guestShares contains my (delayed)", async () => {
     const r1 = new Room(HOST, "test", "test");
-    await r1.connect();
+    await r1.whenConnected;
     const rec1 = r1.myGuestRecord;
     await millis(500);
-    await rec1.load({ a: 1 });
+    await rec1.initData({ a: 1 });
 
     const my = rec1.shared;
     const guests = r1.guestShareds;
@@ -254,16 +257,16 @@ describe("Guest Shareds", () => {
     r1.disconnect();
   });
 
-  it("remote contains a shared created after a delay", async () => {
+  it("remote guestShares contains my (delayed)", async () => {
     const r1 = new Room(HOST, "test", "test");
-    await r1.connect();
+    await r1.whenConnected;
     const rec1 = r1.myGuestRecord;
     await millis(500);
-    await rec1.load({ a: 1 });
+    await rec1.initData({ a: 1 });
     const my = rec1.shared;
 
     const r2 = new Room(HOST, "test", "test");
-    await r2.connect();
+    await r2.whenConnected;
     const guestShareds = r2.guestShareds;
     await millis(500);
 
@@ -276,7 +279,7 @@ describe("Guest Shareds", () => {
 
   it("warns on changes to guestShareds", async () => {
     const r1 = new Room(HOST, "test", "test");
-    await r1.connect();
+    await r1.whenConnected;
     const guestShareds = r1.guestShareds;
 
     const l1 = guestShareds.length;
@@ -300,7 +303,7 @@ describe("Host", () => {
     r1 = new Room(HOST, "test", "test");
     r2 = new Room(HOST, "test", "test");
     r3 = new Room(HOST, "test", "test2");
-    await Promise.all([r1.connect(), r2.connect(), r3.connect()]);
+    await Promise.all([r1.whenConnected, r2.whenConnected, r3.whenConnected]);
     expect(r1._isConnected()).toBe(true);
     expect(r2._isConnected()).toBe(true);
     expect(r3._isConnected()).toBe(true);
@@ -323,5 +326,24 @@ describe("Host", () => {
     expect(r1.hostName).toBeDefined();
     expect(r3.hostName).toBeDefined();
     expect(r1.hostName).not.toBe(r3.hostName);
+  });
+});
+
+describe("watch watch", () => {
+  test("?", () => {
+    const myArr: any[] = [];
+    const myWatchedArr: any[] = onChange(myArr, (a, b, c) => {
+      /**/
+    });
+
+    const myObj: Record<string, any> = {};
+
+    myWatchedArr.push(myObj);
+    // myArr changed
+
+    myObj.a = 1;
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    myWatchedArr[0].a = 2;
   });
 });

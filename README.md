@@ -17,10 +17,10 @@
 
 Test Coverage:
 
-![Statements](https://img.shields.io/badge/statements-99.62%25-brightgreen.svg?style=flat)
-![Branches](https://img.shields.io/badge/branches-94.21%25-brightgreen.svg?style=flat)
-![Functions](https://img.shields.io/badge/functions-97.91%25-brightgreen.svg?style=flat)
-![Lines](https://img.shields.io/badge/lines-99.59%25-brightgreen.svg?style=flat)
+![Statements](https://img.shields.io/badge/statements-98.26%25-brightgreen.svg?style=flat)
+![Branches](https://img.shields.io/badge/branches-92.03%25-brightgreen.svg?style=flat)
+![Functions](https://img.shields.io/badge/functions-96.55%25-brightgreen.svg?style=flat)
+![Lines](https://img.shields.io/badge/lines-98.12%25-brightgreen.svg?style=flat)
 
 </div>
 

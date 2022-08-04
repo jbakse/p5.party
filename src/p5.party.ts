@@ -20,13 +20,12 @@ function init() {
     ? `p5.js v${p5.prototype.VERSION}`
     : "p5.js is older than 1.3.1";
   log.styled("font-weight: bold", version_string);
-  log.styled("font-weight: bold", `p5.party v${version}-ts`);
+  log.styled("font-weight: bold", `p5.party v${version}`);
 
   let room: Room | null = null;
 
   // ! partyConnect (preload)
 
-  p5.prototype.registerPreloadMethod("partyConnect", p5.prototype);
   p5.prototype.partyConnect = function (
     host: string,
     appName: string,
@@ -37,9 +36,9 @@ function init() {
       log.warn("You should call partyConnect() only one time");
       return;
     }
-    room = new Room(host, appName, roomName);
     const load = async () => {
-      await room?.connect(); // room defined above
+      room = new Room(host, appName, roomName);
+      await room.whenConnected;
       window.addEventListener("beforeunload", () => {
         room?.disconnect();
       });
@@ -50,6 +49,7 @@ function init() {
     };
     void load();
   };
+  p5.prototype.registerPreloadMethod("partyConnect", p5.prototype);
 
   // ! partyLoadShared (preload)
 
@@ -66,7 +66,7 @@ function init() {
     const record = room.getRecord(name);
 
     const load = async () => {
-      await room?.whenConnected(); // room null checked above
+      await room?.whenConnected; // room null checked above
       await record.load(initObject);
       log.log(`partyLoadShared "${name}" done!`);
       cb?.(record.shared);
@@ -79,8 +79,6 @@ function init() {
   };
 
   // ! partyLoadMyShared
-
-  // note: guest record not created until partyLoadMyShared() is called so it won't be in the guest array
 
   p5.prototype.registerPreloadMethod("partyLoadMyShared", p5.prototype);
   p5.prototype.partyLoadMyShared = function (
@@ -95,8 +93,9 @@ function init() {
     const record = room.myGuestRecord;
 
     const load = async () => {
-      await room?.whenConnected(); // room null checked above
-      await record.load(initObject);
+      await room?.whenConnected; // room null checked above
+      await record.whenLoaded;
+      await record.initData(initObject);
       log.log(`partyLoadMyShared done!`);
       cb?.(record.shared);
       this._decrementPreload();
@@ -151,7 +150,7 @@ function init() {
       );
       return;
     }
-    Record.recordForShared(shared)?.setShared(object);
+    Record.recordForShared(shared)?.setData(object);
   };
 
   // ! partyWatchShared
@@ -203,5 +202,11 @@ function init() {
       return;
     }
     room.emit(event, data);
+  };
+
+  p5.prototype.partyToggleInfo = function () {
+    log.warn(
+      "partyToggleInfo is no longer available in this version of p5.party."
+    );
   };
 }

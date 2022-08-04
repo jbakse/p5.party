@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
+import dedent from "ts-dedent";
+
 import {
   JSONValue,
   JSONObject,
   RecordData,
 } from "@deepstream/client/dist/src/constants";
 
-export { JSONValue, JSONObject, RecordData };
+import { SubscriptionCallback } from "@deepstream/client/dist/src/record/record";
 
-import dedent from "ts-dedent";
 import * as log from "./log";
 
+export { JSONValue, JSONObject, RecordData, SubscriptionCallback };
 export type UserData = unknown;
 
 /**
@@ -43,6 +46,7 @@ export function isJSONValue(
  * @param value value to check
  * @returns if the value is JSONObject
  */
+
 export function isJSONObject(
   value: UserData,
   name?: string
@@ -78,8 +82,9 @@ interface ValidationError {
   message: string;
 }
 
-// validationError is a module global and can be checked if validateJSONValue returns false for info on the error.
-// note: is there a better pattern for this?
+// validationError is a module global and can be checked if/after validateJSONValue returns false for info on the error.
+// note: is there a better pattern for providing error details here?
+
 let validationError: ValidationError | null;
 
 function validateJSONValue(value: UserData, path = ""): boolean {
@@ -192,26 +197,4 @@ function validateJSONValue(value: UserData, path = ""): boolean {
  *
  *  .log((value as JSONObject).test); // okay
  *  .log(value.test);                 // not okay
- */
-
-/**
- *  export declare type JSONPrimitive = string | number | boolean | null;
- *  export interface JSONObject {
- *      [member: string]: JSONValue;
- *  }
- *  export interface JSONArray extends Array<JSONValue> {
- *  }
- *  export declare type JSONValue = JSONPrimitive | JSONObject | JSONArray;
- *  export declare type RecordPathData = JSONValue;
- *  export declare type RecordData = JSONObject | Array<string> | null | undefined;
- */
-
-/**
- *  example
- *
- *  export function test(value: UserData): JSONValue {
- *    if (!isJSONValue(value)) return null;
- *    return value;
- *  }
- *
  */

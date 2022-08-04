@@ -38,10 +38,8 @@
     "prebuild": "npm run genversion",
     "build": "npm run esbuild -- --outfile=dist/p5.party.js",
     "prerelease": "npm run build",
-    "prepublishOnly": "npm run build && npm run zip",
+    "prepublishOnly": "npm run build",
     "postpublish": "curl https://purge.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js",
-    "prezip": "rm -f p5.party.zip",
-    "zip": "npm run build && ln -s public/examples && zip p5.party.zip -r dist -r examples && rm -r examples && unzip -l p5.party.zip",
     "genversion": "genversion --es6 --semi version.js",
     "esbuild": "esbuild src/p5.party.ts --bundle --sourcemap --minify --target=es6 --define:global=window --inject:esbuild.inject.js"
   },

@@ -1,6 +1,12 @@
+□ something to consider: 
+    ✓ does resolved promise resolve again immediately if waited on again? (a: yes) @done(22-06-27 11:14)
+    ✓ if so, we could cache the load() promise on the object and use that for a better when ready/loaded. @done(22-06-27 11:14)
+    ✓ though that might mean some wrapping code in the method @done(22-06-27 11:14)
+    ✓ move the load call into the constructor? @done(22-08-04 12:33)
+
 Docs:
-    □ make note about empty {} not being in guests[]
-        □ if you want everyone to be in there as soon as they connect, add a placehold prop `partyGetMyShared({placeholder: true})`
+    ✓ make note about empty {} not being in guests[] @done(22-06-27 11:38)
+        ✓ if you want everyone to be in there as soon as they connect, add a placehold prop `partyGetMyShared({placeholder: true})` @done(22-06-27 11:38)
 
     Restore Features:
     ✓ test p5.party loading callbacks @done(22-06-01 21:04)
@@ -10,7 +16,7 @@ Docs:
     ✓ partyLoadGuestShareds(); @done(22-06-03 11:18)
     ✓ partyWatchShared() @done(22-06-06 14:50)
     ✓ partyEmit() partySubscribe() @done(22-06-06 14:59)
-    □ ? partyToggleInfo() - panel
+    
 
     ✓ pong example doesn't work because guests[] doesn't contain the same object as me. (it has a different copy of the record/shared object) @done(22-06-07 21:55)
     ✓ D12 is breaking for same reason! @done(22-06-07 21:55)
@@ -18,47 +24,64 @@ Docs:
     ✓ ghosts does not work because guests[].length can't be used to determine join order any more. (can be fixed by putting a property on getMyShared()) @done(22-06-07 21:55)
 
 Code Review:
-    □ check what is public/private
-    □ order class members (is there an extension for this)
-    □ hacky #updateGuestShareds
-        instead of current hacky #updateGuestShareds, maybe try keeping 
-        two arrays: `#guestShareds` and `#nonemptyGuestShareds`
+    ✓ check what is public/private @done(22-08-04 12:44)
+    
 
 Intermission: 
     □ check test coverage
-    □ compare SLOC
-    □ compare export size (try more modern es version target?)
-    □ extension is "better comments" better than "highlight"
+    □ extensions: is "better comments" better than "highlight"?
 
 Deploy:
-    □ create a branch for 0.7
-    □ add student credit to readme
-    □ bump tsc version, remove ts suffix in code
-    □ squash tsc to main
-    □ push to github, verify netlify
-    □ release
+    ✓ add student credit to readme @done(22-06-08 12:42)
+    ✓ bump tsc version, remove ts suffix in code @done(22-06-08 12:42)
+    ✓ squash tsc to main @done(22-06-08 12:42)
+    ✓ push to github, verify netlify @done(22-06-08 12:42)
+    ✓ release @done(22-06-08 12:42)
 
 
 Examples:
-    □ move multifile examples to modules
-    □ remove bad examples (tanks 1, drag 1)
+    ✓ move multifile examples to modules @done(22-08-04 14:46)
+    ✓ remove bad examples (tanks 1, drag 1) @done(22-08-04 14:46)
     ✓ remove ! examples @done(22-06-07 13:05)
     ✓  fix live server injecting into html displayed on example pages? @done(22-06-07 21:59)
-
+    □ e3_sign_up example puts input field at bottom of page
+    □ callbacks example puts button at bottom of page
 
 Clean up: 
     ✓ remove .js files @done(22-06-06 23:37)
     ✓ remove old dev deps @done(22-06-06 23:37)
     ✓ update npm scripts now that js dev deps are gone @done(22-06-07 11:14)
+    □ clean up branches (merge + remove feature branches)
+
     
-
-Add Features:
+Priority Features:
     □ overwrite on reopening room
-        partyLoadShared takes an initobject which is only used if the record doesn't exist yet. Might be better to set default to overwriting record contents if connector is host?
+        partyLoadShared takes an initobject which is only used if the record doesn't exist yet. Might be better to set default to overwriting record contents if connector is host? Or some way to signal you want this? a `resetEmptyRoom` flag or call.
+        Currently i find i'm more likely to use setup()->partyIsHost->partySetShared thanthe initobject. the init object just isn't more convient (which was the point!)
 
-    □ "owned" record warnings/errors
-        □ actually, it might be best to just make guests[] locked
+
+Possible Features:
+    □ allow early calls to Record initData, setData, watchShared, delete
+        these currently expect the dsRecord to be ready and fail if not
+        they could wait for whenLoaded() instead with a little refactoring
+        wait until need is demonstrated
+
+    □ show warning or error on writes to "owned" records
+        it is generally a good practice to only read from `guests` array
+        and write to only `my`
+        though sometimes, with careful planning, it is alright to violate this general practice
+        □ consider allowing but warning when this practice is violated
+        □ consider erroring when this practice is violated (locked `guests`)
+        □ consider allowing user to mark owner of shared objects and enforce with warnings or errors
+
     □ record tracking, garbage collect, room reset
-    □ room.deleteRecord
-    □ tsc javadocs?
+		currently all server records for named shared objects are leaked
+		p5.party does not maintan list of records created
+		user records and guest records are not deleted automatically (unless the server restarts)
+        there is no way to manually delete a record
+        □ create room.deleteRecord
+    
+    □ tsc javadocs
 
+    □ restore partyToggleInfo() - panel
+        the earlier version of p5.party had an info panel that showed who was connected and who was host, maybe restore it?

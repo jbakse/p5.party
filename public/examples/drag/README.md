@@ -1,4 +1,4 @@
-# drag2
+# drag
 
 Some little squres to drag around.
 

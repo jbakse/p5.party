@@ -34,12 +34,9 @@ Shared objects:
 	
 
 Records:
-	☐ records leak
-		currently all server records are leaked.
-		there are no lists of records created
-		user records and guest records are not deleted (unless the server restarts)
 
-	☐ clear room/app records
+
+	☐ api to clear room/app records
 		Would be useful in normal, emergency, and dev situations.
 		Having stale data stick around can be confusing reloading a js program usually restarts it from 0, but not when you have data hanging out on the back end.
 		pattern: `setup->if host->reset room->init room`
@@ -103,12 +100,10 @@ Emit Subscribe:
 
 
 Release Package:
-	☐ provide min and unmin versions?
-		compare to other p5 libraries
-		https://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
-	☐ Should the examples be distributed in the zip?
-	☐ Should the zip even be distributed?
+	☐ provide min and unmin versions, include them in the release resources
 
+	
+	
 Examples:
 
 	☐ Div Cursors Example

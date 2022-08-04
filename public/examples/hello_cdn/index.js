@@ -6,18 +6,12 @@ function preload() {
 
   // begin loading shared object
   // setup() won't be called until the shared object is loaded
-  shared = partyLoadShared("shared");
+  shared = partyLoadShared("shared", { x: 0, y: 0 });
 }
 
 function setup() {
   createCanvas(400, 400);
   noStroke();
-
-  // set defaults on shared data
-  shared.x ??= 0;
-  shared.y ??= 0;
-
-  // see: http://mdn.io/nullish-assign
 }
 
 function mousePressed() {

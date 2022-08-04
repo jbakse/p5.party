@@ -1,4 +1,5 @@
-/* istanbul ignore file */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+// /* istanbul ignore file */
 
 import * as log from "../src/log";
 
@@ -11,19 +12,20 @@ export const DELAY = 200;
 // export const HOST = "wss://deepstream-server-1.herokuapp.com";
 // export const DELAY = 500;
 
-export const errorSpy = jest
-  .spyOn(log, "error")
-  .mockImplementation((...args) => {
+export const errorSpy = //
+  jest.spyOn(log, "error").mockImplementation((...args) => {
+    //console.log(...args);
+  });
+
+export const warnSpy = //
+  jest.spyOn(log, "warn").mockImplementation((...args) => {
     // console.log(...args);
   });
 
-export const warnSpy = jest.spyOn(log, "warn").mockImplementation((...args) => {
-  // console.log(...args);
-});
-
-export const logSpy = jest.spyOn(log, "log").mockImplementation((...args) => {
-  // console.log(...args);
-});
+export const logSpy = //
+  jest.spyOn(log, "log").mockImplementation((...args) => {
+    // console.log(...args);
+  });
 
 beforeEach(() => {
   errorSpy.mockClear();

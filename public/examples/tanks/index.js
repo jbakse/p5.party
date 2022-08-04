@@ -1,34 +1,28 @@
-// p5.party experimental
-
-// project utils
-
-// @todo: switch to modules, would clean up global declartions below
-
-/* global Rect pointInRect */
-/* global StatTracker */
-/* global debugShow */
+import { StatTracker } from "./stats.js";
+import { debugShow } from "./debug.js";
+import { pointInRect, Rect } from "./shape.js";
 
 let stats;
 let shared, my, guests;
 
-function preload() {
+window.preload = () => {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "tanks_2", "main");
   shared = partyLoadShared("shared", { bullets: [] });
   my = partyLoadMyShared();
   guests = partyLoadGuestShareds();
-}
+};
 
-function setup() {
+window.setup = () => {
   createCanvas(500, 400).parent("canvas-wrap");
-  stats = new StatTracker();
+  stats = new StatTracker(my);
 
   my.tank = { x: random(width), y: random(height), a: random(2 * PI), spin: 0 };
 
   // hosting can change mid-game so every client subscribes, and then checks if it is host on every message
   partySubscribe("createBullet", onCreateBullet);
-}
+};
 
-function draw() {
+window.draw = () => {
   moveTank();
   if (partyIsHost()) stepGame();
   drawScene();
@@ -38,7 +32,7 @@ function draw() {
     stats,
     guests: guests,
   });
-}
+};
 
 ///////////////////////////////////////////
 // HOST CODE
@@ -91,7 +85,7 @@ function moveTank() {
   my.tank.a += my.tank.spin;
 }
 
-function keyPressed() {
+window.keyPressed = () => {
   if (key === " ") {
     partyEmit("createBullet", {
       x: my.tank.x + sin(my.tank.a) * 24,
@@ -102,7 +96,7 @@ function keyPressed() {
   }
 
   return false;
-}
+};
 
 ///////////////////////////////////////////
 // CLIENT CODE - DRAW
@@ -131,3 +125,9 @@ function drawBullet(b) {
   ellipse(b.x, b.y, 10, 10);
   pop();
 }
+
+window.addEventListener("keydown", function (e) {
+  if (e.keyCode == 32 && e) {
+    e.preventDefault();
+  }
+});

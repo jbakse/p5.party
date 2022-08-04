@@ -1,19 +1,16 @@
-/* global uuidv4 */
-/* global my */
-
-/* exported StatTracker */
-class StatTracker {
+export class StatTracker {
   #id;
   #frames;
   #startTime;
 
-  constructor() {
+  constructor(my) {
     this.#frames = 0;
     this.#startTime = performance.now();
     this.frameRate = 0;
     this.ping = 0;
-    this.#id = uuidv4();
+    this.#id = random(); // quick and dirty unique id
     my.stats = {};
+    this.my = my;
     partySubscribe("ping", this.onPing.bind(this));
     partySubscribe("pong", this.onPong.bind(this));
   }
@@ -26,7 +23,7 @@ class StatTracker {
   onPong(data) {
     if (data.sender === this.#id) {
       this.ping = performance.now() - data.time;
-      my.stats.ping = this.ping;
+      this.my.stats.ping = this.ping;
     }
   }
   tick() {
@@ -37,7 +34,7 @@ class StatTracker {
       this.#frames = 0;
       this.#startTime = now;
 
-      my.stats.frameRate = this.frameRate;
+      this.my.stats.frameRate = this.frameRate;
       partyEmit("ping", {
         sender: this.#id,
         time: performance.now(),

@@ -333,6 +333,7 @@ function keyPressed() {
   if (inputMode === "move") {
     if (key === " " || keyCode === RETURN) {
       startMessageOnRelease = true;
+      return false;
     }
     if (key === "q") {
       me.avatarId = ++me.avatarId % 16;

@@ -1,5 +1,3 @@
-/* global uuidv4 */
-
 class Rect {
   constructor(l = 0, t = 0, w = 0, h = 0) {
     this.l = l;
@@ -20,7 +18,7 @@ function pointInRect(p, r) {
   return p.x > r.l && p.x < r.l + r.w && p.y > r.t && p.y < r.t + r.h;
 }
 
-const my_id = uuidv4();
+const my_id = Math.random(); // quick and dirty id
 
 let shared;
 

@@ -59,7 +59,7 @@ function mousePressed() {
 
 // ?
 function onPlaySound(name) {
-  console.log("onPlaySound", name);
+  console.log("onPlaySound", name, sounds);
 
   // ?
   sounds[name].play();

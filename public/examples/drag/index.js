@@ -5,7 +5,7 @@ const my_id = Math.random();
 let shared;
 
 window.preload = () => {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "drag_1", "main");
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "drag_2", "main");
   shared = partyLoadShared("shared");
 };
 
@@ -28,6 +28,10 @@ window.draw = () => {
 };
 
 window.mousePressed = () => {
+  // abort if any sprites are already in drag
+  // this requires players to take turns with dragging
+  if (shared.sprites.find((s) => s.inDrag)) return;
+
   for (const s of shared.sprites.slice().reverse()) {
     if (mousePressedSprite(s)) break;
   }

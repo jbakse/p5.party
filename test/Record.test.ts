@@ -57,7 +57,9 @@ describe("Record - Early Use", () => {
   it("Errors if whenReady checked before load begins", async () => {
     const ds1 = new DeepstreamClient(HOST);
     const r1 = new Record(ds1, "test");
-    await r1.whenReady();
+
+    await expect(r1.whenLoaded).rejects.toThrow();
+
     expect(errorSpy).toHaveBeenCalled();
     errorSpy.mockClear();
     ds1.close();
@@ -71,7 +73,7 @@ describe("Record — Creating", () => {
   it("ignores init object if not object and warns", async () => {
     const r1 = new Record(ds1, "test");
     await r1.load("string");
-    await r1.whenReady();
+    await r1.whenLoaded;
 
     const shared = r1.shared;
     expect(shared).toStrictEqual({});
@@ -227,12 +229,36 @@ describe("Record — Shared Object", () => {
     await r2.load();
     const shared2 = r2.shared;
 
-    r1.setShared({ a: "a", b: "b" });
+    r1.setData({ a: "a", b: "b" });
     await millis(DELAY);
 
     expect(shared2).toStrictEqual({ a: "a", b: "b" });
 
     shared1.a = undefined as unknown as JSONValue;
+    await millis(DELAY);
+
+    expect(shared1).toStrictEqual({ b: "b" });
+    expect(shared2).toStrictEqual({ b: "b" });
+  });
+
+  it("removes deleted properties", async () => {
+    const r1 = new Record(ds1, "test");
+    await r1.load();
+    const shared1 = r1.shared;
+
+    const r2 = new Record(ds2, "test");
+    await r2.load();
+    const shared2 = r2.shared;
+
+    r1.setData({ a: "a", b: "b" });
+    await millis(DELAY);
+
+    expect(shared2).toStrictEqual({ a: "a", b: "b" });
+
+    // shared1.a = undefined as unknown as JSONValue;
+
+    delete shared1.a;
+
     await millis(DELAY);
 
     expect(shared1).toStrictEqual({ b: "b" });
@@ -291,7 +317,7 @@ describe("Record — Shared Object", () => {
     await r2.load();
     const shared2 = r2.shared;
 
-    r1.setShared({});
+    r1.setData({});
 
     // cast as any to force bad types
     shared1.function = (() => {}) as any; // 1
@@ -353,9 +379,9 @@ describe("Record — setShared()", () => {
 
   it("warns and ignores if called early", () => {
     const r1 = new Record(ds1, "test");
-    r1.setShared({ test: "test" });
-    expect(warnSpy).toHaveBeenCalledTimes(1);
-    warnSpy.mockClear();
+    r1.setData({ test: "test" });
+    expect(errorSpy).toHaveBeenCalledTimes(1);
+    errorSpy.mockClear();
   });
 
   it("should add and remove properties", async () => {
@@ -371,7 +397,7 @@ describe("Record — setShared()", () => {
       object: { a: 1 },
       emptyIt: [],
     };
-    r1.setShared(newObject);
+    r1.setData(newObject);
     await millis(DELAY);
 
     expect(r1.shared).toStrictEqual(newObject);
@@ -380,11 +406,11 @@ describe("Record — setShared()", () => {
   it("warns and ignores if not given JSONObject", async () => {
     const r1 = new Record(ds1, "test");
     await r1.load({});
-    r1.setShared({});
+    r1.setData({});
     expect(r1.shared).toStrictEqual({});
 
-    r1.setShared("string");
-    r1.setShared({ test: BigInt(1) });
+    r1.setData("string");
+    r1.setData({ test: BigInt(1) });
 
     expect(r1.shared).toStrictEqual({});
 
@@ -406,7 +432,7 @@ describe("Record — watchShared()", () => {
     const r1 = new Record(ds1, "test");
     await r1.load();
 
-    r1.setShared({});
+    r1.setData({});
     r1.watchShared((data) => {
       calledCount++;
       expect(data).toBeInstanceOf(Object);
@@ -427,7 +453,7 @@ describe("Record — watchShared()", () => {
     const r1 = new Record(ds1, "test");
     await r1.load();
 
-    r1.setShared({});
+    r1.setData({});
     r1.watchShared("test", (data) => {
       calledCount++;
       expect(data).toBe("test");

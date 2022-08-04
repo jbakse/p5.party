@@ -1,32 +1,33 @@
-import { DeepstreamClient } from "@deepstream/client";
-import {
-  Record as DSRecord,
-  SubscriptionCallback,
-} from "@deepstream/client/dist/src/record/record";
-
 import onChange from "on-change";
+
+import { DeepstreamClient } from "@deepstream/client";
+import { Record as DSRecord } from "@deepstream/client/dist/src/record/record";
 
 import * as log from "./log";
 
+import { SubscriptionCallback } from "./validate";
 import { UserData, JSONValue, JSONObject, RecordData } from "./validate";
 import { isJSONValue, isJSONObject, isEmpty } from "./validate";
+
 import { patchInPlace } from "./patch";
 
-const sharedRecordLookup = new WeakMap<JSONObject, Record>();
+type SharedObject = JSONObject;
+
+const sharedRecordLookup = new WeakMap<SharedObject, Record>();
 
 export class Record {
   readonly #ds: DeepstreamClient;
   readonly #name: string;
   #dsRecord: DSRecord | null;
-  #shared: JSONObject;
-  #watchedShared: JSONObject;
+  #shared: SharedObject;
+  #watchedShared: SharedObject;
+  #whenLoaded: Promise<void> | null;
 
   constructor(ds: DeepstreamClient, name: string) {
     this.#ds = ds;
     this.#name = name;
     this.#dsRecord = null;
     this.#shared = {};
-    sharedRecordLookup.set(this.#shared, this);
     this.#watchedShared = onChange(
       this.#shared,
       this.#onClientChangeData.bind(this),
@@ -34,43 +35,77 @@ export class Record {
         onValidate: this.#onClientValidateData.bind(this),
       }
     );
+    this.#whenLoaded = null;
+
+    sharedRecordLookup.set(this.#shared, this);
   }
 
   async load(initObject?: UserData): Promise<void> {
+    if (this.#whenLoaded) {
+      log.warn("Record.load() called twice!", this.#name);
+      return this.#whenLoaded;
+    }
+
     if (this.#ds.getConnectionState() !== "OPEN") {
-      log.error("Record.load() called before room is connected.");
+      log.error("Record.load() called before room is connected.", this.#name);
       return;
     }
-    this.#dsRecord = this.#ds.record.getRecord(this.#name);
-    this.#dsRecord.subscribe(this.#onServerChangeData.bind(this), true);
-    await this.#dsRecord.whenReady();
-    if (!initObject) return;
+
+    const innerLoad = async () => {
+      this.#dsRecord = this.#ds.record.getRecord(this.#name);
+      this.#dsRecord.subscribe(this.#onServerChangeData.bind(this), true);
+      await this.#dsRecord.whenReady();
+      if (!initObject) return;
+      await this.initData(initObject);
+    };
+
+    this.#whenLoaded = innerLoad();
+    return this.#whenLoaded;
+  }
+
+  get whenLoaded(): Promise<void> {
+    if (this.#whenLoaded === null) {
+      log.error("Record.whenLoaded called before load().", this.#name);
+      return Promise.reject(
+        new Error("Record.whenLoaded called before load().")
+      );
+    }
+    return this.#whenLoaded;
+  }
+
+  /**
+   * sets initial data on the record only if the record is empty
+   *
+   * @param data initial data to set on the record
+   */
+
+  async initData(data: UserData): Promise<void> {
+    if (!this.#dsRecord?.isReady) {
+      log.error("Record.initData() called before record ready.", this.#name);
+      return;
+    }
+
+    // if (!data) return;
     if (!isEmpty(this.#dsRecord.get())) return; // don't overwrite existing data
-    if (!isJSONObject(initObject, "init-data")) return; // validate user data
-    await this.#dsRecord.setWithAck(initObject);
+    if (!isJSONObject(data, "init-data")) return; // don't try to write bad data
+
+    // todo: allow but warn non-owner writes
+    await this.#dsRecord.setWithAck(data);
   }
 
-  async whenReady() {
-    if (this.#dsRecord === null) {
-      log.error(`Record '${this.#name}' loading hasn't begun.`);
-      return;
-    }
-    await this.#dsRecord.whenReady();
-    // when ready returns a Promise<dsRecord>
-    // we don't want to return the dsRecord
-    return;
-  }
-
-  setShared(data: UserData): void {
-    if (!isJSONObject(data, "data")) return;
-
+  setData(data: UserData): void {
     if (!this.#dsRecord?.isReady) {
       // prettier-ignore
-      log.warn(`setShared() called on '${this.#name}' before ready.\n Ignored: ${JSON.stringify(data)}`);
+      log.error(
+        `Record.setData() called before record ready. ${
+          this.#name
+        }\n Ignored: ${JSON.stringify(data)}`
+      );
       return;
     }
+    if (!isJSONObject(data, "set-data")) return; // don't try to write bad data
 
-    // todo: warn and allow non-owner writes
+    // todo: allow but warn non-owner writes
     this.#dsRecord.set(data);
   }
 
@@ -88,26 +123,12 @@ export class Record {
     triggerNow?: boolean
   ): void {
     if (!this.#dsRecord?.isReady) {
-      log.warn(`watchShared() called on '${this.#name}' before fully ready.`);
+      log.warn(`watchShared() called on '${this.#name}' before ready.`);
       return;
     }
 
-    this.whenReady().then(
-      () => {
-        // @ts-expect-error subscribe overload signatures match watchShared
-        this.#dsRecord.subscribe(path, cb, triggerNow);
-      },
-      () => {
-        /**/
-      }
-    );
-
-    // if (typeof path === "string" && typeof cb === "function") {
-    //   this.#dsRecord.subscribe(path, cb, triggerNow);
-    // }
-    // if (typeof path === "function" && typeof cb !== "function") {
-    //   this.#dsRecord.subscribe(path, cb)
-    // }
+    // @ts-expect-error subscribe overload signatures DO match watchShared
+    this.#dsRecord.subscribe(path, cb, triggerNow);
   }
 
   get shared(): JSONObject {
@@ -117,10 +138,6 @@ export class Record {
   get name(): string {
     return this.#name;
   }
-
-  // discard() {
-  //   this.#dsRecord?.discard();
-  // }
 
   async delete() {
     if (!this.#dsRecord?.isReady) {
@@ -148,8 +165,7 @@ export class Record {
     newValue: UserData,
     oldValue: UserData
   ): boolean {
-    const valid = isJSONValue(newValue, `${this.#name}/${path}`);
-    return valid;
+    return isJSONValue(newValue, `${this.#name}/${path}`);
   }
 
   #onClientChangeData(
@@ -159,7 +175,11 @@ export class Record {
   ): void {
     if (!this.#dsRecord?.isReady) {
       // prettier-ignore
-      log.warn(`Shared object '${this.#name}' written to before ready.\n Ignored: ${path} = ${JSON.stringify(newValue)}`);
+      log.warn(
+        `Shared object written to before ready. ${
+          this.#name
+        }\n Ignored: ${path} = ${JSON.stringify(newValue)}`
+      );
       return;
     }
     // todo: warn and allow non-owner writes
