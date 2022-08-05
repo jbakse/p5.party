@@ -1,6 +1,6 @@
 <div align="center">
 
-![p5.party logo](assets/p5_party_logo.jpg)
+![p5.party logo](assets/p5_party_logo.png)
 
 <!-- ![Netlify](https://img.shields.io/netlify/8ab7413c-e95d-42b8-8988-5d930954a3f1) -->
 <!-- ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jbakse/p5.party) -->
@@ -34,8 +34,6 @@ p5.party is a library for easily prototyping online multi-user sketches with p5.
 
 [Discussion](https://github.com/jbakse/p5.party/discussions)
 
-:warning: &nbsp; p5.party is is still in pre-release. Expect rough edges, API changes, and bugs!
-
 ## What is it good for?
 
 **Prototyping + Sketching**
@@ -44,11 +42,11 @@ p5.party is a library for easily prototyping online multi-user sketches with p5.
 
 **Workshops + Classes**
 
-p5.party uses a [deepstream.io](http://deepstream.io) server which is easy to set up and cheap—or free—to run. Multiple sketches and projects can connect to the same p5.party server, so students can focus on sketching instead of setting up servers.
+p5.party uses a [deepstream.io](http://deepstream.io) server which is easy to set up and cheap—or free—to run. Many sketches and projects can connect to the same p5.party server, so students can focus on sketching instead of setting up servers.
 
-**Turn Based Games and Apps**
+<!-- **Turn Based Games and Apps**
 
-Quickly get people connected and playing together. Try out ideas using many of your existing skills in p5.js.
+Quickly get people connected and playing together. Try out ideas using many of your existing skills in p5.js. -->
 
 ## What is it not good for?
 
@@ -60,9 +58,9 @@ p5.party is designed for prototypes. As your project grows, you'll need to look 
 
 Sketches built with p5.party are insecure. p5.party has no method to authenticate or authorize users. Multiple apps share a server and can read, write, and delete each other's data.
 
-**Fast-Action Games**
+<!-- **Fast-Action Games**
 
-Fast-action multiplayer games are inherently complex. Compensating for network latency requires [prediction and reconciliation](https://www.gabrielgambetta.com/client-server-game-architecture.html) strategies which are somewhat application specific and outside the scope of p5.party.
+Fast-action multiplayer games are inherently complex. Compensating for network latency requires [prediction and reconciliation](https://www.gabrielgambetta.com/client-server-game-architecture.html) strategies which are somewhat application specific and outside the scope of p5.party. -->
 
 ## Features
 
@@ -133,7 +131,7 @@ https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js
 
 Visit the [P5 Web Editor Quick Start Guide](https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js) to get started using p5.party in the p5.js web editor.
 
-You can also download the latest release of p5.party and the example apps from the [releases page on Github](https://github.com/jbakse/p5.party/releases).
+<!-- You can also download the latest release of p5.party from the [releases page on Github](https://github.com/jbakse/p5.party/releases). -->
 
 Visit the [VS Code Quick Start Guide](https://www.notion.so/Hello-p5-party-c4c0f94127c1408e9d6dd51f91ac8414) to get started using p5.party in locally with VS Code.
 

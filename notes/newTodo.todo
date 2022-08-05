@@ -85,3 +85,8 @@ Possible Features:
 
     □ restore partyToggleInfo() - panel
         the earlier version of p5.party had an info panel that showed who was connected and who was host, maybe restore it?
+    
+    □ party reset
+        ability to disconnect/reconnect all connected clients, and possibly reload their browsers. Live reloading multiple browsers on save in development is very helpful when working with p5.party, i have this set up in VS Code, but when working on p5 web editor or with remote partners this can be a challenge
+    
+    □ ability to query number of people in a room before connecting
