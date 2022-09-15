@@ -34,9 +34,23 @@ body > section {
   margin: 0 auto;
 }
 
+body > h2 {
+  font-size: 1rem;
+  margin: 0 auto;
+  margin-bottom: .75rem;
+  max-width: 1200px;
+}
+
 .group {
   display: flex;
   flex-wrap: wrap;
+}
+
+
+.group.highlight {
+  padding: 15px;
+  background: #eee;
+  border-radius: 5px;
 }
 
 .group h2 {

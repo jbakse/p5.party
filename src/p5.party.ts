@@ -134,7 +134,7 @@ function init() {
       log.error("partyIsHost() called before partyConnect()");
       return false;
     }
-    return room.isHost(); //room.hostName === room.guestName;
+    return room.isHost();
   };
 
   // ! partySetShared

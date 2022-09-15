@@ -40,6 +40,7 @@ export class Room {
       );
 
       // subscribe to ANY/ALL clients connect/disconnect on SERVER
+      // (not limited to app / room)
       this.#ds.presence.subscribe(this.#onPresence.bind(this));
 
       // log in to deepstream server
@@ -128,6 +129,7 @@ export class Room {
 
   async #updateGuestNames(): Promise<void> {
     const everyone = await this.#ds.presence.getAll();
+
     this.#guestNames = everyone
       .filter((guestName) => guestName.startsWith(`${this.#roomId}/`))
       .concat(this.#guestName)
