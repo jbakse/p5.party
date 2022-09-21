@@ -32,26 +32,41 @@ Releases are automated using `np`.
 
 # How to use a feature branch
 
+Create Feature Branch
+
 ```bash
 git branch feature-branch # create a new feature branch
 git checkout feature-branch # switch to the feature branch
 ... commit changes ...
+```
+
+Merge with squash
+
+```bash
 git rebase master # rebase your changes on top of master
 git checkout master # switch back to master
-git merge --squash feature-branch # merge your changes into master via a squash
 
+
+git merge --squash feature-branch # merge your changes into master via a squash
 commit ALL the changes as one commit.
 
 # git won't know your branch has been merged, so...
 git branch -d feature-branch
 # ...will warn you and tell you you need to ...
 git branch -D feature-branch
-
-
 # and remove from origin (e.g. github)
 git push origin :feature-branch
+```
 
+Merge without squash
 
+```bash
+git rebase master
+git checkout master
+git merge feature-branch
+git branch --merged # show the branches that you've merged
+git branch -d feature-branch
+git push origin :feature-branch
 ```
 
 # How to update dependencies
