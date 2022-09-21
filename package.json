@@ -47,10 +47,12 @@
     "@deepstream/client": "^5.2.6",
     "@deepstream/server": "^5.2.6",
     "on-change": "^4.0.0",
+    "reefjs": "^12.1.0",
     "ts-dedent": "^2.2.0"
   },
   "devDependencies": {
     "@types/jest": "^28.1.1",
+    "@types/reefjs": "^7.6.1",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
     "buffer": "^6.0.3",

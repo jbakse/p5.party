@@ -7,6 +7,8 @@ import { Record } from "./Record";
 
 export class Room {
   readonly #ds: DeepstreamClient;
+  readonly #appName: string;
+  readonly #roomName: string;
   readonly #roomId: string; // e.g. "app-room"
   readonly #guestName: string; // e.g. "app-room/client-uid"
   readonly #guestRecords: Map<string, Record>;
@@ -20,6 +22,8 @@ export class Room {
 
   constructor(host: string, appName: string, roomName: string) {
     this.#ds = new DeepstreamClient(host);
+    this.#appName = appName;
+    this.#roomName = roomName;
     this.#roomId = `${appName}-${roomName}`;
     this.#guestName = `${this.#roomId}/${this.#ds.getUid()}`;
     this.#guestRecords = new Map();
@@ -71,6 +75,14 @@ export class Room {
     this.#ds.close();
   }
 
+  info() {
+    return {
+      appName: this.#appName,
+      roomName: this.#roomName,
+      guestNames: this.#guestNames,
+      isHost: this.isHost(),
+    };
+  }
   getRecord(name: string): Record {
     const r = new Record(this.#ds, `${this.#roomId}/${name}`);
     return r;

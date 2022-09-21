@@ -53,7 +53,10 @@ Clean up:
     ✓ update npm scripts now that js dev deps are gone @done(22-06-07 11:14)
     ✓ clean up branches (merge + remove feature branches) @done(22-09-21 11:16)
 
-    
+Tooling: 
+    ✓ embed css into the javascript? @done(22-09-21 13:43)
+        https://github.com/evanw/esbuild/issues/2110
+
 Priority Features:
     □ overwrite on reopening room
         partyLoadShared takes an initobject which is only used if the record doesn't exist yet. Might be better to set default to overwriting record contents if connector is host? Or some way to signal you want this? a `resetEmptyRoom` flag or call.
@@ -85,7 +88,9 @@ Possible Features:
 
     □ restore partyToggleInfo() - panel
         the earlier version of p5.party had an info panel that showed who was connected and who was host, maybe restore it?
-    
+        □ using https://reefjs.com/
+
+
     □ party reset
         ability to disconnect/reconnect all connected clients, and possibly reload their browsers. Live reloading multiple browsers on save in development is very helpful when working with p5.party, i have this set up in VS Code, but when working on p5 web editor or with remote partners this can be a challenge
     

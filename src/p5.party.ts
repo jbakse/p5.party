@@ -4,12 +4,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { JSONObject, UserData } from "./validate";
+import { SubscriptionCallback } from "@deepstream/client/dist/src/record/record";
 
-import * as log from "./log";
 import { version } from "../version";
+import * as log from "./log";
 import { Room } from "./Room";
 import { Record } from "./Record";
-import { SubscriptionCallback } from "@deepstream/client/dist/src/record/record";
+import { createInfo, destroyInfo } from "./info";
 
 const p5 = (window as any).p5;
 
@@ -208,5 +209,24 @@ function init() {
     log.warn(
       "partyToggleInfo is no longer available in this version of p5.party."
     );
+  };
+
+  let isInfoShown = false;
+  p5.prototype.partyToggleInfo = function (show?: boolean) {
+    if (room === null) {
+      log.error("partyToggleInfo() called before partyConnect()");
+      return;
+    }
+
+    if (show === undefined) {
+      isInfoShown = !isInfoShown;
+    } else {
+      isInfoShown = show;
+    }
+    if (isInfoShown) {
+      createInfo(room);
+    } else {
+      destroyInfo();
+    }
   };
 }

@@ -78,3 +78,13 @@ body > h2 {
 .list li {
   list-style: none;
 }
+
+.bang {
+  font-size: .75em;
+  border: 1px solid green;
+  background: green;
+  color: white;
+  border-radius: 3px;
+  padding: 1px 3px;
+  margin: 6px;
+}

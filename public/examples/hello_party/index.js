@@ -5,7 +5,7 @@ function preload() {
   partyConnect(
     "wss://deepstream-server-1.herokuapp.com",
     "hello_party",
-    "main2"
+    "main"
   );
 
   // begin loading shared object

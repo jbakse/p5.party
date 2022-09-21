@@ -17,19 +17,22 @@ function setup() {
     });
   }
 
-  partyToggleInfo(false); // pass false to hide
+  // info is hidden by default
 
-  createButton("Toggle Info").mousePressed(() => {
+  const toggleButton = createButton("Toggle Info").mousePressed(() => {
     partyToggleInfo(); // pass nothing to toggle
   });
+  toggleButton.parent(document.querySelector("main"));
 
-  createButton("Show Info").mousePressed(() => {
+  const showButton = createButton("Show Info").mousePressed(() => {
     partyToggleInfo(true); // pass true to show
   });
+  showButton.parent(document.querySelector("main"));
 
-  createButton("Hide Info").mousePressed(() => {
-    partyToggleInfo(false); // pass true to show
+  const hideButton = createButton("Hide Info").mousePressed(() => {
+    partyToggleInfo(false); // pass false to hide
   });
+  hideButton.parent(document.querySelector("main"));
 }
 
 function mousePressed() {
