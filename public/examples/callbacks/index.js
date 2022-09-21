@@ -7,7 +7,8 @@ function preload() {
 function setup() {
   console.log("setup");
   createCanvas(400, 400);
-  createButton("connect").mousePressed(connectToParty);
+  const button = createButton("connect").mousePressed(connectToParty);
+  button.parent(document.querySelector("main"));
 }
 
 function connectToParty() {

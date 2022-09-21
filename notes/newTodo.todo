@@ -44,14 +44,14 @@ Examples:
     ✓ remove bad examples (tanks 1, drag 1) @done(22-08-04 14:46)
     ✓ remove ! examples @done(22-06-07 13:05)
     ✓  fix live server injecting into html displayed on example pages? @done(22-06-07 21:59)
-    □ e3_sign_up example puts input field at bottom of page
-    □ callbacks example puts button at bottom of page
+    ✓ e3_sign_up example puts input field at bottom of page @done(22-09-21 11:14)
+    ✓ callbacks example puts button at bottom of page @done(22-09-21 11:16)
 
 Clean up: 
     ✓ remove .js files @done(22-06-06 23:37)
     ✓ remove old dev deps @done(22-06-06 23:37)
     ✓ update npm scripts now that js dev deps are gone @done(22-06-07 11:14)
-    □ clean up branches (merge + remove feature branches)
+    ✓ clean up branches (merge + remove feature branches) @done(22-09-21 11:16)
 
     
 Priority Features:

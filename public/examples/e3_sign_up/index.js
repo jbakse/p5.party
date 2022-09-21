@@ -18,6 +18,7 @@ function setup() {
 
   // ?
   nameInput = createInput();
+  nameInput.parent(document.querySelector("main"));
 
   // ?
   nameInput.input(onNameInput);
