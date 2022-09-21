@@ -12,6 +12,7 @@ function preload() {
 function setup() {
   createCanvas(400, 400);
   noStroke();
+  partyToggleInfo(true);
 }
 
 function mousePressed() {
