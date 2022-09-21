@@ -5,12 +5,10 @@ let refreshId;
 let infoComponent;
 
 export async function createInfo(room) {
-  console.log("createInfo", room);
   await room.whenConnected;
-  console.log("A");
+
   if (infoDiv) return;
 
-  console.log("1");
   // create info panel div
   infoDiv = document.createElement("div");
   infoDiv.className = "p5party_info";
