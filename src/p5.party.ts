@@ -54,6 +54,77 @@ function init() {
         false
       );
 
+      // Auto reloading
+      // When iterating, it is usually best to have all connected clients reload
+      // when the code changes. This can be set up on local dev easily, but
+      // the p5 web editor doesn't support this.
+      // The auto setting, which can be manually enabled from the info panel tells p5 party to automatically reload all other guests in the room when the "auto" guest is reloaded.
+      // Reloading happens immediately after the auto guest connects, making the auto guest the host before setup() is called.
+
+      const auto = sessionStorage.getItem("auto") === "true";
+      log.log("Auto:", auto);
+      if (auto) {
+        log.log("Auto enabled. Reloading others...");
+        room.emit("p5PartyEvent", {
+          action: "disconnect-reload",
+          sender: room.info().guestName,
+        });
+        // await become host
+        while (!room.isHost()) {
+          log.log("Waiting...");
+          await new Promise((r) => setTimeout(r, 100));
+        }
+      }
+
+      room.subscribe("p5PartyEvent", (data: JSONObject) => {
+        async function handleAction() {
+          if (!room) return;
+
+          // reload-others
+          if (
+            data.action === "reload-others" &&
+            data.sender != room.info().guestName
+          ) {
+            log.log("Recieved reload-others p5PartyEvent. Reloading...");
+            window.location.reload();
+          }
+
+          // disconnect-others
+          if (
+            data.action === "disconnect-others" &&
+            data.sender != room.info().guestName
+          ) {
+            log.log(
+              "Recieved disconnect-others p5PartyEvent. Disconnecting..."
+            );
+            room.disconnect();
+            void createInfo(room);
+          }
+
+          // disconnect-reload;
+          if (
+            data.action === "disconnect-reload" &&
+            data.sender != room.info().guestName
+          ) {
+            const auto = sessionStorage.getItem("auto") === "true";
+            if (auto) {
+              log.alert(
+                "Recieved disconnect-reload p5PartyEvent, but auto is set. Disabling auto..."
+              );
+              sessionStorage.setItem("auto", "false");
+            }
+            log.log(
+              "Recieved disconnect-reload p5PartyEvent. Disconnecting..."
+            );
+            room.disconnect();
+            await new Promise((r) => setTimeout(r, 500));
+            log.log("Reloading...");
+            window.location.reload();
+          }
+        }
+        void handleAction();
+      });
+
       log.log("partyConnect done!");
       this._decrementPreload();
       cb?.();

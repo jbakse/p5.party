@@ -4,7 +4,6 @@ import { SubscriptionCallback } from "./validate";
 import { UserData, JSONValue, JSONObject } from "./validate";
 import { isJSONValue, isEmpty } from "./validate";
 import { Record } from "./Record";
-import { createInfo } from "./info";
 
 export class Room {
   readonly #ds: DeepstreamClient;
@@ -59,8 +58,6 @@ export class Room {
 
       // get the guest records and update guestShareds
       this.#updateGuestShareds();
-
-      this.subscribe("p5PartyEvent", this.#onP5PartyEvent.bind(this));
     };
     return innerConnect();
   }
@@ -71,18 +68,6 @@ export class Room {
 
   get whenConnected(): Promise<void> {
     return this.#whenConnected;
-  }
-
-  #onP5PartyEvent(data: JSONObject) {
-    if (data.action === "reload-others" && data.sender != this.#guestName) {
-      log.log("Recieved reload-others p5PartyEvent. Reloading...");
-      window.location.reload();
-    }
-    if (data.action === "disconnect-others" && data.sender != this.#guestName) {
-      log.log("Recieved disconnect-others p5PartyEvent. Disconnecting...");
-      this.disconnect();
-      void createInfo(this);
-    }
   }
 
   disconnect() {

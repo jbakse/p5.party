@@ -10,6 +10,12 @@ export const log = makeLogger(
   "background-color: #88F; color: #00ffff; padding: 2px 5px; border-radius: 2px"
 );
 
+export const alert = makeLogger(
+  "log",
+  "party-alert",
+  "background-color: #FF0; color: #000; padding: 2px 5px; border-radius: 2px"
+);
+
 export const warn = makeLogger(
   "warn",
   "party-warn",
