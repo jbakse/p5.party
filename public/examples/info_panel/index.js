@@ -18,6 +18,8 @@ function setup() {
   }
 
   // info is hidden by default
+  // show it
+  partyToggleInfo(true);
 
   const toggleButton = createButton("Toggle Info").mousePressed(() => {
     partyToggleInfo(); // pass nothing to toggle

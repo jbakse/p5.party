@@ -44,6 +44,16 @@ function init() {
         room?.disconnect();
       });
 
+      document.addEventListener(
+        "keyup",
+        (e) => {
+          if (e.ctrlKey && e.key === "i") {
+            p5.prototype.partyToggleInfo();
+          }
+        },
+        false
+      );
+
       log.log("partyConnect done!");
       this._decrementPreload();
       cb?.();
@@ -205,12 +215,6 @@ function init() {
     room.emit(event, data);
   };
 
-  p5.prototype.partyToggleInfo = function () {
-    log.warn(
-      "partyToggleInfo is no longer available in this version of p5.party."
-    );
-  };
-
   let isInfoShown = false;
   p5.prototype.partyToggleInfo = function (show?: boolean) {
     if (room === null) {
@@ -224,7 +228,7 @@ function init() {
       isInfoShown = show;
     }
     if (isInfoShown) {
-      createInfo(room);
+      void createInfo(room);
     } else {
       destroyInfo();
     }

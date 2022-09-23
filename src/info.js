@@ -1,4 +1,5 @@
 import { store, component } from "reefjs";
+import * as log from "./log";
 
 let infoDiv;
 let refreshId;
@@ -18,8 +19,8 @@ export async function createInfo(room) {
   const data = store(room.info());
 
   function template() {
-    const { appName, roomName, guestNames, isHost } = data;
-    return `
+    const { appName, roomName, guestNames, isHost, isConnected } = data;
+    const style = `
       <style>
         .p5party_info {
           position: fixed;
@@ -30,16 +31,71 @@ export async function createInfo(room) {
           font-family: 'Courier New', Courier, monospace;
           font-size: 18px;
         }
+        .error {
+          color: white;
+          background: red;
+          padding: 3px 6px;
+        }
+        button {
+          display: block;
+          margin-top: 6px;
+          background: black;
+          color: white;
+          border: none;
+          border-radius: 3px;
+          padding: 3px 6px;
+          cursor: pointer;
+        }
+        button:hover {
+          background: #666;
+        }
+        button:active {
+          background: #999;
+        }
       </style>
-
-      <div>${appName}</div>
-      <div>${roomName}</div>
-      <div>guests: ${guestNames.length}</div>
-      <div>${isHost ? "hosting" : ""}</div>
     `;
+
+    if (isConnected) {
+      return (
+        style +
+        ` <div>${appName}</div>
+          <div>${roomName}</div>
+          <div>guests: ${guestNames.length}</div>
+          <div>${isHost ? "hosting" : ""}</div>
+          <button data-p5party="reload-others">reload others</button>
+          <button data-p5party="disconnect-others">disconnect others</button>
+        `
+      );
+    } else {
+      return (
+        style +
+        ` <div class="error">disconnected</div>
+        `
+      );
+    }
   }
 
   infoComponent = component(infoDiv, template);
+
+  document.addEventListener("click", (event) => {
+    let action = event.target.getAttribute("data-p5party");
+
+    if (!action) return;
+    if (action === "reload-others") {
+      log.log("reload-others");
+      room.emit("p5PartyEvent", {
+        action: "reload-others",
+        sender: room.info().guestName,
+      });
+    }
+    if (action === "disconnect-others") {
+      log.log("disconnect-others");
+      room.emit("p5PartyEvent", {
+        action: "disconnect-others",
+        sender: room.info().guestName,
+      });
+    }
+  });
 
   // update UI
   refreshId = setInterval(() => {
