@@ -33,7 +33,7 @@
     "netlify": "npm run esbuild -- --outfile=public/dist/p5.party.js",
     "-------------": "--",
     "prestart": "npm run genversion",
-    "posttest": "istanbul-badges-readme",
+    "!posttest": "istanbul-badges-readme",
     "prenetlify": "npm run genversion",
     "prebuild": "npm run genversion",
     "build": "npm run esbuild -- --outfile=dist/p5.party.js",
