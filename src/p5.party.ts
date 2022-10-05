@@ -138,7 +138,7 @@ function init() {
   p5.prototype.registerPreloadMethod("partyLoadShared", p5.prototype);
   p5.prototype.partyLoadShared = function (
     name: string,
-    initObject = {},
+    initObject?: UserData,
     cb?: (shared: JSONObject) => void
   ): JSONObject | undefined {
     if (room === null) {
@@ -149,7 +149,9 @@ function init() {
 
     const load = async () => {
       await room?.whenConnected; // room null checked above
-      await record.load(initObject);
+
+      const overwrite = room?.isHost() === true;
+      await record.load(initObject, overwrite);
       log.log(`partyLoadShared "${name}" done!`);
       cb?.(record.shared);
       this._decrementPreload();

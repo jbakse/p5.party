@@ -2,18 +2,15 @@ let shared;
 
 function preload() {
   partyConnect("wss://deepstream-server-1.herokuapp.com", "is_host", "main");
-  shared = partyLoadShared("globals");
+  shared = partyLoadShared("globals", {
+    clicks: [],
+    startTime: Date.now(),
+  });
 }
 
 function setup() {
   createCanvas(400, 400);
   noStroke();
-
-  // use partyIsHost in setup to see if you are the first one in the room
-  if (partyIsHost()) {
-    shared.clicks = [];
-    shared.startTime = new Date();
-  }
 }
 
 function draw() {
@@ -24,10 +21,10 @@ function draw() {
   // we don't want every participant doing this
   // so we can ask the host to handle it
   if (partyIsHost()) {
-    const elapsed = new Date() - new Date(shared.startTime);
+    const elapsed = Date.now() - shared.startTime;
     if (elapsed > 10000) {
       partySetShared(shared, {
-        startTime: new Date(),
+        startTime: Date.now(),
         clicks: [],
       });
     }

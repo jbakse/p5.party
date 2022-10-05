@@ -17,11 +17,7 @@ const palette = [
 ];
 
 function preload() {
-  partyConnect(
-    "wss://deepstream-server-1.herokuapp.com",
-    "jb_party_demo_9_13",
-    "main1"
-  );
+  partyConnect("wss://deepstream-server-1.herokuapp.com", "pixel_edit", "main");
   shared = partyLoadShared("shared");
 }
 
@@ -29,12 +25,10 @@ function setup() {
   createCanvas(400, 440);
   ellipseMode(CORNER);
 
+  console.log(JSON.stringify(shared));
+
   // initialize grid only if needed
   if (!shared.grid) resetGrid();
-
-  // or, you could use partyIsHost if you want to reset the grid when
-  // a new session begins
-  // if (partyIsHost()) resetGrid();
 }
 
 function mousePressed() {

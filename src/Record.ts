@@ -40,7 +40,7 @@ export class Record {
     sharedRecordLookup.set(this.#shared, this);
   }
 
-  async load(initObject?: UserData): Promise<void> {
+  async load(initObject?: UserData, overwrite = false): Promise<void> {
     if (this.#whenLoaded) {
       log.warn("Record.load() called twice!", this.#name);
       return this.#whenLoaded;
@@ -56,7 +56,7 @@ export class Record {
       this.#dsRecord.subscribe(this.#onServerChangeData.bind(this), true);
       await this.#dsRecord.whenReady();
       if (!initObject) return;
-      await this.initData(initObject);
+      await this.initData(initObject, overwrite);
     };
 
     this.#whenLoaded = innerLoad();
@@ -79,14 +79,14 @@ export class Record {
    * @param data initial data to set on the record
    */
 
-  async initData(data: UserData): Promise<void> {
+  async initData(data: UserData, overwrite = false): Promise<void> {
     if (!this.#dsRecord?.isReady) {
       log.error("Record.initData() called before record ready.", this.#name);
       return;
     }
 
     // if (!data) return;
-    if (!isEmpty(this.#dsRecord.get())) return; // don't overwrite existing data
+    if (!overwrite && !isEmpty(this.#dsRecord.get())) return; // don't overwrite existing data
     if (!isJSONObject(data, "init-data")) return; // don't try to write bad data
 
     // todo: allow but warn non-owner writes

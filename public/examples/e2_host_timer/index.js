@@ -18,7 +18,9 @@ function setup() {
   frameRate(60);
 
   // ?
+  console.log("hi1");
   if (partyIsHost()) {
+    console.log("hi2");
     // ?
     partySetShared(shared, { circles: [], timer: 5 });
   }

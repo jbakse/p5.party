@@ -9,8 +9,9 @@ function preload() {
   );
 
   // begin loading shared object
+  // and provide starting values for the object to be used
+  // if there are no clients already connected to the room
   // setup() won't be called until the shared object is loaded
-  // provide default values for shared data
   shared = partyLoadShared("shared", { x: 100, y: 100 });
 }
 
