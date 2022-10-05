@@ -22,7 +22,8 @@ export async function createInfo(room) {
   });
 
   function template() {
-    const { auto, appName, roomName, guestNames, isHost, isConnected } = data;
+    const { /*auto,*/ appName, roomName, guestNames, isHost, isConnected } =
+      data;
     const style = `
       <style>
         .p5party_info {
@@ -111,13 +112,14 @@ export async function createInfo(room) {
           <div>${isHost ? "hosting" : ""}</div>
           <button data-p5party="reload-others">reload others</button>
           <button data-p5party="disconnect-others">disconnect others</button>
-          <div>
-            <input id="auto" class="checkbox" type="checkbox" data-p5party="auto" ${
-              auto ? "checked" : ""
-            }/>
-            <label for="auto">auto</label>
-          </div>
+          
           `
+        // <div>
+        //   <input id="auto" class="checkbox" type="checkbox" data-p5party="auto" ${
+        //     auto ? "checked" : ""
+        //   }/>
+        //   <label for="auto">auto</label>
+        // </div>
       );
     } else {
       return (
