@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@100&display=swap');
+
+@font-face {
+    font-family: 'Dune';
+    src: url('./dune_rise/Dune_Rise.otf') format('opentype');
+    font-style: normal;
+    font-weight: 100;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    /* border: 1px solid red; */
+    background: #222;
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
+}
+
+canvas {
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin: 3em auto;
+}

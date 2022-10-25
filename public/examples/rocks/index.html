@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Rocks</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main></main>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@latest/lib/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@latest/lib/addons/p5.sound.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js"></script>
+    <script type="module" src="main.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
+    <link rel="stylesheet" href="/examples.css" />
+
+    <script>
+      function onFetch(response) {
+        if (!response.ok) {
+          throw Error(response.statusText);
+        }
+        return response;
+      }
+      function showJS(url) {
+        // show example source
+        return fetch(url)
+          .then(onFetch)
+          .then((r) => r.text())
+          .then((t) => {
+            // const div = document.getElementById("source-javascript");
+            const div = document.createElement("div");
+
+            div.innerHTML = `<pre><code class="lang-javascript">${t}</code></pre>`;
+            document.body.appendChild(div);
+            console.log("hi");
+            // hljs.initHighlighting();
+          })
+          .catch((e) => {});
+      }
+
+      // const readme = showJS("./README.md");
+      // const main = showJS(`./main.js`);
+      // const party = showJS(`./party.js`);
+      // const gameStatePlay = showJS(`./gameStatePlay.js`);
+      // const gameStateTitle = showJS(`./gameStateTitle.js`);
+      // const camera = showJS(`./camera.js`);
+      // const particles = showJS(`./particles.js`);
+      // const frag = showJS(`./shader.frag`);
+      // const vert = showJS(`./shader.vert`);
+
+      // Promise.all([readme, main, camera, gameStatePlay, gameStateTitle, particles, party, frag, vert]).then(() => {
+      //   hljs.initHighlighting();
+      // });
+      async function showSource() {
+        await showJS("./README.md");
+        await showJS(`./main.js`);
+        await showJS(`./camera.js`);
+        await showJS(`./gameStatePlay.js`);
+        await showJS(`./gameStateTitle.js`);
+        await showJS(`./particles.js`);
+        await showJS(`./party.js`);
+        await showJS(`./shader.frag`);
+        await showJS(`./shader.vert`);
+        hljs.initHighlighting();
+      }
+
+      showSource();
+    </script>
+  </body>
+</html>
