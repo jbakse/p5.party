@@ -178,6 +178,7 @@ function updateShip(ship) {
       die();
 
       // wait 3 seconds and respawn
+      // TODO: this should be cleaned up on leave()!
       setTimeout(() => {
         spawn();
       }, 3000);
