@@ -31,6 +31,7 @@ a:visited {
 
 body > section {
   max-width: 1200px;
+
   margin: 0 auto;
 }
 
@@ -41,6 +42,17 @@ body > h2 {
   max-width: 1200px;
 }
 
+.logo {
+  margin: 20px auto;
+  max-width: 50%;
+  display: block;
+}
+
+.links {
+
+  margin: auto;
+  font-size: 1.25em;
+}
 .group {
   display: flex;
   flex-wrap: wrap;
