@@ -4,7 +4,7 @@ let me;
 let guests;
 
 function preload() {
-  partyConnect("wss://demoserver.p5party.org", "cursors", "main1");
+  partyConnect("wss://demoserver.p5party.org", "cursors");
   me = partyLoadMyShared({ x: 200, y: 200 });
   guests = partyLoadGuestShareds();
 }

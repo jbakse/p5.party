@@ -16,7 +16,7 @@ const squares = [
 let shared;
 
 function preload() {
-  partyConnect("wss://demoserver.p5party.org", "tic_tac_toe", "main");
+  partyConnect("wss://demoserver.p5party.org", "tic_tac_toe");
   shared = partyLoadShared("shared");
 }
 

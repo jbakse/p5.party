@@ -9,7 +9,7 @@ let overlay_checkbox, road_checkbox;
 let shared;
 
 function preload() {
-  partyConnect("wss://demoserver.p5party.org", "tile_mapper", "main");
+  partyConnect("wss://demoserver.p5party.org", "tile_mapper");
   shared = partyLoadShared("globals");
 
   road_set = loadImage("./road.png");

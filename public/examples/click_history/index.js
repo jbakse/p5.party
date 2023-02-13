@@ -1,7 +1,7 @@
 let shared;
 
 function preload() {
-  partyConnect("wss://demoserver.p5party.org", "click_history", "main");
+  partyConnect("wss://demoserver.p5party.org", "click_history");
   shared = partyLoadShared("globals", {
     x: 0,
     y: 0,

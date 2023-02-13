@@ -2,7 +2,7 @@ let guests;
 let me;
 
 function preload() {
-  partyConnect("wss://demoserver.p5party.org", "ghosts", "main");
+  partyConnect("wss://demoserver.p5party.org", "ghosts");
   me = partyLoadMyShared();
   guests = partyLoadGuestShareds();
 }

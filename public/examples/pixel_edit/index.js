@@ -17,7 +17,7 @@ const palette = [
 ];
 
 function preload() {
-  partyConnect("wss://demoserver.p5party.org", "pixel_edit", "main");
+  partyConnect("wss://demoserver.p5party.org", "pixel_edit");
   shared = partyLoadShared("shared");
 }
 

@@ -46,7 +46,7 @@ let sprites;
 
 function preload() {
   // get shared data
-  partyConnect("wss://demoserver.p5party.org", "d12", "main");
+  partyConnect("wss://demoserver.p5party.org", "d12");
   shared = partyLoadShared("main");
   players = partyLoadGuestShareds();
   me = partyLoadMyShared();

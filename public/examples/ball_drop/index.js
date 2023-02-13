@@ -2,7 +2,7 @@ let host;
 let shared;
 
 function preload() {
-  partyConnect("wss://demoserver.p5party.org", "ball_drop", "main");
+  partyConnect("wss://demoserver.p5party.org", "ball_drop");
   shared = partyLoadShared("shared");
   host = partyLoadShared("host");
 }

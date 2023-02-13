@@ -23,7 +23,7 @@ const my_id = Math.random(); // quick and dirty id
 let shared;
 
 function preload() {
-  partyConnect("wss://demoserver.p5party.org", "stickies", "main");
+  partyConnect("wss://demoserver.p5party.org", "stickies");
   shared = partyLoadShared("shared");
 }
 

@@ -2,7 +2,7 @@ const sounds = {}; // ?
 
 function preload() {
   // ?
-  partyConnect("wss://demoserver.p5party.org", "sound_board", "main");
+  partyConnect("wss://demoserver.p5party.org", "sound_board");
 
   // ?
   sounds.closed_hat = loadSound("assets/closed_hat.wav");

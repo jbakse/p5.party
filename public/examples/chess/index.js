@@ -27,7 +27,7 @@ let chess_set;
 let selection = false;
 
 window.preload = () => {
-  partyConnect("wss://demoserver.p5party.org", "chess", "main");
+  partyConnect("wss://demoserver.p5party.org", "chess");
   shared = partyLoadShared("shared");
   chess_set = loadImage("./chess_8.png");
 };

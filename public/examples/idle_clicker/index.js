@@ -1,7 +1,7 @@
 let me, guests;
 
 function preload() {
-  partyConnect("wss://demoserver.p5party.org", "idle_clicker", "main");
+  partyConnect("wss://demoserver.p5party.org", "idle_clicker");
   guests = partyLoadGuestShareds();
   me = partyLoadMyShared({ score: 0, name: pick(names) });
 }

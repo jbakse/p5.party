@@ -90,7 +90,7 @@ let shared;
 
 function preload() {
   // connect to server
-  partyConnect("...", "hello_party", "main");
+  partyConnect("...", "hello_party");
 
   // load a shared data object
   shared = partyLoadShared("shared");

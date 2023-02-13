@@ -30,7 +30,7 @@ function init() {
   p5.prototype.partyConnect = function (
     host: string,
     appName: string,
-    roomName: string,
+    roomName = "_main",
     cb?: () => void
   ) {
     if (room !== null) {

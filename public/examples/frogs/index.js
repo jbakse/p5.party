@@ -143,7 +143,7 @@ function preload() {
   soundLib.intro = loadSound(`./assets/frogger_sfx_intro.wav`);
   soundLib.title = loadSound(`./assets/frogger_sfx_title.wav`);
 
-  partyConnect("wss://demoserver.p5party.org", "frogs", "main");
+  partyConnect("wss://demoserver.p5party.org", "frogs");
   shared = partyLoadShared("shared", {
     lanes: [
       { pos: 0 },

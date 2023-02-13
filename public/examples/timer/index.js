@@ -4,7 +4,7 @@ const PLAYING_DURATION = 4000;
 let shared;
 
 function preload() {
-  partyConnect("wss://demoserver.p5party.org", "timer", "main");
+  partyConnect("wss://demoserver.p5party.org", "timer");
   shared = partyLoadShared("globals", {
     gameState: "waiting", // waiting, playing
     startTime: Date.now(),

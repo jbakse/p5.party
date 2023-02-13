@@ -53,7 +53,7 @@ import { initRock, initRocks, updateRocks } from "./gameStatePlay.js";
 export let hostData, me, guests;
 
 export function preload() {
-  partyConnect("wss://demoserver.p5party.org", "rocks", "main");
+  partyConnect("wss://demoserver.p5party.org", "rocks");
 
   hostData = partyLoadShared("host", { rocks: initRocks() });
   me = partyLoadMyShared({});

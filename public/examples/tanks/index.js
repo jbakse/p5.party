@@ -6,7 +6,7 @@ let stats;
 let shared, my, guests;
 
 window.preload = () => {
-  partyConnect("wss://demoserver.p5party.org", "tanks_2", "main");
+  partyConnect("wss://demoserver.p5party.org", "tanks_2");
   shared = partyLoadShared("shared", { bullets: [] });
   my = partyLoadMyShared();
   guests = partyLoadGuestShareds();

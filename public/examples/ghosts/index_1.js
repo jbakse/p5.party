@@ -1,7 +1,7 @@
 // let shared;
 
 // function preload() {
-//   partyConnect("wss://demoserver.p5party.org", "ghosts", "main");
+//   partyConnect("wss://demoserver.p5party.org", "ghosts");
 //   shared = partyLoadShared("shared");
 // }
 

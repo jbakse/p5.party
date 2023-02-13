@@ -1,6 +1,6 @@
 let shared;
 function preload() {
-  partyConnect("wss://demoserver.p5party.org", "set_shared", "main");
+  partyConnect("wss://demoserver.p5party.org", "set_shared");
   shared = partyLoadShared("shared", {});
 }
 

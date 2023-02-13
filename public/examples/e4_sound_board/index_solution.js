@@ -2,7 +2,7 @@ const sounds = {}; // object to hold loaded sounds
 
 function preload() {
   // connect to the p5.party server
-  partyConnect("wss://demoserver.p5party.org", "sound_board", "main");
+  partyConnect("wss://demoserver.p5party.org", "sound_board");
 
   // begin loading each sound, store them as properties of the sounds object
   sounds.closed_hat = loadSound("assets/closed_hat.wav");

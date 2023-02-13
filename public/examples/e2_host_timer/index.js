@@ -3,7 +3,7 @@ let shared;
 
 function preload() {
   // ?
-  partyConnect("wss://demoserver.p5party.org", "host_timer", "main");
+  partyConnect("wss://demoserver.p5party.org", "host_timer");
 
   // ?
   shared = partyLoadShared("shared");
