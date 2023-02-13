@@ -8,7 +8,7 @@ let me;
 let guests;
 
 window.preload = () => {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "cover_up", "main");
+  partyConnect("wss://demoserver.p5party.org", "cover_up", "main");
   shared = partyLoadShared("shared");
   me = partyLoadMyShared();
   guests = partyLoadGuestShareds();

@@ -27,7 +27,7 @@ let chess_set;
 let selection = false;
 
 window.preload = () => {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "chess", "main");
+  partyConnect("wss://demoserver.p5party.org", "chess", "main");
   shared = partyLoadShared("shared");
   chess_set = loadImage("./chess_8.png");
 };

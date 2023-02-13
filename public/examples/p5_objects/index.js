@@ -1,7 +1,7 @@
 let shared;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "p5_objects", "main");
+  partyConnect("wss://demoserver.p5party.org", "p5_objects", "main");
   shared = partyLoadShared("shared");
 }
 

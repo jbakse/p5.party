@@ -4,7 +4,7 @@ let me; // a shared object for this client
 
 function preload() {
   // connect to p5.party server
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "sign_up", "main");
+  partyConnect("wss://demoserver.p5party.org", "sign_up", "main");
 
   // load shared objects for all connected clients, including this one
   guests = partyLoadGuestShareds();

@@ -3,7 +3,7 @@ let shared; // ?
 function preload() {
   // ?
   partyConnect(
-    "wss://deepstream-server-1.herokuapp.com",
+    "wss://demoserver.p5party.org",
     "sync_letter", // ?
     "main" // ?
   );

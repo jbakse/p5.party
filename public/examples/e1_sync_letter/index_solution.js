@@ -3,7 +3,7 @@ let shared; // declare variable for shared object
 function preload() {
   // establish connection to party server
   partyConnect(
-    "wss://deepstream-server-1.herokuapp.com", // server name
+    "wss://demoserver.p5party.org", // server name
     "sync_letter", // app name
     "main" // room name
   );

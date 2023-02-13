@@ -57,7 +57,7 @@ function keyReleased() {
 // setup
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "ghosts", "main");
+  partyConnect("wss://demoserver.p5party.org", "ghosts", "main");
   me = partyLoadMyShared({ initialized: true });
   guests = partyLoadGuestShareds();
 }

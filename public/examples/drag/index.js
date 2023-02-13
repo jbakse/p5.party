@@ -5,7 +5,7 @@ const my_id = Math.random();
 let shared;
 
 window.preload = () => {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "drag_2", "main");
+  partyConnect("wss://demoserver.p5party.org", "drag_2", "main");
   shared = partyLoadShared("shared");
 };
 

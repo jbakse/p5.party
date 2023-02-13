@@ -2,7 +2,7 @@ let shared;
 
 function preload() {
   // connect to the party server
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "hello_cdn", "main");
+  partyConnect("wss://demoserver.p5party.org", "hello_cdn", "main");
 
   // begin loading shared object
   // setup() won't be called until the shared object is loaded

@@ -10,11 +10,7 @@ let shared;
 
 function preload() {
   if (room) {
-    partyConnect(
-      "wss://deepstream-server-1.herokuapp.com",
-      "select_room",
-      room
-    );
+    partyConnect("wss://demoserver.p5party.org", "select_room", room);
     shared = partyLoadShared("shared", { x: 0, y: 0 });
   }
 }

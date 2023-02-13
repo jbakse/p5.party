@@ -3,7 +3,7 @@ let shared;
 
 function preload() {
   // ?
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "host_timer", "main");
+  partyConnect("wss://demoserver.p5party.org", "host_timer", "main");
 
   // ?
   shared = partyLoadShared("shared");

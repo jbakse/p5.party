@@ -23,7 +23,7 @@ const my_id = Math.random(); // quick and dirty id
 let shared;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "stickies", "main");
+  partyConnect("wss://demoserver.p5party.org", "stickies", "main");
   shared = partyLoadShared("shared");
 }
 

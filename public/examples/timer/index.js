@@ -4,7 +4,7 @@ const PLAYING_DURATION = 4000;
 let shared;
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "timer", "main");
+  partyConnect("wss://demoserver.p5party.org", "timer", "main");
   shared = partyLoadShared("globals", {
     gameState: "waiting", // waiting, playing
     startTime: Date.now(),

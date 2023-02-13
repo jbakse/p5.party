@@ -40,11 +40,7 @@ let my, guests;
 
 function preload() {
   // connect to the party server
-  partyConnect(
-    "wss://deepstream-server-1.herokuapp.com",
-    "hello_party",
-    "main"
-  );
+  partyConnect("wss://demoserver.p5party.org", "hello_party", "main");
 
   shared = partyLoadShared("shared", {});
   my = partyLoadMyShared({ x: 100, y: 100, show: false, role: "observer" });

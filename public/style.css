@@ -29,10 +29,14 @@ a:visited {
   border-bottom: 1px dotted var(--accent-color);
 }
 
-body > section {
+body > * {
   max-width: 1200px;
-
   margin: 0 auto;
+}
+
+body > .video {
+  display: block;
+  width: 960px;
 }
 
 body > h2 {

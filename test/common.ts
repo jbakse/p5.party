@@ -9,7 +9,7 @@ import * as log from "../src/log";
 export const HOST = "ws://127.0.0.1:6020";
 export const DELAY = 200;
 
-// export const HOST = "wss://deepstream-server-1.herokuapp.com";
+// export const HOST = "wss://demoserver.p5party.org";
 // export const DELAY = 500;
 
 export const errorSpy = //

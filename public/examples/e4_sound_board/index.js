@@ -2,11 +2,7 @@ const sounds = {}; // ?
 
 function preload() {
   // ?
-  partyConnect(
-    "wss://deepstream-server-1.herokuapp.com",
-    "sound_board",
-    "main"
-  );
+  partyConnect("wss://demoserver.p5party.org", "sound_board", "main");
 
   // ?
   sounds.closed_hat = loadSound("assets/closed_hat.wav");

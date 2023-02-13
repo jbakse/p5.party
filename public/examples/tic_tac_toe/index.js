@@ -16,11 +16,7 @@ const squares = [
 let shared;
 
 function preload() {
-  partyConnect(
-    "wss://deepstream-server-1.herokuapp.com",
-    "tic_tac_toe",
-    "main"
-  );
+  partyConnect("wss://demoserver.p5party.org", "tic_tac_toe", "main");
   shared = partyLoadShared("shared");
 }
 

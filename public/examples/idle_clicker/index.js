@@ -1,11 +1,7 @@
 let me, guests;
 
 function preload() {
-  partyConnect(
-    "wss://deepstream-server-1.herokuapp.com",
-    "idle_clicker",
-    "main"
-  );
+  partyConnect("wss://demoserver.p5party.org", "idle_clicker", "main");
   guests = partyLoadGuestShareds();
   me = partyLoadMyShared({ score: 0, name: pick(names) });
 }

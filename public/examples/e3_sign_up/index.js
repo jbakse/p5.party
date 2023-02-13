@@ -4,7 +4,7 @@ let me; // ?
 
 function preload() {
   // ?
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "sign_up", "main");
+  partyConnect("wss://demoserver.p5party.org", "sign_up", "main");
 
   // ?
   guests = partyLoadGuestShareds();

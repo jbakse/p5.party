@@ -12,14 +12,9 @@ function setup() {
 }
 
 function connectToParty() {
-  partyConnect(
-    "wss://deepstream-server-1.herokuapp.com",
-    "callbacks",
-    "main",
-    () => {
-      console.log("connected!");
-    }
-  );
+  partyConnect("wss://demoserver.p5party.org", "callbacks", "main", () => {
+    console.log("connected!");
+  });
   partyLoadShared("shared", { x: 0, y: 0 }, (s) => {
     console.log("shared object loaded!");
     shared = s;

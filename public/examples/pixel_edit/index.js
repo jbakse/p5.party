@@ -17,7 +17,7 @@ const palette = [
 ];
 
 function preload() {
-  partyConnect("wss://deepstream-server-1.herokuapp.com", "pixel_edit", "main");
+  partyConnect("wss://demoserver.p5party.org", "pixel_edit", "main");
   shared = partyLoadShared("shared");
 }
 
