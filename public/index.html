@@ -1,27 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Examples</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
 
-  <body>
-    <nav>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examples</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <nav class="NavBar">
+    <div class="left">
       <a href="/">p5.party</a>
+    </div>
+
+    <div class="right">
       <a href="/examples">Examples</a>
       <a href="https://www.notion.so/Welcome-to-p5-party-887564cad8ec455e9bee994362322f2e">Documentation</a>
       <a href="https://github.com/jbakse/p5.party">Github</a>
       <a href="https://www.notion.so/Download-5917be8ee65c4764bb3a250622ede480">Download</a>
-    </nav>
+    </div>
+  </nav>
 
-    <section>
-      <img class="logo" src="images/p5_party_logo.png" alt="p5.party logo" />
-    </section>
+  <section class="block">
+    <img class="logo" src="images/p5_party_logo.png" alt="p5.party logo" />
+    <p class="tagline">Online multiplayer for p5.js</h1>
+  </section>
 
-    <iframe
-      class="video"
+  <!-- <iframe
+      class="video-iframe"
       width="960"
       height="540"
       src="https://www.youtube.com/embed/j3qcmhn2tkY"
@@ -29,14 +36,67 @@
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       allowfullscreen
-    ></iframe>
+    ></iframe> -->
 
-    <section class="intro">
-      p5.party is a library for easily prototyping online multi-user sketches with p5.js. With p5.party you can quickly test ideas for multiplayer games, realtime multi-user apps, and multi-computer
-      art projects.
-    </section>
-    <section class="intro">Some more copy</section>
+  <section class="block columns">
+    <div class="column feature">
+      <h2>Real-time Data Sync</h2>
+      <p>p5.party provides a simple, imperative interface for working with shared data, automatically syncronizing your
+        changes across all connected clients.</p>
+    </div>
+
+    <div class="column feature">
+      <h2>No Server-Side Code</h2>
+      <p>Sketches using p5.party are written using only client-side javascript. Quickly try ideas without writing server
+        code or setting up a back-end stack.</p>
+    </div>
+
+    <div class="column feature">
+      <h2>Perfect for Prototypes</h2>
+      <p>Quickly prototype ideas for multiplayer games, real-time multi-user apps, and multi-computer art projects.</p>
+    </div>
+  </section>
+
+  <section class="block columns">
+
+    <div class="column feature">
+      <h2>Built for Students</h2>
+      <p>p5.party is small and easy to learn. If you understand the basics of p5.js and JavaScript objects, you are
+        ready to learn p5.party.</p>
+    </div>
+
+    <div class="column feature">
+      <h2>Built for Teachers</h2>
+      <p>The p5.party docs include teaching materials and a single, zero-config p5.party server can support all of your
+        student's apps.</p>
+    </div>
+
+    <div class="column feature">
+      <h2>Fully Documented</h2>
+      <p>p5.party has a full guide, quick-start tutorials, a complete API reference, and lots of examples.</p>
+    </div>
+
+
+
+  </section>
+  <section class="block columns">
+    <figure class="column">
+      <img class="full-width" alt="tic-tac-toe demo"
+        src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/291e44ab-7ec9-4e83-9cca-ba63b6b3d1c8/tic-tac-toe-final_AdobeExpress.gif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230214%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230214T024754Z&X-Amz-Expires=86400&X-Amz-Signature=4283b4d1f5590eb489b6c881039e95b78760467e156b18e6b415908a2b0bcd55&X-Amz-SignedHeaders=host&x-id=GetObject" />
+      <figcaption>
+        Make simple multi-player games!
+      </figcaption>
+    </figure>
+    <figure class="column">
+      <img class="full-width" alt="tic-tac-toe demo"
+        src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/5299e997-e3f1-4ae7-8de6-7834a4cf0b53/d12.gif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230214%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230214T024754Z&X-Amz-Expires=86400&X-Amz-Signature=08ad4cd2714d4ff4d1ffbf823fdd5c0540e8349944cef0214909a5029195003e&X-Amz-SignedHeaders=host&x-id=GetObject" />
+      <figcaption>
+        Make complex multi-player games!
+      </figcaption>
+    </figure>
+
 
     <br />
-  </body>
+</body>
+
 </html>
