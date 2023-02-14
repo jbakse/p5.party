@@ -32,18 +32,18 @@ pre {
 /* layout */
 .block {
   max-width: 1200px;
-  margin: 3em auto 0 auto;
+  margin: 2em auto 0 auto;
 }
 
 .columns {
   display: flex;
+  flex-wrap: wrap;
+  gap: 2em;
 }
 
 .column {
   flex: 1;
-}
-.column + .column{
-  margin-left: 2em;
+  min-width: 300px;
 }
 
 /* text */
@@ -52,6 +52,10 @@ html * {
   font-weight: 100;
   font-size: 24px;
   line-height: 1.5;
+}
+
+body {
+  padding: 1em;
 }
 
 
@@ -84,6 +88,10 @@ body {
 /* Nav Bar */
 
 .NavBar {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
   display: flex;
   justify-content: space-between;
 
@@ -140,8 +148,96 @@ figure img {
 figcaption {
   text-align: center;
   font-size: 0.8em;
-  font-style: italic;
+  font-style: italic; 
+}
+
+
+/* youtube banner */
+
+.youtube-banner {
+  width: 600px;
+  height: 120px;
+  margin: 0 auto;
   
+  
+  display: flex;
+
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  
+  text-decoration: none;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+}
+
+.youtube-banner:hover {
+  text-decoration: underline;
+  
+}
+
+.youtube-banner .left {
+  flex: 2;
+  padding: 1em;
+}
+
+.youtube-banner .right {
+  position: relative;
+  flex: 1;
+}
+
+.youtube-banner img
+{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+}
+
+.youtube-banner svg
+{
+  position: absolute;
+  
+  height: 40%;    
+  right: 6px;
+  bottom: 8px;
+  
+  object-fit: cover;
+}
+
+/* code blocks */
+
+.code-block {
+  white-space: normal;
+}
+.code-block {
+  position: relative;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+}
+
+*+.code-block {
+  margin-top: 1em;
+}
+.code-block figcaption {
+  text-align: left;
+  font-style: normal; 
+  padding-left: 1em;
+  background-color: #ffc;
+}
+
+.code-block img {
+  position: absolute;
+  right: 0;
+  top: 2em;
+}
+
+.code-block code {
+  display: block;
+  padding: 1em;
+  white-space: pre-wrap;
 }
 
 
