@@ -28,9 +28,11 @@ Test Coverage:
 
 p5.party is a library for easily prototyping online multi-user sketches with p5.js. With p5.party you can quickly test ideas for multiplayer games, realtime multi-user apps, and multi-computer art projects.
 
+[p5.party Website](https://p5party.org)
+
 [Documentation](https://www.notion.so/p5-party-Documentation-887564cad8ec455e9bee994362322f2e)
 
-[Demos + Examples](https://p5party.netlify.app/)
+[Demos + Examples](https://p5party.org/examples)
 
 [Discussion](https://github.com/jbakse/p5.party/discussions)
 
@@ -123,17 +125,9 @@ function draw() {
 
 ## Installation and Quickstart
 
-The quickest way to get started with p5.party is to load it from a CDN.
+The quickest way to get started with p5.party is to load it from a [CDN](https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js) or download the latest [release](https://github.com/jbakse/p5.party/releases) .
 
-```
-https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js
-```
-
-Visit the [P5 Web Editor Quick Start Guide](https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js) to get started using p5.party in the p5.js web editor.
-
-<!-- You can also download the latest release of p5.party from the [releases page on Github](https://github.com/jbakse/p5.party/releases). -->
-
-Visit the [VS Code Quick Start Guide](https://www.notion.so/Hello-p5-party-c4c0f94127c1408e9d6dd51f91ac8414) to get started using p5.party in locally with VS Code.
+Visit the [P5 Web Editor Quick Start Guide](https://www.notion.so/P5-js-Web-Editor-Quick-Start-Guide-5cc4a197886a4bda89573f5879e47c78) or [VS Code Quick Start Guide](https://www.notion.so/Hello-p5-party-c4c0f94127c1408e9d6dd51f91ac8414) to get started!
 
 ## Server Installation
 
@@ -160,8 +154,9 @@ p5.party builds on [deepstream.io](http://deepstream.io) and [sindresorhus/on-ch
 
 p5.party was created by Justin Bakse, Munro Hoberman, and Isabel Anguera.
 
-contributions by Tanvi Mishra, Apurv Rayate, Hyacinth Weng
+Contributions by Tanvi Mishra, Apurv Rayate, Hyacinth Weng,
+MJ Gomez-Saavedra, Shayla Lee
 
 ## Thanks To
 
-Jessie Han, An Kong, Kevin Lin, Malin Mabika, Tanvi Mishra, Brittany Price, Apurv Rayate, Beatriz Ribeiro Dos Santos, Tong Shao, Hyacinth Weng, Winnie Yuxiang Zhai, Joan Jingwen Zhang
+Jessie Han, An Kong, Kevin Lin, Malin Mabika, Tanvi Mishra, Brittany Price, Apurv Rayate, Beatriz Ribeiro Dos Santos, Tong Shao, Hyacinth Weng, Winnie Yuxiang Zhai, Joan Jingwen Zhang, Jasmine Chen, Joshua Davison, Caitlin Keating, Simone Liu, Zhuoran Ma, Rand Rivera, Runzhe Sha, Haotian Wang, Ziyi Wang

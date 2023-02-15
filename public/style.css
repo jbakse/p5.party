@@ -1,7 +1,31 @@
+
+
 @import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&display=fallback");
 
 :root {
-  --accent-color: #000066;
+  
+  --light-red: #fbb;
+  --light-yellow: #ffb;
+  --light-green: #bfb;
+  --light-cyan: #bff;
+  --light-blue: #bff;
+  --light-purple: #fbf;
+
+  --dark-red: #600;
+  --mid-yellow: #bb6;
+  --dark-green: #060;
+  --dark-cyan: #066;
+  --dark-blue: #006;
+  --dark-purple: #606;
+
+
+  --dark-red: #600;
+  --dark-yellow: #660;
+  --dark-green: #060;
+  --dark-cyan: #066;
+  --dark-blue: #006;
+  --dark-purple: #606;
+
 }
 
 /* reset */
@@ -32,7 +56,7 @@ pre {
 /* layout */
 .block {
   max-width: 1200px;
-  margin: 2em auto 0 auto;
+  margin: 3em auto 0 auto;
 }
 
 .columns {
@@ -43,8 +67,11 @@ pre {
 
 .column {
   flex: 1;
-  min-width: 300px;
+  min-width: 400px;
+  max-width: 50%;
 }
+
+
 
 /* text */
 html * {
@@ -55,17 +82,31 @@ html * {
 }
 
 body {
-  padding: 1em;
+  
+}
+
+main {
+  margin: 0 1em
 }
 
 
+h1 {
 
+  font-size: 2rem;
+}
 h1,
 h2,
 h3 {
   font-weight: 400;
 }
 
+h2 + * {
+  margin-top: .25em;
+}
+
+p + p {
+  margin-top: .5em;
+}
 a,
 a:visited {
   color: var(--accent-color);
@@ -88,32 +129,41 @@ body {
 /* Nav Bar */
 
 .NavBar {
-  position: absolute;
-  width: 100%;
-  top: 0;
-  left: 0;
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 
-  background: #ffffbb;
+
+  background: var(--light-yellow);
   padding: .5em;
 
   /* drop shadow */
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+  
 }
 
-.NavBar .right a {
-  margin-left: 2em;
+.NavBar .left,
+.NavBar .right {
+  display: flex;
+  gap: 2em;
+  
 }
 
 .NavBar a {
   font-weight: bold;
   text-decoration: none;
-  padding: 1em 0;
 }
 
 .NavBar a:hover {
   text-decoration: underline;
+}
+
+
+@media (max-width: 840px) {
+  .NavBar .right {
+    flex-direction: column;
+    gap: 0px;
+  }
 }
 
 /* Hero */
@@ -154,30 +204,73 @@ figcaption {
 
 /* youtube banner */
 
-.youtube-banner {
-  width: 600px;
-  height: 120px;
-  margin: 0 auto;
+.youtube-banner,
+.youtube-banner:visited {
+  max-width: 620px;
   
+  margin: 0 auto;
   
   display: flex;
 
-  background: white;
-  border-radius: 15px;
-  overflow: hidden;
+  background: var(--dark-purple);
+  animation: col 10s infinite;
+  color: white;
   
   text-decoration: none;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+
+  border-radius: 10px;
+  overflow: hidden;
+  /* border: 3px solid #000066; */
+  
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+  
 }
+
+@keyframes col {
+  0% {
+    background-color: var(--dark-purple)
+  }
+
+  15% {
+    background-color: var(--dark-red)
+  }
+
+  30% {
+    background-color: var(--dark-yellow)
+  }
+
+  45% {
+    background-color: var(--dark-green)
+  }
+
+  60% {
+    background-color: var(--dark-cyan)
+  }
+
+  75% {
+    background-color: var(--dark-blue)
+  }
+
+  90% {
+    background-color: var(--dark-purple)
+  }
+
+
+ 
+}
+
+
+
+
+
 
 .youtube-banner:hover {
   text-decoration: underline;
-  
 }
 
 .youtube-banner .left {
   flex: 2;
-  padding: 1em;
+  padding: 1em 1.5em .75em 1em;
 }
 
 .youtube-banner .right {
@@ -205,6 +298,15 @@ figcaption {
   object-fit: cover;
 }
 
+/* hiders */
+
+
+@media (max-width: 840px) {
+  .shrink-small {
+    width: 128px;
+  }
+}
+
 /* code blocks */
 
 .code-block {
@@ -221,23 +323,26 @@ figcaption {
 *+.code-block {
   margin-top: 1em;
 }
+
 .code-block figcaption {
   text-align: left;
   font-style: normal; 
-  padding-left: 1em;
-  background-color: #ffc;
+  padding: .25em 1em 0 1em;
+  background-color: var(--mid-yellow);
 }
 
 .code-block img {
   position: absolute;
   right: 0;
   top: 2em;
+  
 }
 
 .code-block code {
   display: block;
   padding: 1em;
   white-space: pre-wrap;
+  
 }
 
 
@@ -292,3 +397,9 @@ figcaption {
   padding: 1px 3px;
   margin: 6px;
 }  
+
+/* overscroll */
+
+.overscroll {
+  height: 500px;
+}
