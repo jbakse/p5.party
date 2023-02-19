@@ -17,7 +17,8 @@
     "src",
     "dist"
   ],
-  "main": "src/p5.party.ts",
+  "main": "dist/p5.party.js",
+  "types": "dist/p5.party.d.ts",
   "engines": {
     "node": "18.3.0"
   },
