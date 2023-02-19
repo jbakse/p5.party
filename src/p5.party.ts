@@ -12,6 +12,9 @@ import { Room } from "./Room";
 import { Record } from "./Record";
 import { createInfo, destroyInfo } from "./info";
 
+export { Room };
+export { Record };
+
 const p5 = (window as any).p5;
 
 p5 ? init() : log.warn("p5.js not found.");
