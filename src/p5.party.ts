@@ -15,9 +15,10 @@ import { createInfo, destroyInfo } from "./info";
 export { Room };
 export { Record };
 
-const p5 = (window as any).p5;
-
-p5 ? init() : log.warn("p5.js not found.");
+if (typeof window !== "undefined") {
+  const p5 = (window as any).p5;
+  p5 ? init() : log.warn("p5.js not found.");
+}
 
 function init() {
   const version_string = p5.prototype.VERSION
