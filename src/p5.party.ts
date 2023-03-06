@@ -12,10 +12,12 @@ import { Room } from "./Room";
 import { Record } from "./Record";
 import { createInfo, destroyInfo } from "./info";
 
-export { Room };
-export { Record };
-
 if (typeof window !== "undefined") {
+  window.p5party = {
+    Room,
+    Record,
+  };
+
   const p5 = (window as any).p5;
   p5 ? init() : log.warn("p5.js not found.");
 }

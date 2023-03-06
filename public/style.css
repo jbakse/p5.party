@@ -182,23 +182,27 @@ body {
 
 
 figure {
-  overflow: hidden;
-  border-radius: 15px;
-  background: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding-bottom: .5em;
+  /* overflow: hidden; */
+  /* border-radius: 15px; */
+  /* background: white; */
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+  /* padding-bottom: .5em; */
 }
 
-figure img {
+figure video {
   display: block;
   width: 100%;
-  
 }
 
 figcaption {
   text-align: center;
   font-size: 0.8em;
   font-style: italic; 
+  
+}
+
+figure video + figcaption {
+  margin-top: .5em;
 }
 
 

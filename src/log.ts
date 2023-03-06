@@ -30,14 +30,21 @@ export const error = makeLogger(
 
 type loggerType = "debug" | "log" | "warn" | "error";
 function makeLogger(type: loggerType, prefix: string, style: string) {
-  // eslint-disable-next-line
-  return console[type].bind(window.console, `%c${prefix}`, style);
+  if (typeof window !== "undefined") {
+    // eslint-disable-next-line
+    return console[type].bind(window.console, `%c${prefix}`, style);
+  } else {
+    return console;
+  }
 }
 
 // eslint-disable-next-line
-export const styled = console.log.bind(
-  window.console,
-  "%cparty-log%c %c%s",
-  "background-color: #88F; color: #00ffff; padding: 2px 5px; border-radius: 2px",
-  "background: none;"
-);
+export const styled =
+  typeof window !== "undefined"
+    ? console.log.bind(
+        window.console,
+        "%cparty-log%c %c%s",
+        "background-color: #88F; color: #00ffff; padding: 2px 5px; border-radius: 2px",
+        "background: none;"
+      )
+    : console.log;
