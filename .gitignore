@@ -16,3 +16,6 @@ Icon[\r]
 
 # jest test files
 coverage
+
+# production files are often too big for github
+production
