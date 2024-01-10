@@ -2,14 +2,16 @@
 
 1. `npm run start` to build/watch/rebuild
 2. use VS Code / Live Server to open examples in browser
+3. .vscode/settings.json configs live server root to be `public/`
 
 # How to run tests
 
 1. `npm run serve` to start local version of the server (leave running)
-2. `npm run test` to run the test suite
+2. open another terminal window and...
+3. `npm run test` to run the test suite
    -or-
-3. `npm run serve` to start local version of the server (leave running)
-4. run tests from VS Code interface with `Jest` extension
+4. `npm run serve` to start local version of the server (leave running)
+5. run tests from VS Code interface with `Jest` extension
 
 # How To Release a new Version of p5.Party
 
