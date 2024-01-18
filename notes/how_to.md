@@ -119,3 +119,8 @@ Merge them in
 ```
 git merge upstream/master
 ```
+
+# Expose the local server to the internet
+
+npx localtunnel --port 8000
+curl https://loca.lt/mytunnelpassword

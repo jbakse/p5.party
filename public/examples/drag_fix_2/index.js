@@ -1,12 +1,14 @@
-import { Point, Rect, pointInRect } from "./shape.js";
+import { Point, pointInRect, Rect } from "./shape.js";
 
 const my_id = Math.random();
 
-let shared;
+let sharedSprites = [];
 
 window.preload = () => {
-  partyConnect("wss://demoserver.p5party.org", "drag_2");
-  shared = partyLoadShared("shared");
+  partyConnect("wss://demoserver.p5party.org", "drag_fix_3");
+  sharedSprites[0] = partyLoadShared("sharedSpriteA");
+  sharedSprites[1] = partyLoadShared("sharedSpriteB");
+  sharedSprites[2] = partyLoadShared("sharedSpriteC");
 };
 
 window.setup = () => {
@@ -14,31 +16,35 @@ window.setup = () => {
   noStroke();
 
   if (partyIsHost()) {
-    shared.sprites = [];
-    shared.sprites.push(initSprite(new Rect(10, 10, 100, 100), "#ffff66"));
-    shared.sprites.push(initSprite(new Rect(30, 30, 100, 100), "#ff66ff"));
-    shared.sprites.push(initSprite(new Rect(50, 50, 100, 100), "#66ffff"));
+    partySetShared(
+      sharedSprites[0],
+      initSprite(new Rect(10, 10, 100, 100), "#ffff66"),
+    );
+    partySetShared(
+      sharedSprites[1],
+      initSprite(new Rect(30, 30, 100, 100), "#ff66ff"),
+    );
+    partySetShared(
+      sharedSprites[2],
+      initSprite(new Rect(50, 50, 100, 100), "#66ffff"),
+    );
   }
 };
 
 window.draw = () => {
   background("#cc6666");
-  shared.sprites.forEach(stepSprite);
-  shared.sprites.forEach(drawSprite);
+  sharedSprites.forEach(stepSprite);
+  sharedSprites.forEach(drawSprite);
 };
 
 window.mousePressed = () => {
-  // abort if any sprites are already in drag
-  // this requires players to take turns with dragging
-  if (shared.sprites.find((s) => s.inDrag)) return;
-
-  for (const s of shared.sprites.slice().reverse()) {
+  for (const s of sharedSprites.slice().reverse()) {
     if (mousePressedSprite(s)) break;
   }
 };
 
 window.mouseReleased = () => {
-  for (const s of shared.sprites.slice().reverse()) {
+  for (const s of sharedSprites.slice().reverse()) {
     if (mouseReleasedSprite(s)) break;
   }
 };
@@ -75,12 +81,10 @@ function mousePressedSprite(s) {
     s.inDrag = true;
     s.owner = my_id;
     s.dragOffset = new Point(s.rect.l - mouseX, s.rect.t - mouseY);
-
-    // move to top
-    const i = shared.sprites.indexOf(s);
-    shared.sprites.splice(i, 1);
-    shared.sprites.push(s);
     return true;
+    // move to top
+    // in drag_conflict squares are moved to the top when dragging starts
+    // this is not implemented here yet
   }
   return false;
 }
