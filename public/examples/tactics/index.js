@@ -1,21 +1,60 @@
 // example unit
 // {
-//   x: 0, // grid position
-//   y: 0, // grid position
+//   col: 0, // grid position
+//   row: 0, // grid position
 //   selected: false, // is this unit selected?
 //   owner: 1, // player 1 or 2
 // }
 
-const GRID_ROWS = 16;
-const GRID_COLS = 16;
-const GRID_SIZE = 32;
+class Grid {
+  constructor(top, left, width, height, rows, cols) {
+    this.top = top;
+    this.left = left;
+    this.width = width;
+    this.height = height;
+    this.rows = rows;
+    this.cols = cols;
+    this.cellWidth = width / cols;
+    this.cellHeight = height / rows;
+  }
+
+  mouseCoord() {
+    return {
+      col: Math.floor((mouseX - this.left) / this.cellWidth),
+      row: Math.floor((mouseY - this.top) / this.cellHeight),
+      inside:
+        mouseX >= this.left &&
+        mouseY >= this.top &&
+        mouseX < this.left + this.width &&
+        mouseY < this.top + this.height,
+    };
+  }
+
+  cellBounds(col, row) {
+    return {
+      left: col * this.cellHeight + this.left,
+      top: row * this.cellWidth + this.top,
+      width: this.cellWidth,
+      height: this.cellHeight,
+    };
+  }
+}
+
+function insetRect(r, inset) {
+  return {
+    top: r.top + inset,
+    left: r.left + inset,
+    width: r.width - inset * 2,
+    height: r.height - inset * 2,
+  };
+}
+
+const BOARD = new Grid(50, 50, 500, 500, 16, 16);
 
 const PLAYER_1_COLOR = "#ff0000";
 const PLAYER_2_COLOR = "#0000ff";
 
 let setupComplete = false;
-
-let selectionNeighbors = [];
 
 let shared;
 let me;
@@ -33,14 +72,15 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(512, 512);
+  createCanvas(600, 600);
   noStroke();
 
+  // initialize shared state
   if (partyIsHost()) {
-    console.log("I am the host!");
     partySetShared(shared, {
       currentPlayer: 1,
       units: populateUnits(),
+      selectionNeighbors: [],
     });
   }
 
@@ -53,118 +93,140 @@ function setup() {
 
 function draw() {
   if (!setupComplete) return;
+
   // logic
   assignPlayers();
 
-  // find the selected unit
-  const selectedUnit = shared.units.find((u) => u.selected);
-  if (selectedUnit) {
-    let neighbors = listNeighbors(selectedUnit, 3);
-    // remove neighbors that are occupied
-    selectionNeighbors = neighbors.filter(
-      (n) => !shared.units.find((u) => u.x === n.x && u.y === n.y),
-    );
-  } else {
-    selectionNeighbors = [];
-  }
+  // dom
+  updateDom();
 
-  // update dom
+  // drawing
+  background("#667788");
+  drawCheckerboard();
+  drawUnits();
+  drawNeighbors();
+  drawUI();
+}
+
+function updateDom() {
   if (shared.currentPlayer === me.role) {
     endTurnButton.show();
   } else {
     endTurnButton.hide();
   }
+}
 
-  // drawing
-  background("#667788");
-
-  // draw light checkerboard
+function drawCheckerboard() {
   push();
-  for (let x = 0; x < GRID_COLS; x++) {
-    for (let y = 0; y < GRID_ROWS; y++) {
+  for (let x = 0; x < BOARD.cols; x++) {
+    for (let y = 0; y < BOARD.rows; y++) {
       if ((x + y) % 2 === 0) {
         fill(0, 0, 0, 10);
-        rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        const b = BOARD.cellBounds(x, y);
+        rect(b.left, b.top, b.width, b.height);
       }
     }
   }
   pop();
+}
 
-  // draw units
+function drawUnits() {
   push();
+  ellipseMode(CORNER);
   shared.units.forEach((unit) => {
-    const x = unit.x * GRID_SIZE;
-    const y = unit.y * GRID_SIZE;
-
     fill(unit.owner === 1 ? PLAYER_1_COLOR : PLAYER_2_COLOR);
-    ellipseMode(CORNER);
-    stroke("white");
     strokeWeight(unit.selected ? 5 : 0);
-    ellipse(x + 3, y + 3, GRID_SIZE - 6, GRID_SIZE - 6);
 
+    stroke("white");
+    let b = BOARD.cellBounds(unit.col, unit.row);
+    b = insetRect(b, 3);
+    ellipse(b.left, b.top, b.width, b.height);
     if (unit.moved) {
       fill(0, 0, 0, 100);
-      ellipse(x + 3, y + 3, GRID_SIZE - 6, GRID_SIZE - 6);
+      ellipse(b.left, b.top, b.width, b.height);
     }
   });
   pop();
+}
 
-  // draw highlight for neighbors
+function drawNeighbors() {
   push();
-  selectionNeighbors.forEach((n) => {
-    const x = n.x * GRID_SIZE;
-    const y = n.y * GRID_SIZE;
+  shared.selectionNeighbors.forEach((n) => {
+    let b = BOARD.cellBounds(n.col, n.row);
+    b = insetRect(b, 3);
+
     fill(255, 255, 255, 100);
-    rect(x + 3, y + 3, GRID_SIZE - 6, GRID_SIZE - 6, 4);
+    rect(b.left, b.top, b.width, b.height, 3);
   });
   pop();
+}
 
-  // draw UI
+function drawUI() {
   push();
   fill("#000");
   textSize(32);
   textAlign(CENTER, CENTER);
-  text("PLAYER " + (shared.currentPlayer), width * .5, 30);
+  text("PLAYER " + shared.currentPlayer, width * 0.5, 30);
 
   textSize(16);
   textAlign(CENTER, CENTER);
-  text(`Role: ${me.role}`, width * .5, height - 30);
+  text(`Role: ${me.role}`, width * 0.5, height - 30);
   pop();
 }
 
 function mousePressed() {
+  // stop if its not our turn
   if (shared.currentPlayer !== me.role) return;
 
-  const m = mouseGridPosition();
-  const unit = shared.units.find((u) =>
-    u.x === m.x && u.y === m.y && u.owner === me.role && !u.moved
+  const m = BOARD.mouseCoord();
+  if (!m.inside) return;
+
+  // handle unit clicks
+  const clickedUnit = shared.units.find(
+    (u) => u.col === m.col && u.row === m.row && u.owner === me.role && !u.moved
   );
-  const neighbor = selectionNeighbors.find((n) => n.x === m.x && n.y === m.y);
-
-  if (unit) {
-    // clear all selections
-    shared.units.forEach((u) => (u.selected = false));
-    unit.selected = true;
+  if (clickedUnit) {
+    selectUnit(clickedUnit);
+    return;
   }
 
-  if (neighbor) {
-    // move unit to neighbor
-    const unit = shared.units.find((u) => u.selected);
-    unit.x = neighbor.x;
-    unit.y = neighbor.y;
-    unit.selected = false;
-    unit.moved = true;
+  // handle neighbor clicks
+  const clickedNeighbor = shared.selectionNeighbors.find((n) => {
+    return n.col === m.col && n.row === m.row;
+  });
+  if (clickedNeighbor) {
+    moveUnit(
+      shared.units.find((u) => u.selected),
+      clickedNeighbor.col,
+      clickedNeighbor.row
+    );
+    return;
   }
-  if (!unit && !neighbor) {
+
+  // handle "nothing" clicks
+  if (!clickedUnit && !clickedNeighbor) {
     shared.units.forEach((u) => (u.selected = false));
+    shared.selectionNeighbors = [];
   }
 }
 
-function mouseGridPosition() {
-  return {
-    x: Math.floor(mouseX / GRID_SIZE),
-    y: Math.floor(mouseY / GRID_SIZE),
-  };
+function selectUnit(unit) {
+  // update selection
+  shared.units.forEach((u) => (u.selected = false));
+  unit.selected = true;
+
+  // update neighbors
+  shared.selectionNeighbors = manhattanNeighbors(unit, 0, 3).filter(
+    (n) => !shared.units.find((u) => u.col === n.col && u.row === n.row)
+  );
+}
+
+function moveUnit(unit, col, row) {
+  unit.col = col;
+  unit.row = row;
+  unit.selected = false;
+  shared.selectionNeighbors = [];
+  unit.moved = true;
 }
 
 // called from draw each player checks if player1 or 2 role is open
@@ -175,7 +237,6 @@ function assignPlayers() {
     console.log("need player 1");
     // find the first observer
     const o = guests.find((p) => p.role === "observer");
-    console.log("found", o, me, o === me);
     // if thats me, take the role
     if (o === me) o.role = 1;
   }
@@ -187,9 +248,13 @@ function assignPlayers() {
 
 function onEndTurn() {
   if (shared.currentPlayer !== me.role) return;
-  // clear moved property on all units
-  shared.units.forEach((u) => (u.moved = false));
 
+  // clear selection, neighbors, and moved
+  shared.units.forEach((u) => (u.moved = false));
+  shared.units.forEach((u) => (u.selected = false));
+  shared.selectionNeighbors = [];
+
+  // switch players
   if (shared.currentPlayer === 1) {
     shared.currentPlayer = 2;
   } else {
@@ -200,31 +265,10 @@ function onEndTurn() {
 function populateUnits() {
   const units = [];
 
-  function createUnit(minX, maxX, minY, maxY, owner) {
-    const x = randomInt(minX, maxX);
-    const y = randomInt(minY, maxY);
-    return { x, y, owner };
-  }
-
-  // while there are fewer than 5 units owned by player 1
-  while (units.filter((u) => u.owner === 1).length < 5) {
-    // create unit
-    const unit = createUnit(4, 7, 0, 16, 1);
-    // add unit if location not taken
-    if (!units.find((u) => u.x === unit.x && u.y === unit.y)) {
-      units.push(unit);
-    }
-  }
-
-  // while there are fewer than 5 units owned by player 2
-  while (units.filter((u) => u.owner === 2).length < 5) {
-    // create unit
-    const unit = createUnit(8, 11, 0, 15, 2);
-    // add unit if location not taken
-    if (!units.find((u) => u.x === unit.x && u.y === unit.y)) {
-      units.push(unit);
-    }
-  }
+  units.push({ col: 6, row: 7, owner: 1 });
+  units.push({ col: 7, row: 7, owner: 1 });
+  units.push({ col: 8, row: 8, owner: 2 });
+  units.push({ col: 9, row: 8, owner: 2 });
 
   return units;
 }
@@ -234,25 +278,26 @@ function populateUnits() {
 // excludes pos
 // exculdes positions outside grid bounds
 
-function listNeighbors(pos, distance = 1) {
+function manhattanNeighbors(pos, minDist = 1, maxDist = 1) {
   if (!pos) return [];
-  if (distance < 1) return [];
 
   const neighbors = [];
-  for (let x = pos.x - distance; x <= pos.x + distance; x++) {
-    for (let y = pos.y - distance; y <= pos.y + distance; y++) {
-      if (x < 0 || x >= GRID_COLS || y < 0 || y >= GRID_ROWS) continue;
-      if (manhattanDistance(pos, { x, y }) > distance) continue;
-      neighbors.push({ x, y });
+  for (let col = pos.col - maxDist; col <= pos.col + maxDist; col++) {
+    for (let row = pos.row - maxDist; row <= pos.row + maxDist; row++) {
+      if (col < 0 || col >= BOARD.cols || row < 0 || row >= BOARD.rows)
+        continue;
+      if (manhattanDistance(pos, { col, row }) < minDist) continue;
+      if (manhattanDistance(pos, { col, row }) > maxDist) continue;
+      neighbors.push({ col, row });
     }
   }
   return neighbors;
 }
 
 function manhattanDistance(a, b) {
-  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+  return Math.abs(a.col - b.col) + Math.abs(a.row - b.row);
 }
 
-function randomInt(min, max) {
-  return Math.floor(random(min, max));
-}
+// function randomInt(min, max) {
+//   return Math.floor(random(min, max));
+// }
