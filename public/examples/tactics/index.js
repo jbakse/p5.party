@@ -1,3 +1,4 @@
+import DOMCursors from "../dom_cursors/domCursors.js";
 import Grid from "./grid.js";
 import { insetRect } from "./shape.js";
 import { assignRoles } from "./partyHacks.js";
@@ -34,7 +35,7 @@ window.preload = () => {
 };
 
 window.setup = () => {
-  createCanvas(600, 600);
+  const c = createCanvas(600, 600);
   noStroke();
 
   // initialize shared state
@@ -49,8 +50,12 @@ window.setup = () => {
   // create a button
   endTurnButton = createButton("End Turn");
   endTurnButton.mousePressed(onEndTurn);
+  // move button into <main>
+  endTurnButton.parent(document.querySelector("main"));
 
   setupComplete = true;
+
+  new DOMCursors(c, guests, me);
 };
 
 window.draw = () => {

@@ -22,6 +22,7 @@ module.exports = {
     loadSound: "readonly",
   },
   rules: {
+    "prefer-const": "error",
     "prefer-destructuring": "off",
     "no-unused-vars": [
       "error",

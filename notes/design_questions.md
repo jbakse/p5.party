@@ -2,7 +2,7 @@
 
 # Probably Soon
 
-## Events before Setup()
+## Protect against bugs from Events before Setup()?
 
 p5.js emits events (like mousePressed) even before setup() has been called. p5.js#5588
 
@@ -14,47 +14,24 @@ Could p5.party act sensibly if the shared object is written/read before its read
 
 Possibly: reads are undefined? reads are based on (new api) init values? writes are ignored? Writes are deferred?
 
-## Reset Empty Rooms on Connect
+## Reset Empty Rooms on Connect?
 
 We could reset empty rooms based on boolean argument to partyConnect.
 Currently p5.party doesn't guarantee that the room is reset OR that it is persistant. It would help to be able to reset every time for clarity.
 
-## Allow init object when loading shared objects
-
-One way to handle initing objects is passing an optional init object on partyGetShared, etc.
-
-- this probably gives p5.party the best control over making sure that the object is inited before other clients see it.
-- would it be `object = object ?? init` or `for property: o.p = o.p ?? init.p`?
-- the above wouldn't be mostly moot if the room was reset on connect.
-
-## Rename functions to party.getShared() etc.
+## Rename functions to party.getShared() etc?
 
 Apurv: keep the prefix. either partySetShared or party.setShared
 Tanvi: party.setShared is more clear.
 Hyacinth: party.setShared
 
-## Rename participants to guests?
-
-Should we change participants -> guests? shorter, more on theme
-apurv: yes
-tanvi: yes
-hyacinth: yes
-
-## Better pattern for initializing shared objects
-
-Currently shared properties are initialized in setup(), but this does potentially lead to a race condition.
-
-Option: Have an init-object argument on partyLoadShared()?
-Option: Hide shared object from all but first requester until first requester has the opportunity to init (or affirms init)
-Option: setupParty()
-
-Tanvi: I have had issues initializing shared objects in an organized way. Would like a better-suggested-way to do it.
-
 ## API to boot participants?
 
 all: yes, when people leave the sketch open it can be an issue.
 
-This could be part of what "reseting a room" on connect does.
+note: "reload others" and "disconnect others" is now available in the info panel
+
+- do we want api control for this?
 
 ## API to clean room
 
@@ -70,7 +47,7 @@ We could provide info like
 -list/# of guests for room
 -current host of room
 
-## Write Locked Shared Objects
+## Write Locked Shared Objects?
 
 It could be very useful, especially to p5.party beginners, to give warnings (or even errors) if a client tries to write to a shared object that "belongs" to another client.
 
@@ -92,7 +69,7 @@ Maybe an addional option on getShared();
   Justin-Counter, you should be doing that anyway, and people are getting into trouble because they are not.
   Tanvi-I think it would be good if it is easy/uncomplicated.
 
-## add setupParty()
+## add setupParty()?
 
 Add setupParty(), which would be called once if you are the host before setup, intended for initializing shared objects.
 apurv: yes
@@ -185,21 +162,9 @@ Maybe some sort of user supplied serialize/deserialze functions?
 
 Should each object get its own shared object? That would conceptually follow the idea that the internal state of one object should not impact the internal state of another.
 
-## Shared Object hide until Ready
+^I think above I'm talking about how modifying two properties on the same shared object is a conflict but modifying two different shared objects at once is fine. The object is the "unit of conflict".
 
-Some way to create a shared object but put a "hide" on it until you are ready for other clients to see it.
-
-something like
-
-```javascript
-const shared = party.getShared("shared", ready); // object created on server right away, but if other clients request it they will have to wait
-function ready(s) {
-  s.x = 123;
-  party.publish(s); // until published, other clients wait for it
-}
-```
-
-I don't thnk we need this if there is a way to set defaults on getShared, which is planned in new API.
+Wild thought: could you specify a class when creating a shared object. You could do somehting like partyLoadShared('tank1', Tank); I have no idea if that would make any sense or how it would work, just brainstorming.
 
 ## Support for Roles
 
@@ -208,7 +173,7 @@ Should p5.party have built in support for "roles" like player 1, player 2, playe
 -apurv: yes, but mabye better to do yourself
 -tanvi: yes
 -justin: i think this is more game specific, so probably not something that should be in the library. This IS a very common feature, should document best practices in examples.
--tanvi: an observer wouldn't need a shared object in the participants array. there isn't a way for sketchers to control that currently
+-tanvi: an observer wouldn't need a shared object in the participants array. there isn't a way for sketchers to control that currently (note: there is now)
 -justin: interesting point.
 
 note: this could also be a foundation for having p5.party support "turns" somehow.
