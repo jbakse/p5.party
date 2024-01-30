@@ -220,9 +220,11 @@ function selectUnit(unit) {
   unit.selected = true;
 
   // update neighbors
-  shared.selectionNeighbors = BOARD.manhattanNeighbors(unit, 0, 3).filter(
-    (n) => !shared.units.find((u) => u.col === n.col && u.row === n.row)
-  );
+  // shared.selectionNeighbors = BOARD.manhattanNeighbors(unit, 0, 3).filter(
+  //   (n) => !shared.units.find((u) => u.col === n.col && u.row === n.row)
+  // );
+
+  shared.selectionNeighbors = BOARD.travelNeighbors(unit, 4, shared.units);
 }
 
 function moveUnit(unit, col, row) {
@@ -252,9 +254,15 @@ function onEndTurn() {
 function populateUnits() {
   const units = [];
 
-  units.push({ col: 6, row: 7, owner: 1 });
+  units.push({ col: 7, row: 6, owner: 1 });
   units.push({ col: 7, row: 7, owner: 1 });
+  units.push({ col: 7, row: 8, owner: 1 });
+  units.push({ col: 8, row: 6, owner: 2 });
+  units.push({ col: 8, row: 7, owner: 2 });
   units.push({ col: 8, row: 8, owner: 2 });
+
+  units.push({ col: 9, row: 6, owner: 2 });
+  units.push({ col: 9, row: 7, owner: 2 });
   units.push({ col: 9, row: 8, owner: 2 });
 
   return units;

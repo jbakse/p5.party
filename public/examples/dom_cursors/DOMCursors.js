@@ -23,6 +23,11 @@ export default class DOMCursors {
     document.addEventListener("mousedown", this.onMouseDown.bind(this));
     document.addEventListener("mouseup", this.onMouseUp.bind(this));
 
+    // Rather than an animation frame, perhaps we should watch the
+    // shared objects? We can't. As of now, p5party does not provides a way
+    // to watch the entire guest shareds array (maybe it should). So we need to
+    // poll anyway to see if there are new guests.
+
     this.animate = this.animate.bind(this);
     this.animate();
   }
