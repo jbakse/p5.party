@@ -29,7 +29,8 @@ Code Review:
 
 Intermission: 
     □ check test coverage
-    □ extensions: is "better comments" better than "highlight"?
+    ✓ extensions: is "better comments" better than "highlight"? @done(24-01-29 14:51)
+        yes
 
 Deploy:
     ✓ add student credit to readme @done(22-06-08 12:42)
@@ -76,9 +77,7 @@ Priority Features:
             □ code clean up
             ✓ CSS for checkbox @done(22-09-23 12:41)
 
-    □ overwrite on reopening room
-        partyLoadShared takes an initobject which is only used if the record doesn't exist yet. Might be better to set default to overwriting record contents if connector is host? Or some way to signal you want this? a `resetEmptyRoom` flag or call.
-        Currently i find i'm more likely to use setup()->partyIsHost->partySetShared thanthe initobject. the init object just isn't more convient (which was the point!)
+    
 
 
 Possible Features:
@@ -102,14 +101,19 @@ Possible Features:
         there is no way to manually delete a record
         □ create room.deleteRecord
     
+    □ overwrite on reopening room
+        partyLoadShared takes an initobject which is only used if the record doesn't exist yet. Might be better to set default to overwriting record contents if connector is host? Or some way to signal you want this? a `resetEmptyRoom` flag or call.
+        Currently i find i'm more likely to use setup()->partyIsHost->partySetShared thanthe initobject. the init object just isn't more convient (which was the point!)
+    
     □ tsc javadocs
 
-    □ restore partyToggleInfo() - panel
+    ✓ restore partyToggleInfo() - panel @done(24-01-29 14:55)
         the earlier version of p5.party had an info panel that showed who was connected and who was host, maybe restore it?
-        □ using https://reefjs.com/
-
-
+        
     □ party reset
-        ability to disconnect/reconnect all connected clients, and possibly reload their browsers. Live reloading multiple browsers on save in development is very helpful when working with p5.party, i have this set up in VS Code, but when working on p5 web editor or with remote partners this can be a challenge
+        ability to disconnect/reconnect all connected clients, and possibly reload their browsers. Live reloading multiple browsers on save in development is very helpful when working with p5.party, i have this set up in VS Code, but when working on p5 web editor or with remote partners this can be a challenge.
+        This is now partially implemented, you can disconnect other clients from the info panel.
+        Should there be an API call for this?
+        I ran into a roadblock trying to reload clients hosted on the p5 web editor, its just not structured in a way where a simple reload gets the latest code.
     
     □ ability to query number of people in a room before connecting

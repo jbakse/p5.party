@@ -2,7 +2,8 @@
 
 1. `npm run start` to build/watch/rebuild
 2. use VS Code / Live Server to open examples in browser
-3. .vscode/settings.json configs live server root to be `public/`
+   `.vscode/settings.json` is configured so that the
+   live server root is`public/`
 
 # How to run tests
 
