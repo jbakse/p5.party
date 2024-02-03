@@ -117,3 +117,9 @@ Possible Features:
         I ran into a roadblock trying to reload clients hosted on the p5 web editor, its just not structured in a way where a simple reload gets the latest code.
     
     □ ability to query number of people in a room before connecting
+
+
+    □ use page visibility api this to let host call “not it” if frozen?
+        https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
+    
+    □ is this a better way to describe POJOs on p5.party : “Plain objects (objects without a prototype)”

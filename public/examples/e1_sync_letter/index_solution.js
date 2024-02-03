@@ -75,7 +75,7 @@ function draw() {
  *
  * 8) What will be the value of `shared.letter` be if no one presses a key?
  *
- * 'A'. Because it was initialized with the value of 'A' in setup.
+ * 'a'. Because it was initialized with the value of 'A' in setup.
  *
  * 9) Why does the value of `shared.letter` reset when a new client joins?
  *
