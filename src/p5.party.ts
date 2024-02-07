@@ -3,6 +3,8 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+declare let p5: any;
+
 import { JSONObject, UserData } from "./validate";
 import { SubscriptionCallback } from "@deepstream/client/dist/src/record/record";
 
@@ -13,7 +15,7 @@ import { Record } from "./Record";
 import { createInfo, destroyInfo } from "./info";
 
 if (typeof window !== "undefined") {
-  window.p5party = {
+  (window as any).p5party = {
     Room,
     Record,
   };
