@@ -1,27 +1,18 @@
 let guests, me;
-let roleKeeper;
 
-// todo: add a way for there to be teams?
-// todo: confirm its safe to load the same shared multiple times
-// me = partyLoadMyShared();
-// my = partyLoadMyShared();
-// me === my is true
-// how is that!?
-// todo: if it is, then can RoleKeeper load the shareds for itself in addition to the main script loading them?
-// todo: can i then call new RoleKeeper() from preload?
-// would i then have to make something like rollKeeper.start() from setup?
-// or await all the callbacks from the shareds to be loaded?
+let turnKeeper;
 
 window.preload = () => {
   partyConnect("wss://demoserver.p5party.org", "role_keeper");
   me = partyLoadMyShared();
-
   guests = partyLoadGuestShareds();
+
+  new RoleKeeper(["player1", "player2"], "none");
+  turnKeeper = new TurnKeeper(["player1", "player2"]);
 };
 
 function setup() {
   createCanvas(400, 400);
-  roleKeeper = new RoleKeeper(guests, me, ["player1", "player2"], "none");
 }
 
 function draw() {
@@ -32,74 +23,82 @@ function draw() {
   text("Connected Guests", 10, 60);
   let y = 80;
   for (const guest of guests) {
-    text(guest.role, 10, y);
-    if (guest === me) {
-      text("<- me", 100, y);
-    }
-    if (roleKeeper.getCurrentTurn() === guest.role) {
+    text(guest.role_keeper.role, 10, y);
+    if (guest === me) text("<- you", 100, y);
+    if (turnKeeper.getCurrentTurn() === guest.role_keeper.role)
       text("<- turn", 200, y);
-    }
     y += 20;
   }
 
-  text(`Current Turn: ${roleKeeper.getCurrentTurn()}`, 10, height - 40);
-  if (roleKeeper.getCurrentTurn() === me.role)
+  text(`You are: ${me.role_keeper.role}`, 10, height - 60);
+  text(`Current Turn: ${turnKeeper.getCurrentTurn()}`, 10, height - 40);
+  if (turnKeeper.getCurrentTurn() === me.role_keeper.role)
     text("Its your turn. Click to end turn.", 10, height - 20);
 }
 
 function mousePressed() {
-  if (roleKeeper.getCurrentTurn() === me.role) roleKeeper.nextTurn();
+  if (turnKeeper.getCurrentTurn() === me.role_keeper.role)
+    turnKeeper.nextTurn();
 }
 
-class RoleKeeper {
-  constructor(guests, me, roles = [1, 2], unassigned = "unassigned") {
-    if (roles.length < 1)
-      console.error("RoleKeeper: You must have at least one role!");
+class TurnKeeper {
+  #turns;
+  #shared;
 
-    this.guests = guests;
-    this.me = me;
-    this.roles = roles;
-    this.unassigned = unassigned;
-
-    this.update = this.update.bind(this);
-    this.shared = partyLoadShared("role_keeper", {}, () => {
-      this.shared.currentTurn = roles[0];
-      this.update();
+  constructor(turns = [1, 2]) {
+    this.#turns = turns;
+    this.#shared = partyLoadShared("turn_keeper", {}, () => {
+      this.#shared.currentTurn = turns[0];
     });
-
-    // requestAnimationFrame(this.update);
   }
 
   getCurrentTurn() {
-    return this.shared.currentTurn;
+    return this.#shared.currentTurn;
   }
 
   nextTurn() {
-    const currentIndex = this.roles.indexOf(this.shared.currentTurn);
-    const nextIndex = (currentIndex + 1) % this.roles.length;
-    this.shared.currentTurn = this.roles[nextIndex];
-  }
-
-  update() {
-    requestAnimationFrame(this.update);
-    assignRoles(this.guests, this.me, this.roles, this.unassigned);
+    const currentIndex = this.#turns.indexOf(this.#shared.currentTurn);
+    const nextIndex = (currentIndex + 1) % this.#turns.length;
+    this.#shared.currentTurn = this.#turns[nextIndex];
   }
 }
 
-function assignRoles(guests, me, roles = [1, 2], unassigned = "unassigned") {
-  // upgrade from undefined to unassigned if specified
-  if (unassigned && me.role === undefined) me.role = unassigned;
+class RoleKeeper {
+  #roles;
+  #unassigned;
+  #guests;
+  #me;
+  #boundUpdate; // holds a bound version of the update function
 
-  // loop through roles and assign them if needed
-  roles.forEach((role) => {
-    // if there isn't any guest currently in this role...
-    if (!guests.find((g) => g.role === role)) {
-      // find an unassigned guest...
-      const guest = guests.find(
-        (g) => g.role === unassigned || g.role === undefined
-      );
-      // if that unassigned guest is me, take on the role
-      if (guest === me) guest.role = role;
-    }
-  });
+  constructor(roles = [1, 2], unassigned = "unassigned") {
+    if (roles.length < 1)
+      console.error("RoleKeeper: You must have at least one role!");
+
+    this.#roles = roles;
+    this.#unassigned = unassigned;
+    this.#guests = partyLoadGuestShareds();
+    this.#boundUpdate = this.#update.bind(this);
+    this.#me = partyLoadMyShared(undefined, () => {
+      this.#me.role_keeper = { role: unassigned };
+
+      this.#boundUpdate();
+    });
+  }
+
+  #update() {
+    requestAnimationFrame(this.#boundUpdate);
+
+    // loop through roles and assign them if needed
+    this.#roles.forEach((role) => {
+      // if there isn't any guest currently in this role...
+      if (!this.#guests.find((g) => g.role_keeper.role === role)) {
+        // find first unassigned guest...
+        const guest = this.#guests.find(
+          (g) => g.role_keeper.role === this.#unassigned
+        );
+        // if that unassigned guest is me, take on the role
+        if (guest === this.#me) guest.role_keeper.role = role;
+      }
+    });
+  }
 }
