@@ -1,72 +1,107 @@
-// TODO doesn't work if the client is scrolled!
-
 export default class DOMCursors {
-  constructor(canvas, guests, me) {
-    // get the canvas
-    this.canvas = canvas;
-    this.guests = guests;
-    this.me = me;
+  #hideCursor;
+  #canvas;
+  #guests;
+  #me;
+  #overCanvas;
+  #cursors;
 
+  constructor(hideCursor = false, canvas) {
+    this.#hideCursor = hideCursor;
+    this.#canvas = canvas ?? document.querySelector(".p5Canvas");
+    this.#guests = partyLoadGuestShareds();
+    this.#me = partyLoadMyShared(undefined, this.start.bind(this));
+    this.#overCanvas = false;
+    if (this.#hideCursor) this.#canvas.style.cursor = "none";
+  }
+
+  start() {
     // initialize my cursor
-    this.me.dom_cursors = {
-      id: randomInt().toString(),
-      mouse_x: 0,
+    this.#me.dom_cursors = {
+      id: randomInt().toString(16), // random hex id
+      mouse_x: -10000,
       mouse_y: 0,
       mouse_down: false,
-      color: takeColor(guests),
+      color: takeColor(this.#guests),
     };
 
     // stores the cursor elements
-    this.cursors = {};
+    this.#cursors = {};
 
+    // add event listeners
     document.addEventListener("mousemove", this.onMouseMove.bind(this));
     document.addEventListener("mousedown", this.onMouseDown.bind(this));
     document.addEventListener("mouseup", this.onMouseUp.bind(this));
+    this.#canvas.addEventListener("mouseenter", this.onEnterCanvas.bind(this));
+    this.#canvas.addEventListener("mouseleave", this.onLeaveCanvas.bind(this));
 
-    // Rather than an animation frame, perhaps we should watch the
-    // shared objects? We can't. As of now, p5party does not provides a way
-    // to watch the entire guest shareds array (maybe it should). So we need to
-    // poll anyway to see if there are new guests.
-
+    // use animate to poll guests and update cursors
+    // if p5party had a partyWatchGuests() function, we might use that instead?
     this.animate = this.animate.bind(this);
     this.animate();
   }
 
   onMouseMove(e) {
     // get the mouse position relative to the canvas
-    const x = e.clientX - this.canvas.position().x + window.scrollX;
-    const y = e.clientY - this.canvas.position().y + window.scrollY;
-    this.me.dom_cursors.mouse_x = x;
-    this.me.dom_cursors.mouse_y = y;
+    this.#me.dom_cursors.mouse_x =
+      e.clientX - this.#canvas.getBoundingClientRect().x;
+    this.#me.dom_cursors.mouse_y =
+      e.clientY - this.#canvas.getBoundingClientRect().y;
   }
   onMouseDown(e) {
-    this.me.dom_cursors.mouse_down = true;
+    this.#me.dom_cursors.mouse_down = true;
   }
   onMouseUp(e) {
-    this.me.dom_cursors.mouse_down = false;
+    this.#me.dom_cursors.mouse_down = false;
+  }
+  onEnterCanvas(e) {
+    this.#overCanvas = true;
+  }
+  onLeaveCanvas(e) {
+    this.#overCanvas = false;
   }
 
   animate(t) {
     // request next frame
     requestAnimationFrame(this.animate);
-    this.guests.forEach((guest) => {
-      if (guest === this.me) return;
+
+    // loop through the guests
+    this.#guests.forEach((guest) => {
+      // make sure this guest has a dom_cursors object
       if (!guest.dom_cursors) return;
-      // if guest doesn't have a cursor, create one
-      if (!this.cursors[guest.dom_cursors.id]) {
+
+      // if guest doesn't have a corresponding cursor element, create one
+      if (!this.#cursors[guest.dom_cursors.id]) {
         const e = createCursorElement();
         document.body.appendChild(e);
-        this.cursors[guest.dom_cursors.id] = { e };
+        this.#cursors[guest.dom_cursors.id] = { e };
       }
 
       // update cursor position
-      const cursor = this.cursors[guest.dom_cursors.id];
-      cursor.e.style.left =
-        guest.dom_cursors.mouse_x + this.canvas.position().x - 10 + "px";
-      cursor.e.style.top =
-        guest.dom_cursors.mouse_y + this.canvas.position().y - 10 + "px";
+      const cursor = this.#cursors[guest.dom_cursors.id];
 
-      // show the burst if the mouse is down
+      // pos + relative to canvas + adjust hot spot
+      const x =
+        guest.dom_cursors.mouse_x + this.#canvas.getBoundingClientRect().x - 8;
+
+      const y =
+        guest.dom_cursors.mouse_y + this.#canvas.getBoundingClientRect().y - 8;
+
+      // set cursor element position with transform()
+      // https://web.dev/articles/animations-guide
+
+      cursor.e.style.transform = `translate(${x}px, ${y}px)`;
+
+      // hide show this users cursor as needed
+      if (guest === this.#me) {
+        if (this.#hideCursor && this.#overCanvas) {
+          cursor.e.style.display = "block";
+        } else {
+          cursor.e.style.display = "none";
+        }
+      }
+
+      // show the spark if the mouse is down
       const burst = cursor.e.querySelector("#burst");
       if (guest.dom_cursors.mouse_down) {
         burst.style.stroke = guest.dom_cursors.color;
@@ -81,10 +116,10 @@ export default class DOMCursors {
     });
 
     // remove cursors that don't have a guest
-    Object.keys(this.cursors).forEach((id) => {
-      if (!this.guests.find((guest) => guest.dom_cursors.id === id)) {
-        this.cursors[id].e.remove();
-        delete this.cursors[id];
+    Object.keys(this.#cursors).forEach((id) => {
+      if (!this.#guests.find((guest) => guest.dom_cursors.id === id)) {
+        this.#cursors[id].e.remove();
+        delete this.#cursors[id];
       }
     });
   }
@@ -97,7 +132,11 @@ function randomInt(min = 0, max = Number.MAX_SAFE_INTEGER) {
 function createCursorElement() {
   const e = document.createElement("div");
   e.classList.add("cursor");
-  e.style.position = "absolute";
+  e.style.pointerEvents = "none";
+  e.style.willChange = "transform";
+  e.style.position = "fixed";
+  e.style.top = "0";
+  e.style.left = "0";
   e.style.width = "24px";
   e.style.height = "24px";
   e.innerHTML = cursor_svg;
@@ -105,6 +144,8 @@ function createCursorElement() {
   base.style.filter = "drop-shadow(1px 1px 2px rgba(0,0,0,0.5)";
   return e;
 }
+
+// Takes an array of guests and returns the least used color among them.
 
 function takeColor(guests) {
   // get all the colors taken by guests

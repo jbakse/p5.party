@@ -1,18 +1,14 @@
 import DOMCursors from "./DOMCursors.js";
 
-let guests, me;
-
 window.preload = () => {
   // connect to the party server
   partyConnect("wss://demoserver.p5party.org", "hello_party");
-  me = partyLoadMyShared();
-  guests = partyLoadGuestShareds();
 };
 
 window.setup = () => {
-  let c = createCanvas(400, 400);
+  createCanvas(400, 400);
 
-  new DOMCursors(c, guests, me);
+  new DOMCursors(true);
 };
 
 window.draw = () => {

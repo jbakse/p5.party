@@ -81,6 +81,7 @@ Priority Features:
 
 
 Possible Features:
+    □ partyWatchGuests()
     □ allow early calls to Record initData, setData, watchShared, delete
         these currently expect the dsRecord to be ready and fail if not
         they could wait for whenLoaded() instead with a little refactoring
