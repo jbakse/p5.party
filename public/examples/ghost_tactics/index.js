@@ -31,9 +31,9 @@ window.preload = () => {
   partyConnect("wss://demoserver.p5party.org", "ghost_tactics");
 
   shared = partyLoadShared("shared", {
-    currentPlayer: 1,
     units: populateUnits(),
-    selectionNeighbors: [],
+    moveTargets: [],
+    fireTargets: [],
   });
   me = partyLoadMyShared({ placeholder: true });
   spriteSheet = loadImage("sprites.png");
@@ -49,7 +49,7 @@ window.setup = () => {
   endTurnButton = createButton("End Turn");
   endTurnButton.mousePressed(onEndTurn);
   endTurnButton.parent(document.querySelector("main"));
-  endTurnButton.position(width * 0.5 - endTurnButton.width * 0.5, height - 30);
+  endTurnButton.position(width * 0.5 - endTurnButton.width * 0.5, height - 40);
 
   // slice spritesheet
   sprites = spritesFromSheet(spriteSheet);
@@ -60,7 +60,7 @@ window.setup = () => {
   // show everyone's cursors
   new DOMCursors(true);
   new RoleKeeper(["ghosts", "people"], "observer");
-  turnKeeper = new TurnKeeper(["ghosts", "people"]);
+  turnKeeper = new TurnKeeper(["people", "ghosts"]);
 
   setupComplete = true;
 };
@@ -81,7 +81,8 @@ window.draw = () => {
   drawGraves();
   drawUnits();
 
-  drawNeighbors();
+  drawMoveTargets();
+  drawFireTargets();
   drawUI();
 };
 
@@ -161,11 +162,21 @@ function drawGraves() {
   pop();
 }
 
-function drawNeighbors() {
+function drawMoveTargets() {
   push();
   fill(255, 255, 255, 100);
-  shared.selectionNeighbors.forEach((n) => {
-    const b = insetRect(BOARD.cellBounds(n.col, n.row), 3);
+  shared.moveTargets.forEach((t) => {
+    const b = insetRect(BOARD.cellBounds(t.col, t.row), 3);
+    rect(b.left, b.top, b.width, b.height, 3);
+  });
+  pop();
+}
+
+function drawFireTargets() {
+  push();
+  fill(255, 0, 0, 100);
+  shared.fireTargets.forEach((t) => {
+    const b = insetRect(BOARD.cellBounds(t.col, t.row), 3);
     rect(b.left, b.top, b.width, b.height, 3);
   });
   pop();
@@ -176,7 +187,7 @@ function drawUI() {
   textSize(30);
   textAlign(CENTER, CENTER);
 
-  if (turnKeeper.getCurrentTurn() === me.role_keeper.role) {
+  if (isMyTurn()) {
     fill(255, 255, 255);
     text("YOUR TURN", width * 0.5, 55);
   } else {
@@ -188,7 +199,7 @@ function drawUI() {
   textSize(16);
   textAlign(CENTER, CENTER);
   if (me.role_keeper.role === "observer") {
-    text(`OBSERVER`, width * 0.5, height - 20);
+    text(`OBSERVER`, width * 0.5, 20);
   } else {
     text(`You are the ${me.role_keeper.role}.`, width * 0.5, 20);
   }
@@ -197,7 +208,7 @@ function drawUI() {
 
 window.mousePressed = () => {
   // stop if its not our turn
-  if (turnKeeper.getCurrentTurn() !== me.role_keeper.role) return;
+  if (!isMyTurn()) return;
 
   const m = BOARD.mouseCoord();
   if (!m.inside) return;
@@ -216,56 +227,101 @@ window.mousePressed = () => {
     return;
   }
 
-  // handle neighbor clicks
-  const clickedNeighbor = shared.selectionNeighbors.find((n) => {
+  // handle move target clicks
+  const clickedMoveTarget = shared.moveTargets.find((n) => {
     return n.col === m.col && n.row === m.row;
   });
-  if (clickedNeighbor) {
+  if (clickedMoveTarget) {
     moveUnit(
       shared.units.find((u) => u.selected),
-      clickedNeighbor.col,
-      clickedNeighbor.row
+      clickedMoveTarget.col,
+      clickedMoveTarget.row
+    );
+    return;
+  }
+
+  // handle fire target clicks
+  const clickedFireTarget = shared.fireTargets.find((n) => {
+    return n.col === m.col && n.row === m.row;
+  });
+  if (clickedFireTarget) {
+    attackTarget(
+      shared.units.find((u) => u.selected),
+      clickedFireTarget
     );
     return;
   }
 
   // handle "nothing" clicks
-  if (!clickedUnit && !clickedNeighbor) {
+  if (!clickedUnit && !clickedMoveTarget) {
     shared.units.forEach((u) => (u.selected = false));
-    shared.selectionNeighbors = [];
+    shared.moveTargets = [];
   }
 };
 
 function selectUnit(unit) {
   // deselect others
   shared.units.forEach((u) => (u.selected = false));
+  // clear fire targets
+  shared.fireTargets = [];
+
   // select this one
   unit.selected = true;
 
-  // calculate new neighbors
+  // calculate move targets
   const range = unit.owner === "ghosts" ? 3 : 4;
   const blocked = [...shared.units];
   if (unit.owner === "people") {
     blocked.push(...tombs);
   }
-  shared.selectionNeighbors = BOARD.travelNeighbors(unit, range, blocked);
+  shared.moveTargets = BOARD.travelNeighbors(unit, range, blocked);
 }
 
 function moveUnit(unit, col, row) {
+  // clear move targets
+  shared.moveTargets = [];
+
+  // move the unit
   unit.col = col;
   unit.row = row;
-  unit.selected = false;
-  shared.selectionNeighbors = [];
   unit.moved = true;
+
+  // ghosts don't fire
+  if (unit.owner === "ghosts") {
+    unit.selected = false;
+    return;
+  }
+
+  // people do fire
+  const range = 1;
+  const blocked = [];
+  shared.fireTargets = BOARD.travelNeighbors(unit, range, blocked);
+}
+
+function attackTarget(unit, target) {
+  // find the target
+  const targetUnit = shared.units.find(
+    (u) => u.col === target.col && u.row === target.row
+  );
+
+  if (!targetUnit) return;
+
+  // remove the target
+  shared.units = shared.units.filter((u) => u !== targetUnit);
+
+  // clear fire targets
+  unit.selected = false;
+  shared.fireTargets = [];
 }
 
 function onEndTurn() {
-  if (turnKeeper.getCurrentTurn() !== me.role_keeper.role) return;
+  if (!isMyTurn()) return;
 
-  // clear selection, neighbors, and moved
+  // clear selection, targets, and moved status
   shared.units.forEach((u) => (u.moved = false));
   shared.units.forEach((u) => (u.selected = false));
-  shared.selectionNeighbors = [];
+  shared.moveTargets = [];
+  shared.fireTargets = [];
 
   // switch players
   turnKeeper.nextTurn();
