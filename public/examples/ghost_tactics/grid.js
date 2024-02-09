@@ -1,11 +1,11 @@
 export default class Grid {
-  constructor(top, left, width, height, rows, cols) {
-    this.top = top;
+  constructor(left, top, width, height, cols, rows) {
     this.left = left;
+    this.top = top;
     this.width = width;
     this.height = height;
-    this.rows = rows;
     this.cols = cols;
+    this.rows = rows;
     this.cellWidth = width / cols;
     this.cellHeight = height / rows;
   }
@@ -24,8 +24,8 @@ export default class Grid {
 
   cellBounds(col, row) {
     return {
-      left: col * this.cellHeight + this.left,
-      top: row * this.cellWidth + this.top,
+      left: col * this.cellWidth + this.left,
+      top: row * this.cellHeight + this.top,
       width: this.cellWidth,
       height: this.cellHeight,
     };
