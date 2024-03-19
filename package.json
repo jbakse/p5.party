@@ -42,7 +42,7 @@
     "prepublishOnly": "npm run build",
     "postpublish": "curl https://purge.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js",
     "genversion": "genversion --es6 --semi version.js",
-    "esbuild": "esbuild src/p5.party.ts --bundle --sourcemap --minify --target=es6 --define:global=window --inject:esbuild.inject.js"
+    "esbuild": "esbuild src/p5.party.ts --bundle --sourcemap --minify --target=es6 --define:global=window"
   },
   "dependencies": {
     "@deepstream/client": "^5.2.6",
@@ -54,15 +54,12 @@
     "@types/reefjs": "^7.6.1",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
-    "buffer": "^6.0.3",
-    "css-loader": "^6.10.0",
     "esbuild": "^0.20.2",
     "eslint": "^8.16.0",
     "eslint-config-p5js": "^1.1.0",
     "genversion": "^3.0.2",
     "istanbul-badges-readme": "^1.8.1",
     "jest": "^29.7.0",
-    "jest-css-modules": "^2.1.0",
     "jest-environment-jsdom": "^29.7.0",
     "np": "^10.0.1",
     "on-change": "^5.0.1",
