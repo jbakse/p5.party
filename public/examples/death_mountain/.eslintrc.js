@@ -14,6 +14,7 @@ module.exports = {
     partyWatchShared: "readonly",
     partyIsHost: "readonly",
     partyLoadMyShared: "readonly",
+    // partyLoadParticipantShareds: "readonly",
     partyLoadGuestShareds: "readonly",
     partySubscribe: "readonly",
     partyEmit: "readonly",

@@ -59,6 +59,7 @@ window.setup = () => {
 
   // show everyone's cursors
   new DOMCursors(true);
+  // todo: move following to preload
   new RoleKeeper(["ghosts", "people"], "observer");
   turnKeeper = new TurnKeeper(["people", "ghosts"]);
 

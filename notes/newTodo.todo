@@ -81,8 +81,6 @@ Priority Features:
 
 
 Possible Features:
-    □ make it sparkle
-        when working on clicker, i noticed things don't sparkle
     □ partyWatchGuests()
     □ allow early calls to Record initData, setData, watchShared, delete
         these currently expect the dsRecord to be ready and fail if not

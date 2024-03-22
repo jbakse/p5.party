@@ -101,4 +101,7 @@ Theoretically, this library could be used for prototyping persitent worlds right
 
 ## Improve console loging of shared object (proxies)
 
+I'm not thinking of a good way to do this. I don't want to alter console.log.
+This is a quick trick for getting a nice log `console.log(JSON.parse(JSON.stringify(shared)));`
+
 # Unsorted

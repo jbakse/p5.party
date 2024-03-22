@@ -1,6 +1,7 @@
 import onChange from "on-change";
 
 import { DeepstreamClient } from "@deepstream/client";
+import { CONNECTION_STATE } from "@deepstream/client/dist/src/constants";
 import { Record as DSRecord } from "@deepstream/client/dist/src/record/record";
 
 import * as log from "./log";
@@ -46,7 +47,8 @@ export class Record {
       return this.#whenLoaded;
     }
 
-    if (this.#ds.getConnectionState() !== "OPEN") {
+    if (this.#ds.getConnectionState() !== CONNECTION_STATE.OPEN) {
+      // "OPEN"
       log.error("Record.load() called before room is connected.", this.#name);
       return;
     }
