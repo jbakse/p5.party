@@ -14,7 +14,7 @@ This example has a write conflict bug in it which is fixed in different ways in 
 
 In this example all of the square data is stored in one shared object. Moving two squares at the same time will cause a write conflict.
 
-As described in [Avoiding Write Conflicts](https://twisty-alder-868.notion.site/Avoiding-Write-Conflicts-9aff34b8ae5f47fd8e7f14279c99096f), conflict happens when **multiple clients write** to **the same shared object** at **nearly the same time**.
+As described in [Avoiding Write Conflicts](https://justinbakse.notion.site/Avoiding-Write-Conflicts-9aff34b8ae5f47fd8e7f14279c99096f), conflict happens when **multiple clients write** to **the same shared object** at **nearly the same time**.
 
 Since dragging involves very frequent writes, when two people drag at the same time, it is inevitable that those writes will happen at nearly the same time.
 
