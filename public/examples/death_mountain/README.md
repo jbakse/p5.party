@@ -1,7 +1,7 @@
 # Death Mountain
 
 Created by Nikunj Bafna  
-Edited by Justin @Bakse
+Edited by Justin Bakse
 
 AA
 
