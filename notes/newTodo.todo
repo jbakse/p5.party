@@ -1,64 +1,35 @@
-□ something to consider: 
-    ✓ does resolved promise resolve again immediately if waited on again? (a: yes) @done(22-06-27 11:14)
-    ✓ if so, we could cache the load() promise on the object and use that for a better when ready/loaded. @done(22-06-27 11:14)
-    ✓ though that might mean some wrapping code in the method @done(22-06-27 11:14)
-    ✓ move the load call into the constructor? @done(22-08-04 12:33)
-
 Docs:
-    ✓ make note about empty {} not being in guests[] @done(22-06-27 11:38)
-        ✓ if you want everyone to be in there as soon as they connect, add a placehold prop `partyGetMyShared({placeholder: true})` @done(22-06-27 11:38)
-
-    Restore Features:
-    ✓ test p5.party loading callbacks @done(22-06-01 21:04)
-    ✓ partySetShared() @done(22-06-01 23:23)
-    ✓ partyIsHost @done(22-06-01 22:28)
-    ✓ partyLoadMyShared(); @done(22-06-03 11:18)
-    ✓ partyLoadGuestShareds(); @done(22-06-03 11:18)
-    ✓ partyWatchShared() @done(22-06-06 14:50)
-    ✓ partyEmit() partySubscribe() @done(22-06-06 14:59)
-    
-
-    ✓ pong example doesn't work because guests[] doesn't contain the same object as me. (it has a different copy of the record/shared object) @done(22-06-07 21:55)
-    ✓ D12 is breaking for same reason! @done(22-06-07 21:55)
-    
-    ✓ ghosts does not work because guests[].length can't be used to determine join order any more. (can be fixed by putting a property on getMyShared()) @done(22-06-07 21:55)
+    □ lib developer doc: what is stored on the server?
+        □ this would be useful for library devs
+    □ lib user doc: brief what is stored on the server?
+        □ help users understand what the server tracks and remembers, how long
+        □ point out that the server doesn't track what shared objects exist per app/room
+        □ no registry of apps or rooms
 
 Code Review:
-    ✓ check what is public/private @done(22-08-04 12:44)
     
 
-Intermission: 
+Tests: 
     □ check test coverage
-    ✓ extensions: is "better comments" better than "highlight"? @done(24-01-29 14:51)
-        yes
-
+    
 Deploy:
-    ✓ add student credit to readme @done(22-06-08 12:42)
-    ✓ bump tsc version, remove ts suffix in code @done(22-06-08 12:42)
-    ✓ squash tsc to main @done(22-06-08 12:42)
-    ✓ push to github, verify netlify @done(22-06-08 12:42)
-    ✓ release @done(22-06-08 12:42)
-
+    □ update dependencies
 
 Examples:
-    ✓ move multifile examples to modules @done(22-08-04 14:46)
-    ✓ remove bad examples (tanks 1, drag 1) @done(22-08-04 14:46)
-    ✓ remove ! examples @done(22-06-07 13:05)
-    ✓  fix live server injecting into html displayed on example pages? @done(22-06-07 21:59)
-    ✓ e3_sign_up example puts input field at bottom of page @done(22-09-21 11:14)
-    ✓ callbacks example puts button at bottom of page @done(22-09-21 11:16)
-
+    □ review shared object initialization.
+        □ most should use init object in partyLoadShared
+        □ one should focus on setting up in setup if host
+        □ one should show persistent data
+        
 Clean up: 
-    ✓ remove .js files @done(22-06-06 23:37)
-    ✓ remove old dev deps @done(22-06-06 23:37)
-    ✓ update npm scripts now that js dev deps are gone @done(22-06-07 11:14)
-    ✓ clean up branches (merge + remove feature branches) @done(22-09-21 11:16)
 
+Inspector:
+    □ check if it is working correctly
+    
 Tooling: 
-    ✓ embed css into the javascript? @done(22-09-21 13:43)
-        https://github.com/evanw/esbuild/issues/2110
 
 Priority Features:
+    `what is the status of all this? is this really done? how do you use it? is it documented?`
     ✓ remote controls @done(22-09-23 12:42)
         ✓ reload others @done(22-09-23 12:42)
         ✓ disconnect others @done(22-09-23 12:42)

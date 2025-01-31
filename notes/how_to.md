@@ -1,22 +1,33 @@
-# How to run local dev
+# How to work on site + examples
 
-1. `npm run start` to build/watch/rebuild
-2. use VS Code / Live Server to open examples in browser
-   `.vscode/settings.json` is configured so that the
-   live server root is`public/`
+Use VS Code + the Live Server extension. Live Server is configured to use `public/` as the root in `.vscode/settings.json`.
 
-# How to run tests
+1. Install the Live Server extension
+1. Open the project in VS Code
+1. Click "Go Live" in the status bar.
+1. Navigate to `http://127.0.0.1:5500/` in your browser.
 
-1. `npm run serve` to start local version of the server (leave running)
-2. open another terminal window and...
-3. `npm run test` to run the test suite
-   -or-
-4. `npm run serve` to start local version of the server (leave running)
-5. run tests from VS Code interface with `Jest` extension
+# How to build the library
+
+- `npm run start` to build+watch+rebuild
+- `npm run build` to build once
+
+# How to run tests on CLI
+
+1. `npm run serve` to start local version of the backend server
+1. leave server running
+1. open another terminal window
+1. `npm run test` to run the test suite
+
+# How to run tests in VS Code
+
+1. `npm run serve` to start local version of the backend server
+1. leave server running
+1. run tests from VS Code interface with `Jest` extension
 
 # How To Release a new Version of p5.Party
 
-Releases are automated using `np`.
+Releases are semi-automated using `np`.
 
 1. Make sure the code is working.
 1. Make sure local ds server is running so tests can run.
@@ -24,7 +35,7 @@ Releases are automated using `np`.
 1. Make sure your commits are pushed.
 1. Make sure you are up to date with origin.
 1. Make sure you have your phone, for the one-time-password.
-1. Run `npm run release`.
+1. `npm run release` to start release
 1. Enter one-time password from Duo Mobile
 1. Browser should open github release page
 1. Enter name for release (or leave blank to use release number)
@@ -40,18 +51,19 @@ Create Feature Branch
 ```bash
 git branch feature-branch # create a new feature branch
 git checkout feature-branch # switch to the feature branch
-... commit changes ...
+# ... commit changes ...
 ```
 
 Merge with squash
 
 ```bash
+git checkout feature-branch # switch to the feature branch, if needed
 git rebase master # rebase your changes on top of master
 git checkout master # switch back to master
 
 
 git merge --squash feature-branch # merge your changes into master via a squash
-commit ALL the changes as one commit.
+                                  # commit ALL the changes as one commit.
 
 # git won't know your branch has been merged, so...
 git branch -d feature-branch
@@ -64,6 +76,7 @@ git push origin :feature-branch
 Merge without squash
 
 ```bash
+git checkout feature-branch
 git rebase master
 git checkout master
 git merge feature-branch

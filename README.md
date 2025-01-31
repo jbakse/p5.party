@@ -3,8 +3,11 @@
 ![p5.party logo](assets/p5_party_logo.png)
 
 <!-- ![Netlify](https://img.shields.io/netlify/8ab7413c-e95d-42b8-8988-5d930954a3f1) -->
+
 <!-- ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jbakse/p5.party) -->
+
 <!-- ![GitHub contributors](https://img.shields.io/github/contributors/jbakse/p5.party) -->
+
 <!-- ![GitHub all releases](https://img.shields.io/github/downloads/jbakse/p5.party/total) -->
 
 ![NPM](https://img.shields.io/npm/l/p5.party)

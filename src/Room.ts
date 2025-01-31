@@ -1,4 +1,5 @@
 import { DeepstreamClient } from "@deepstream/client";
+import { CONNECTION_STATE } from "@deepstream/client/dist/src/constants";
 import * as log from "./log";
 import { SubscriptionCallback } from "./validate";
 import { UserData, JSONValue, JSONObject } from "./validate";
@@ -63,7 +64,7 @@ export class Room {
   }
 
   _isConnected(): boolean {
-    return this.#ds.getConnectionState() === "OPEN";
+    return this.#ds.getConnectionState() === CONNECTION_STATE.OPEN;
   }
 
   get whenConnected(): Promise<void> {

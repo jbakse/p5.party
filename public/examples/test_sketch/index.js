@@ -14,7 +14,7 @@ function preload() {
 function setup() {
   createCanvas(400, 400);
   noStroke();
-  partyToggleInfo(true);
+  partyWatchShared(shared, "x", onSharedChange, true);
 }
 
 function mousePressed() {
@@ -29,4 +29,8 @@ function draw() {
 
   // read shared data
   ellipse(shared.x, shared.y, 100, 100);
+}
+
+function onSharedChange(x) {
+  console.log("shared data changed", x);
 }

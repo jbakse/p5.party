@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -68,7 +67,7 @@ function init() {
       // the p5 web editor doesn't support this.
       // The auto setting, which can be manually enabled from the info panel tells p5 party to automatically reload all other guests in the room when the "auto" guest is reloaded.
       // Reloading happens immediately after the auto guest connects, making the auto guest the host before setup() is called.
-
+      // todo: is this ^ still fully implemented?
       const auto = sessionStorage.getItem("auto") === "true";
       log.log("Auto:", auto);
       if (auto) {
@@ -255,11 +254,13 @@ function init() {
   ): void {
     if (!Record.recordForShared(shared)) {
       log.warn(
-        "partyWatchShared() doesn't recognize the provided shared object.",
+        "partyWatchShared() expected shared (argument 1) to be shared object.",
         shared
       );
       return;
     }
+
+    /* eslint-disable-next-line @typescript-eslint/no-unsafe-argument */
     Record.recordForShared(shared)?.watchShared(a, b, c);
   };
 
@@ -303,12 +304,10 @@ function init() {
       return;
     }
 
-    if (show === undefined) {
-      isInfoShown = !isInfoShown;
-    } else {
-      isInfoShown = show;
-    }
+    isInfoShown = show ?? !isInfoShown;
+
     if (isInfoShown) {
+      console.log("call createInfo");
       void createInfo(room);
     } else {
       destroyInfo();
