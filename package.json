@@ -27,7 +27,7 @@
     "url": "https://github.com/jbakse/deepstream_test.git"
   },
   "scripts": {
-    "start": "npm run esbuild -- --outfile=public/dist/p5.party.js --watch",
+    "start": "npm run esbuild -- --outfile=public/dist/p5.party.js --loader:.css=text --watch",
     "test": "jest --coverage",
     "release": "np",
     "serve": "PORT=${PORT:-6020} deepstream start",
@@ -37,7 +37,7 @@
     "!posttest": "istanbul-badges-readme",
     "prenetlify": "npm run genversion",
     "prebuild": "npm run genversion",
-    "build": "npm run esbuild -- --outfile=dist/p5.party.js",
+    "build": "npm run esbuild -- --outfile=dist/p5.party.js --loader:.css=text",
     "prerelease": "npm run build",
     "prepublishOnly": "npm run build",
     "postpublish": "curl https://purge.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js",

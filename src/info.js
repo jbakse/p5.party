@@ -1,5 +1,6 @@
-import { store, component } from "reefjs";
+import { signal, component } from "reefjs";
 import * as log from "./log";
+import infoCss from "./info.css";
 
 let infoDiv;
 let refreshId;
@@ -16,7 +17,7 @@ export async function createInfo(room) {
   document.body.append(infoDiv);
 
   // setup UI with reef
-  const data = store({
+  const data = signal({
     auto: sessionStorage.getItem("auto") === "true",
     ...room.info(),
   });
@@ -24,109 +25,28 @@ export async function createInfo(room) {
   function template() {
     const { /*auto,*/ appName, roomName, guestNames, isHost, isConnected } =
       data;
-    const style = `
-      <style>
-        .p5party_info {
-          position: fixed;
-          right: 0;
-          top: 0;
-          padding: 10px;
-
-          background: rgba(255,255,0,.1);
-          
-          font-family: 'Courier New', Courier, monospace;
-          font-size: 18px;
-        }
-
-        .p5party_info .error {
-          padding: 3px 6px;
-          
-          background: red;
-          color: white;
-        }
-
-        .p5party_info button {
-          display: block;
-          margin-top: 6px;
-          padding: 3px 6px;
-          
-          background: white;
-          color: black;
-          border: 1px solid black;
-          border-radius: 3px;
-          
-          cursor: pointer;
-
-          font-family: 'Courier New', Courier, monospace;
-          font-size: 14px;
-        }
-        .p5party_info button:hover {
-          background: #eee;
-        }
-        .p5party_info button:active {
-          background: #ddd;
-        }
-
-        .p5party_info .checkbox {
-          appearance: none;
-          margin: 0;
-          
-          width: 1em;
-          height: 1em;
-          
-          border: 1px solid black;
-          border-radius: 3px;
-          background: white;
-          
-          display: inline-grid;
-          place-content: center;
-        } 
-        .p5party_info .checkbox::before {
-          content: "";
-          width: 0.65em;
-          height: 0.65em;
-          
-          background: black;
-          border-radius: 2px;
-          
-          transform: scale(0);
-          transition: 120ms transform ease-in-out;
-        }
-        .p5party_info .checkbox:checked::before {
-          transform: scale(1);
-        }
-        
-        .p5party_info label {
-          margin: 0;
-          font-size: 14px;
-        }
-      </style>
-    `;
 
     if (isConnected) {
-      return (
-        style +
-        ` <div>${appName}</div>
-          <div>${roomName}</div>
-          <div>guests: ${guestNames.length}</div>
-          <div>${isHost ? "hosting" : ""}</div>
-          <button data-p5party="reload-others">reload others</button>
-          <button data-p5party="disconnect-others">disconnect others</button>
-          
-          `
-        // <div>
-        //   <input id="auto" class="checkbox" type="checkbox" data-p5party="auto" ${
-        //     auto ? "checked" : ""
-        //   }/>
-        //   <label for="auto">auto</label>
-        // </div>
-      );
+      return `
+        <style>${infoCss}</style>
+        <div>${appName}</div>
+        <div>${roomName}</div>
+        <div>guests: ${guestNames.length}</div>
+        <div>${isHost ? "hosting" : ""}</div>
+        <button data-p5party="reload-others">reload others</button>
+        <button data-p5party="disconnect-others">disconnect others</button>
+        `;
+      // <div>
+      //   <input id="auto" class="checkbox" type="checkbox" data-p5party="auto" ${
+      //     auto ? "checked" : ""
+      //   }/>
+      //   <label for="auto">auto</label>
+      // </div>
     } else {
-      return (
-        style +
-        ` <div class="error">disconnected</div>
-        `
-      );
+      return ` 
+        <style>${infoCss}</style>
+        <div class="error">disconnected</div>
+        `;
     }
   }
 
