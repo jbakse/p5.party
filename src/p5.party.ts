@@ -32,7 +32,7 @@ function init() {
 
   let room: Room | null = null;
 
-  // ! partyConnect (preload)
+  /// partyConnect (preload)
 
   p5.prototype.partyConnect = function (
     host: string,
@@ -45,12 +45,14 @@ function init() {
       return;
     }
     const load = async () => {
+      // connect room
       room = new Room(host, appName, roomName);
       await room.whenConnected;
       window.addEventListener("beforeunload", () => {
         room?.disconnect();
       });
 
+      // install ctrl-i inspector pane binding
       document.addEventListener(
         "keyup",
         (e) => {
@@ -61,77 +63,37 @@ function init() {
         false
       );
 
-      // Auto reloading
-      // When iterating, it is usually best to have all connected clients reload
-      // when the code changes. This can be set up on local dev easily, but
-      // the p5 web editor doesn't support this.
-      // The auto setting, which can be manually enabled from the info panel tells p5 party to automatically reload all other guests in the room when the "auto" guest is reloaded.
-      // Reloading happens immediately after the auto guest connects, making the auto guest the host before setup() is called.
-      // todo: is this ^ still fully implemented?
-      const auto = sessionStorage.getItem("auto") === "true";
-      log.log("Auto:", auto);
-      if (auto) {
-        log.log("Auto enabled. Reloading others...");
-        room.emit("p5PartyEvent", {
-          action: "disconnect-reload",
-          sender: room.info().guestName,
-        });
-        // await become host
-        while (!room.isHost()) {
-          log.log("Waiting...");
-          await new Promise((r) => setTimeout(r, 100));
-        }
-      }
+      // check for auto reload
+      await experimentalAutoReload();
 
+      // install p5PartyEvents
       room.subscribe("p5PartyEvent", (data: JSONObject) => {
-        async function handleAction() {
-          if (!room) return;
+        // function handleAction() {
+        if (!room) return;
 
-          // reload-others
-          if (
-            data.action === "reload-others" &&
-            data.sender != room.info().guestName
-          ) {
-            log.log("Recieved reload-others p5PartyEvent. Reloading...");
-            window.location.reload();
-          }
-
-          // disconnect-others
-          if (
-            data.action === "disconnect-others" &&
-            data.sender != room.info().guestName
-          ) {
-            log.log(
-              "Recieved disconnect-others p5PartyEvent. Disconnecting..."
-            );
-            room.disconnect();
-            void createInfo(room);
-          }
-
-          // disconnect-reload;
-          if (
-            data.action === "disconnect-reload" &&
-            data.sender != room.info().guestName
-          ) {
-            const auto = sessionStorage.getItem("auto") === "true";
-            if (auto) {
-              log.alert(
-                "Recieved disconnect-reload p5PartyEvent, but auto is set. Disabling auto..."
-              );
-              sessionStorage.setItem("auto", "false");
-            }
-            log.log(
-              "Recieved disconnect-reload p5PartyEvent. Disconnecting..."
-            );
-            room.disconnect();
-            await new Promise((r) => setTimeout(r, 500));
-            log.log("Reloading...");
-            window.location.reload();
-          }
+        // reload-others
+        if (
+          data.action === "reload-others" &&
+          data.sender != room.info().guestName
+        ) {
+          log.log("Recieved reload-others p5PartyEvent. Reloading...");
+          window.location.reload();
         }
-        void handleAction();
+
+        // disconnect-others
+        if (
+          data.action === "disconnect-others" &&
+          data.sender != room.info().guestName
+        ) {
+          log.log("Recieved disconnect-others p5PartyEvent. Disconnecting...");
+          room.disconnect();
+          void createInfo(room);
+        }
+        // }
+        // void handleAction();
       });
 
+      // finish up
       log.log("partyConnect done!");
       this._decrementPreload();
       cb?.();
@@ -140,7 +102,83 @@ function init() {
   };
   p5.prototype.registerPreloadMethod("partyConnect", p5.prototype);
 
-  // ! partyLoadShared (preload)
+  /// experimental auto reload
+  /**
+      EXPERIMENTAL FEATURE: Auto reloading When developing a sketch that uses
+      p5.party, it is usually best to have all connected clients reload when the
+      code changes. 
+
+      When working in VS Code with Live Server, saving the code auto reloads all
+      local browser tabs running the code, which is usually good enough. When
+      working with the p5 web editor saving the code will reload the sketch in
+      the same tab, but not in other tabs/windows.
+
+      This feature is intended to make working in the p5 web editor (or similar
+      environments) easier by reloaded all other connected clients when the
+      "primary" client reloads. 
+
+      To use this you would open the info panel (ctrl-i) and enable the "auto"
+      checkbox. When enabled, reloading the tab will send a message to all other
+      connected clients to reload.
+
+      Reloading happens immediately after the "auto" guest connects, making the
+      "auto" guest the host before it's setup() is called.
+      */
+
+  async function experimentalAutoReload() {
+    if (!room) return; //
+    // check if this tab has "auto" enabled
+    const auto = sessionStorage.getItem("auto") === "true";
+    log.log("Experimental Auto:", auto);
+
+    // if auto is enabled...
+    if (auto) {
+      // ...reload others and...
+      log.log("Auto enabled. Reloading others...");
+      room.emit("p5PartyEvent", {
+        action: "auto-reload-others",
+        sender: room.info().guestName,
+      });
+      // ...wait until this tab becomes the host...
+      while (!room.isHost()) {
+        log.log("Waiting...");
+        await new Promise((r) => setTimeout(r, 100));
+      }
+    }
+
+    // install the auto-reload-others event listener
+    room.subscribe("p5PartyEvent", async (data: JSONObject) => {
+      // async function handleAction() {
+      if (!room) return;
+
+      // when we get an auto-reload-others message...
+      if (
+        data.action === "auto-reload-others" &&
+        data.sender != room.info().guestName
+      ) {
+        // ... first remove the auto flag if it's set, otherwise this client
+        // will send a reload message back, forming an endless loop ...
+        const auto = sessionStorage.getItem("auto") === "true";
+        if (auto) {
+          log.alert(
+            "Recieved auto-reload-others p5PartyEvent, but auto is set. Disabling auto..."
+          );
+          sessionStorage.setItem("auto", "false");
+        }
+
+        // ... then disconnect and reload
+        log.log("Recieved auto-reload-others p5PartyEvent. Disconnecting...");
+        room.disconnect();
+        await new Promise((r) => setTimeout(r, 500));
+        log.log("Reloading...");
+        window.location.reload();
+      }
+      // }
+      // void handleAction();
+    });
+  }
+
+  /// partyLoadShared (preload)
 
   p5.prototype.registerPreloadMethod("partyLoadShared", p5.prototype);
   p5.prototype.partyLoadShared = function (
@@ -169,7 +207,7 @@ function init() {
     return record.shared;
   };
 
-  // ! partyLoadMyShared
+  /// partyLoadMyShared
 
   p5.prototype.registerPreloadMethod("partyLoadMyShared", p5.prototype);
   p5.prototype.partyLoadMyShared = function (
@@ -197,7 +235,7 @@ function init() {
     return record.shared;
   };
 
-  // ! partyLoadGuestShareds
+  /// partyLoadGuestShareds
 
   p5.prototype.partyLoadGuestShareds = function () {
     if (room === null) {
@@ -218,7 +256,7 @@ function init() {
     return room.guestShareds;
   };
 
-  // ! partyIsHost
+  /// partyIsHost
 
   p5.prototype.partyIsHost = function (): boolean {
     if (room === null) {
@@ -228,7 +266,7 @@ function init() {
     return room.isHost();
   };
 
-  // ! partySetShared
+  /// partySetShared
 
   p5.prototype.partySetShared = function (
     shared: JSONObject,
@@ -244,7 +282,7 @@ function init() {
     Record.recordForShared(shared)?.setData(object);
   };
 
-  // ! partyWatchShared
+  /// partyWatchShared
 
   p5.prototype.partyWatchShared = function (
     shared: JSONObject,
@@ -264,7 +302,7 @@ function init() {
     Record.recordForShared(shared)?.watchShared(a, b, c);
   };
 
-  // ! partySubscribe
+  /// partySubscribe
   p5.prototype.partySubscribe = function (
     event: string,
     cb: SubscriptionCallback
@@ -276,7 +314,7 @@ function init() {
     room.subscribe(event, cb);
   };
 
-  // ! partyUnsubscribe
+  /// partyUnsubscribe
   p5.prototype.partyUnsubscribe = function (
     event: string,
     cb?: SubscriptionCallback
@@ -288,7 +326,7 @@ function init() {
     room.unsubscribe(event, cb);
   };
 
-  // ! partyEmit
+  /// partyEmit
   p5.prototype.partyEmit = function (event: string, data?: UserData): void {
     if (room === null) {
       log.error("partyEmit() called before partyConnect()");

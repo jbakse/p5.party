@@ -25,30 +25,11 @@ Clean up:
 
 Inspector:
     □ check if it is working correctly
+    □ https://p5party.org/examples/hello_party/ (inspector css not right, inspector is at bottom of page)
     
 Tooling: 
 
 Priority Features:
-    `what is the status of all this? is this really done? how do you use it? is it documented?`
-    ✓ remote controls @done(22-09-23 12:42)
-        ✓ reload others @done(22-09-23 12:42)
-        ✓ disconnect others @done(22-09-23 12:42)
-        ✓ auto @done(22-09-23 12:42)
-            - auto sets a session flag
-            ✓ if session flag is set and browser is reloaded @done(22-09-23 12:42)
-                - other clients should disconnect
-                - this client should connect, become host
-                - other clients should reload
-                its probably okay if the order is
-                - this client connects
-                - other clients disconnect, so this one becomes host
-                - this one has setup()
-                - other clients reload
-            ✓ move all this remote control stuff into p5.party, out of core @done(22-09-23 12:41)
-            □ code clean up
-            ✓ CSS for checkbox @done(22-09-23 12:41)
-
-    
 
 
 Possible Features:

@@ -23,8 +23,9 @@ export async function createInfo(room) {
   });
 
   function template() {
-    const { /*auto,*/ appName, roomName, guestNames, isHost, isConnected } =
-      data;
+    // experimental auto reload
+    const { auto } = data;
+    const { appName, roomName, guestNames, isHost, isConnected } = data;
 
     if (isConnected) {
       return `
@@ -35,13 +36,17 @@ export async function createInfo(room) {
         <div>${isHost ? "hosting" : ""}</div>
         <button data-p5party="reload-others">reload others</button>
         <button data-p5party="disconnect-others">disconnect others</button>
+      
+        <!-- experimental auto reload -->
+        <br/>
+        Experimental:
+        <div>
+          <input id="auto" class="checkbox" type="checkbox" data-p5party="auto" ${
+            auto ? "checked" : ""
+          }/>
+          <label for="auto">auto reload</label>
+        </div>
         `;
-      // <div>
-      //   <input id="auto" class="checkbox" type="checkbox" data-p5party="auto" ${
-      //     auto ? "checked" : ""
-      //   }/>
-      //   <label for="auto">auto</label>
-      // </div>
     } else {
       return ` 
         <style>${infoCss}</style>
@@ -70,6 +75,8 @@ export async function createInfo(room) {
         sender: room.info().guestName,
       });
     }
+
+    // experimental auto reload
     if (action === "auto") {
       log.log("auto", event.target.checked);
       sessionStorage.setItem("auto", String(event.target.checked));

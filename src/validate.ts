@@ -8,12 +8,16 @@ import {
   RecordData,
 } from "@deepstream/client/dist/src/constants";
 
-import { SubscriptionCallback } from "@deepstream/client/dist/src/record/record";
+import { SubscriptionCallback as OriginalSubscriptionCallback } from "@deepstream/client/dist/src/record/record";
 
 import * as log from "./log";
 
-export { JSONValue, JSONObject, RecordData, SubscriptionCallback };
+export { JSONValue, JSONObject, RecordData };
 export type UserData = unknown;
+
+export type SubscriptionCallback =
+  | OriginalSubscriptionCallback
+  | ((...args: Parameters<OriginalSubscriptionCallback>) => Promise<void>);
 
 /**
  * checks if `value` is JSONValue (JSON serializable)
