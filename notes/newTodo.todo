@@ -5,6 +5,9 @@ Docs:
         □ help users understand what the server tracks and remembers, how long
         □ point out that the server doesn't track what shared objects exist per app/room
         □ no registry of apps or rooms
+    □ what version of p5.party do the examples use? latest release? lastest pre-release?
+        the examples on p5party.org (live and in dev) use the latest pre-release build
+
 
 Code Review:
     
@@ -20,7 +23,7 @@ Examples:
         □ most should use init object in partyLoadShared
         □ one should focus on setting up in setup if host
         □ one should show persistent data
-        
+    □ hello_cdn should update to newer version of p5.party
 Clean up: 
 
 Inspector:
@@ -30,6 +33,9 @@ Inspector:
 Tooling: 
 
 Priority Features:
+
+Auto-Reload:
+    doesn't work on p5 web editor, the reload does happen in the sketch frame, but it doesn't get the latest code. 
 
 
 Possible Features:

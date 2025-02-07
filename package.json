@@ -27,7 +27,7 @@
     "url": "https://github.com/jbakse/deepstream_test.git"
   },
   "scripts": {
-    "start": "npm run esbuild -- --outfile=public/dist/p5.party.js --loader:.css=text --watch",
+    "start": "npm run esbuild -- --watch --outfile=public/dist/p5.party.js ",
     "test": "jest --coverage",
     "release": "np",
     "serve": "PORT=${PORT:-6020} deepstream start",
@@ -42,7 +42,7 @@
     "prepublishOnly": "npm run build",
     "postpublish": "curl https://purge.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js",
     "genversion": "genversion --es6 --semi version.js",
-    "esbuild": "esbuild src/p5.party.ts --bundle --sourcemap --minify --target=es6 --define:global=window --inject:esbuild.inject.js"
+    "esbuild": "esbuild src/p5.party.ts --bundle --sourcemap --minify --target=es6 --define:global=window --inject:esbuild.inject.js --loader:.css=text"
   },
   "dependencies": {
     "@deepstream/client": "^5.2.6",

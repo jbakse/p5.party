@@ -46,6 +46,8 @@ export async function createInfo(room) {
           }/>
           <label for="auto">auto reload</label>
         </div>
+
+        <a href="https://www.notion.so/justinbakse/The-Info-Panel-193b1bb21cec80aaafd8f341f044b3fc">?</a>
         `;
     } else {
       return ` 
