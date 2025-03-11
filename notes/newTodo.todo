@@ -27,8 +27,8 @@ Examples:
 Clean up: 
 
 Inspector:
-    □ check if it is working correctly
-    □ https://p5party.org/examples/hello_party/ (inspector css not right, inspector is at bottom of page)
+    ✓ check if it is working correctly
+    ✓ https://p5party.org/examples/hello_party/ (inspector css not right, inspector is at bottom of page)
     
 Tooling: 
 
