@@ -354,7 +354,6 @@ function init() {
     isInfoShown = show ?? !isInfoShown;
 
     if (isInfoShown) {
-      console.log("call createInfo");
       void createInfo(room);
     } else {
       destroyInfo();
