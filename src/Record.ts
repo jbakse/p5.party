@@ -184,6 +184,31 @@ export class Record {
       );
       return;
     }
+    //! experimental
+    // function get(obj: JSONValue, path: string) {
+    //   return path.split(".").reduce((current, key) => {
+    //     return current && current[key];
+    //   }, obj);
+    // }
+
+    // function propertyIsEnumerable(obj: JSONValue, path: string) {
+    //   const keys = path.split(".");
+    //   const lastKey = keys.pop();
+    //   const parent = keys.reduce((current, key) => {
+    //     return current && current[key];
+    //   }, obj);
+    //   // return parent && parent.hasOwnProperty(lastKey);
+
+    //   return (
+    //     parent && Object.prototype.propertyIsEnumerable.call(parent, lastKey)
+    //   );
+    // }
+
+    // if (!propertyIsEnumerable(this.#shared, path)) {
+    //   return; // don't sync non-enumerable properties
+    // }
+    //! /experimental
+
     // todo: warn and allow non-owner writes
 
     // `as JSONValue` because newValue validated in onClientValidateData
