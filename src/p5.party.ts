@@ -34,6 +34,7 @@ function init() {
 
   /// partyConnect (preload)
 
+  p5.prototype.registerPreloadMethod("partyConnect", p5.prototype);
   p5.prototype.partyConnect = function (
     host: string,
     appName: string,
@@ -100,7 +101,6 @@ function init() {
     };
     void load();
   };
-  p5.prototype.registerPreloadMethod("partyConnect", p5.prototype);
 
   /// experimental auto reload
   /**
@@ -124,6 +124,15 @@ function init() {
       Reloading happens immediately after the "auto" guest connects, making the
       "auto" guest the host before it's setup() is called.
       */
+
+  p5.prototype.registerMethod("partyDisconnect", p5.prototype);
+  p5.prototype.partyDisconnect = function () {
+    if (room === null) {
+      log.error("partyDisconnect() called before partyConnect()");
+      return;
+    }
+    room.disconnect();
+  };
 
   async function experimentalAutoReload() {
     if (!room) return; //
