@@ -27,7 +27,7 @@ export function patchInPlace(
   const oldKeys = Object.keys(oldObject).reverse();
   const newKeys = Object.keys(newObject);
 
-  // remove oldObject keys that are not in nnewObjectew
+  // remove oldObject keys that are not in newObject
   for (const key of oldKeys) {
     if (!Object.prototype.hasOwnProperty.call(newObject, key)) {
       // log.debug(`remove ${_keyPath}.${key}`);
