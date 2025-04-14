@@ -55,7 +55,7 @@
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
     "buffer": "^6.0.3",
-    "esbuild": "^0.20.2",
+    "esbuild": "^0.25.0",
     "eslint": "^8.16.0",
     "eslint-config-p5js": "^1.1.0",
     "genversion": "^3.0.2",
