@@ -4,19 +4,11 @@
   "author": "Justin Bakse",
   "license": "MIT",
   "description": "Pre-release! An easy to use library for simple multi-user sketches with p5.js.",
-  "keywords": [
-    "p5",
-    "multiuser",
-    "multiplayer",
-    "library"
-  ],
+  "keywords": ["p5", "multiuser", "multiplayer", "library"],
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "src",
-    "dist"
-  ],
+  "files": ["src", "dist"],
   "main": "dist/p5.party.js",
   "types": "dist/p5.party.d.ts",
   "engines": {
@@ -24,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jbakse/deepstream_test.git"
+    "url": "https://github.com/jbakse/p5.party.git"
   },
   "scripts": {
     "start": "npm run esbuild -- --watch --outfile=public/dist/p5.party.js ",
