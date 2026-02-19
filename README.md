@@ -43,7 +43,7 @@ p5.party is a library for easily prototyping online multi-user sketches with p5.
 
 **Prototyping + Sketching**
 
-[p5.party](http://p5.party) provides a simple, imperative interface for working with shared data inspired by the programming conventions used by the [p5.js](https://p5js.org/) api. p5.party let's you try ideas quickly without writing server code or setting up a front-end/back-end stack.
+[p5.party](https://p5party.org/) provides a simple, imperative interface for working with shared data inspired by the programming conventions used by the [p5.js](https://p5js.org/) api. p5.party let's you try ideas quickly without writing server code or setting up a front-end/back-end stack.
 
 **Workshops + Classes**
 
