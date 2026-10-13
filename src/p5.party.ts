@@ -19,13 +19,48 @@ if (typeof window !== "undefined") {
     Record,
   };
 
-  const p5 = (window as any).p5;
-  p5 ? init() : log.warn("p5.js not found.");
+  const p5Constructor = (window as any).p5;
+  if (!p5Constructor) {
+    log.warn("p5.js not found.");
+  } else if (typeof p5Constructor.registerAddon === "function") {
+    p5Constructor.registerAddon(
+      (registeredP5: any, fn: any) => init(registeredP5, fn)
+    );
+  } else {
+    init(p5Constructor, p5Constructor.prototype);
+  }
 }
 
-function init() {
-  const version_string = p5.prototype.VERSION
-    ? `p5.js v${p5.prototype.VERSION}`
+function supportsPreload(instance: any): boolean {
+  return (
+    typeof instance._incrementPreload === "function" &&
+    typeof instance._decrementPreload === "function"
+  );
+}
+
+function withPreload<T>(
+  instance: any,
+  operation: Promise<T>,
+  legacyResult: T | undefined,
+  methodName: string
+): T | undefined | Promise<T> {
+  if (!supportsPreload(instance)) return operation;
+
+  instance._incrementPreload();
+  void operation.then(
+    () => instance._decrementPreload(),
+    (error: unknown) => {
+      instance._decrementPreload();
+      log.error(`${methodName} failed`, error);
+    }
+  );
+  return legacyResult;
+}
+
+function init(p5Constructor: any, fn: any) {
+  const p5Version = p5Constructor.VERSION ?? p5Constructor.prototype.VERSION;
+  const version_string = p5Version
+    ? `p5.js v${p5Version}`
     : "p5.js is older than 1.3.1";
   log.styled("font-weight: bold", version_string);
   log.styled("font-weight: bold", `p5.party v${version}`);
@@ -34,8 +69,7 @@ function init() {
 
   /// partyConnect (preload)
 
-  p5.prototype.registerPreloadMethod("partyConnect", p5.prototype);
-  p5.prototype.partyConnect = function (
+  fn.partyConnect = function (
     host: string,
     appName: string,
     roomName = "_main",
@@ -58,7 +92,7 @@ function init() {
         "keyup",
         (e) => {
           if (e.ctrlKey && e.key === "i") {
-            p5.prototype.partyToggleInfo();
+            fn.partyToggleInfo();
           }
         },
         false
@@ -93,13 +127,11 @@ function init() {
         // }
         // void handleAction();
       });
-
       // finish up
       log.log("partyConnect done!");
-      this._decrementPreload();
       cb?.();
     };
-    void load();
+    return withPreload(this, load(), undefined, "partyConnect()");
   };
 
   /// experimental auto reload
@@ -125,8 +157,7 @@ function init() {
       "auto" guest the host before it's setup() is called.
       */
 
-  p5.prototype.registerMethod("partyDisconnect", p5.prototype);
-  p5.prototype.partyDisconnect = function () {
+  fn.partyDisconnect = function () {
     if (room === null) {
       log.error("partyDisconnect() called before partyConnect()");
       return;
@@ -186,15 +217,13 @@ function init() {
       // void handleAction();
     });
   }
-
   /// partyLoadShared (preload)
 
-  p5.prototype.registerPreloadMethod("partyLoadShared", p5.prototype);
-  p5.prototype.partyLoadShared = function (
+  fn.partyLoadShared = function (
     name: string,
     initObject?: UserData,
     cb?: (shared: JSONObject) => void
-  ): JSONObject | undefined {
+  ): JSONObject | undefined | Promise<JSONObject> {
     if (room === null) {
       log.error("partyLoadShared() called before partyConnect()");
       return undefined;
@@ -208,21 +237,18 @@ function init() {
       await record.load(initObject, overwrite);
       log.log(`partyLoadShared "${name}" done!`);
       cb?.(record.shared);
-      this._decrementPreload();
+      return record.shared;
     };
 
-    void load();
-
-    return record.shared;
+    return withPreload(this, load(), record.shared, "partyLoadShared()");
   };
 
   /// partyLoadMyShared
 
-  p5.prototype.registerPreloadMethod("partyLoadMyShared", p5.prototype);
-  p5.prototype.partyLoadMyShared = function (
+  fn.partyLoadMyShared = function (
     initObject = {},
     cb?: (shared: JSONObject) => void
-  ) {
+  ): JSONObject | undefined | Promise<JSONObject> {
     if (room === null) {
       log.error("partyLoadMyShared() called before partyConnect()");
       return undefined;
@@ -236,17 +262,20 @@ function init() {
       await record.initData(initObject);
       log.log(`partyLoadMyShared done!`);
       cb?.(record.shared);
-      this._decrementPreload();
+      return record.shared;
     };
 
-    void load();
-
-    return record.shared;
+    return withPreload(
+      this,
+      load(),
+      record.shared,
+      "partyLoadMyShared()"
+    );
   };
 
   /// partyLoadGuestShareds
 
-  p5.prototype.partyLoadGuestShareds = function () {
+  fn.partyLoadGuestShareds = function () {
     if (room === null) {
       log.error("partyLoadGuestShareds() called before partyConnect()");
       return undefined;
@@ -254,7 +283,7 @@ function init() {
     return room.guestShareds;
   };
 
-  p5.prototype.partyLoadParticipantShareds = function () {
+  fn.partyLoadParticipantShareds = function () {
     log.warn(
       "partyLoadParticipantShareds is deprecated. Use partyLoadGuestShareds instead."
     );
@@ -267,7 +296,7 @@ function init() {
 
   /// partyIsHost
 
-  p5.prototype.partyIsHost = function (): boolean {
+  fn.partyIsHost = function (): boolean {
     if (room === null) {
       log.error("partyIsHost() called before partyConnect()");
       return false;
@@ -277,7 +306,7 @@ function init() {
 
   /// partySetShared
 
-  p5.prototype.partySetShared = function (
+  fn.partySetShared = function (
     shared: JSONObject,
     object: JSONObject
   ): void {
@@ -293,7 +322,7 @@ function init() {
 
   /// partyWatchShared
 
-  p5.prototype.partyWatchShared = function (
+  fn.partyWatchShared = function (
     shared: JSONObject,
     a: any,
     b: any,
@@ -312,7 +341,7 @@ function init() {
   };
 
   /// partySubscribe
-  p5.prototype.partySubscribe = function (
+  fn.partySubscribe = function (
     event: string,
     cb: SubscriptionCallback
   ): void {
@@ -324,7 +353,7 @@ function init() {
   };
 
   /// partyUnsubscribe
-  p5.prototype.partyUnsubscribe = function (
+  fn.partyUnsubscribe = function (
     event: string,
     cb?: SubscriptionCallback
   ): void {
@@ -336,7 +365,7 @@ function init() {
   };
 
   /// partyEmit
-  p5.prototype.partyEmit = function (event: string, data?: UserData): void {
+  fn.partyEmit = function (event: string, data?: UserData): void {
     if (room === null) {
       log.error("partyEmit() called before partyConnect()");
       return;
@@ -345,7 +374,7 @@ function init() {
   };
 
   let isInfoShown = false;
-  p5.prototype.partyToggleInfo = function (show?: boolean) {
+  fn.partyToggleInfo = function (show?: boolean) {
     if (room === null) {
       log.error("partyToggleInfo() called before partyConnect()");
       return;
@@ -359,4 +388,5 @@ function init() {
       destroyInfo();
     }
   };
+
 }
