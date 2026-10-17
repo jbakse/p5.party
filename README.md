@@ -86,22 +86,18 @@ p5.party automatically designates one (and only one) guest in each room as the h
 <img src="assets/hello_p5party_opt.gif" align="right"/>
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/p5@latest/lib/p5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/p5@2/lib/p5.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js"></script>
 ```
 
 ```javascript
 let shared;
 
-function preload() {
-  // connect to server
-  partyConnect("...", "hello_party");
+async function setup() {
+  // Connect and load shared data before continuing setup.
+  await partyConnect("...", "hello_party");
+  shared = await partyLoadShared("shared");
 
-  // load a shared data object
-  shared = partyLoadShared("shared");
-}
-
-function setup() {
   createCanvas(400, 400);
   noStroke();
   fill("red");
@@ -125,6 +121,17 @@ function draw() {
 ```
 
 \*using the newish [ES2020 ??= Operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_nullish_assignment)
+
+This version of the example uses p5.js 2, where `partyConnect()`, `partyLoadShared()`, and `partyLoadMyShared()` return Promises. With p5.js 1, keep using `preload()` as before:
+
+```javascript
+function preload() {
+  partyConnect("...", "hello_party");
+  shared = partyLoadShared("shared");
+}
+```
+
+p5.party detects the p5.js version at runtime, retaining preload synchronization and immediate shared-object returns in p5.js 1 while returning Promises in p5.js 2.
 
 ## Installation and Quickstart
 
