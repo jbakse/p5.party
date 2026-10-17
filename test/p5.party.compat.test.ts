@@ -1,5 +1,5 @@
 describe("p5.js compatibility", () => {
-  function loadP5Party(isV2: boolean) {
+  function loadP5Party(isV2: boolean, withP5 = true) {
     jest.resetModules();
 
     const state: { rooms: any[]; shared: Record<string, unknown> } = {
@@ -63,7 +63,7 @@ describe("p5.js compatibility", () => {
       };
     }
 
-    (window as any).p5 = p5Constructor;
+    if (withP5) (window as any).p5 = p5Constructor;
     jest.isolateModules(() => {
       require("../src/p5.party");
     });
@@ -148,5 +148,42 @@ describe("p5.js compatibility", () => {
       "partyLoadShared",
       "partyLoadMyShared",
     ]);
+  });
+
+  it("publishes the p5party namespace without p5.js", async () => {
+    const { state } = loadP5Party(false, false);
+    const p5party = (window as any).p5party;
+
+    expect(typeof p5party.Room).toBe("function");
+    await expect(p5party.connect("ws://host", "app")).resolves.toBeUndefined();
+    await expect(p5party.loadShared("shared")).resolves.toBe(state.shared);
+    await expect(p5party.loadMyShared()).resolves.toBe(
+      state.rooms[0].myGuestRecord.shared
+    );
+    expect(p5party.isHost()).toBe(true);
+  });
+
+  it("rejects p5party loads before connecting", async () => {
+    loadP5Party(false, false);
+    const p5party = (window as any).p5party;
+
+    await expect(p5party.loadShared("shared")).rejects.toThrow(
+      "called before p5party.connect()"
+    );
+  });
+
+  it("publishes the p5party namespace alongside p5.js", () => {
+    const { p5Constructor } = loadP5Party(true);
+    expect(typeof (window as any).p5party.connect).toBe("function");
+    expect(typeof p5Constructor.prototype.partyConnect).toBe("function");
+  });
+
+  it("shares one connection between p5 and p5party", async () => {
+    const { p5Constructor, state } = loadP5Party(true);
+    const instance = Object.create(p5Constructor.prototype);
+
+    await instance.partyConnect("ws://host", "app");
+    await (window as any).p5party.connect("ws://host", "app");
+    expect(state.rooms.length).toBe(1);
   });
 });
