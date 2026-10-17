@@ -20,4 +20,7 @@ coverage
 # production files are often too big for github
 production
 
+# local ai planning docs
+ai_plans
+
 .git
