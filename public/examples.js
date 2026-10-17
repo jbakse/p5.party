@@ -36,7 +36,9 @@ export function showJS() {
     .then((r) => r.text())
     .then((t) => {
       const div = document.getElementById("source-javascript");
-      div.innerHTML = `<pre><code class="lang-javascript">${t}</code></pre>`;
+      div.innerHTML = `<pre><code class="lang-javascript">${escapeHtml(
+        t
+      )}</code></pre>`;
       // hljs.initHighlighting();
     })
     .catch((e) => {});
