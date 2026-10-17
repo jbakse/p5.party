@@ -4,11 +4,19 @@
   "author": "Justin Bakse",
   "license": "MIT",
   "description": "Pre-release! An easy to use library for simple multi-user sketches with p5.js.",
-  "keywords": ["p5", "multiuser", "multiplayer", "library"],
+  "keywords": [
+    "p5",
+    "multiuser",
+    "multiplayer",
+    "library"
+  ],
   "publishConfig": {
     "access": "public"
   },
-  "files": ["src", "dist"],
+  "files": [
+    "src",
+    "dist"
+  ],
   "main": "dist/p5.party.js",
   "types": "dist/p5.party.d.ts",
   "engines": {
@@ -48,7 +56,7 @@
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
     "buffer": "^6.0.3",
-    "esbuild": "^0.20.2",
+    "esbuild": "^0.28.2",
     "eslint": "^8.16.0",
     "eslint-config-p5js": "^1.1.0",
     "genversion": "^3.0.2",

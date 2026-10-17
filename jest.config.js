@@ -7,6 +7,8 @@ const config = {
 
   transformIgnorePatterns: ["/node_modules/(?!(on-change)/)"],
 
+  setupFiles: ["<rootDir>/test/setup.ts"],
+
   testRegex: "((\\.|/*.)(test))\\.[jt]sx?$",
 };
 module.exports = config;
