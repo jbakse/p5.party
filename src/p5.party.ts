@@ -23,8 +23,8 @@ if (typeof window !== "undefined") {
   if (!p5Constructor) {
     log.warn("p5.js not found.");
   } else if (typeof p5Constructor.registerAddon === "function") {
-    p5Constructor.registerAddon(
-      (registeredP5: any, fn: any) => init(registeredP5, fn)
+    p5Constructor.registerAddon((registeredP5: any, fn: any) =>
+      init(registeredP5, fn)
     );
   } else {
     init(p5Constructor, p5Constructor.prototype);
@@ -46,7 +46,10 @@ function withPreload<T>(
 ): T | undefined | Promise<T> {
   if (!supportsPreload(instance)) return operation;
 
-  instance._incrementPreload();
+  // p5.js 1 increments the preload count for us, but only when the method is
+  // called from preload() (see registerPreloadMethod in init). Incrementing
+  // here would let older p5.js 1.x versions re-run setup() when these methods
+  // are called after preload.
   void operation.then(
     () => instance._decrementPreload(),
     (error: unknown) => {
@@ -66,6 +69,13 @@ function init(p5Constructor: any, fn: any) {
   log.styled("font-weight: bold", `p5.party v${version}`);
 
   let room: Room | null = null;
+
+  // p5.js 1: have p5 track these as preload methods
+  if (typeof fn.registerPreloadMethod === "function") {
+    fn.registerPreloadMethod("partyConnect", fn);
+    fn.registerPreloadMethod("partyLoadShared", fn);
+    fn.registerPreloadMethod("partyLoadMyShared", fn);
+  }
 
   /// partyConnect (preload)
 
@@ -265,12 +275,7 @@ function init(p5Constructor: any, fn: any) {
       return record.shared;
     };
 
-    return withPreload(
-      this,
-      load(),
-      record.shared,
-      "partyLoadMyShared()"
-    );
+    return withPreload(this, load(), record.shared, "partyLoadMyShared()");
   };
 
   /// partyLoadGuestShareds
@@ -306,10 +311,7 @@ function init(p5Constructor: any, fn: any) {
 
   /// partySetShared
 
-  fn.partySetShared = function (
-    shared: JSONObject,
-    object: JSONObject
-  ): void {
+  fn.partySetShared = function (shared: JSONObject, object: JSONObject): void {
     if (!Record.recordForShared(shared)) {
       log.warn(
         "partySetShared() doesn't recognize the provided shared object.",
@@ -341,10 +343,7 @@ function init(p5Constructor: any, fn: any) {
   };
 
   /// partySubscribe
-  fn.partySubscribe = function (
-    event: string,
-    cb: SubscriptionCallback
-  ): void {
+  fn.partySubscribe = function (event: string, cb: SubscriptionCallback): void {
     if (room === null) {
       log.error("partySubscribe() called before partyConnect()");
       return;
@@ -388,5 +387,4 @@ function init(p5Constructor: any, fn: any) {
       destroyInfo();
     }
   };
-
 }

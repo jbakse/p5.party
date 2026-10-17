@@ -53,6 +53,10 @@ describe("p5.js compatibility", () => {
     p5Constructor.VERSION = isV2 ? "2.0.0" : undefined;
     p5Constructor.prototype.VERSION = isV2 ? undefined : "1.11.3";
 
+    if (!isV2) {
+      p5Constructor.prototype.registerPreloadMethod = jest.fn();
+    }
+
     if (isV2) {
       p5Constructor.registerAddon = (addon: Function) => {
         addon(p5Constructor, p5Constructor.prototype);
@@ -80,8 +84,12 @@ describe("p5.js compatibility", () => {
     const { p5Constructor, state } = loadP5Party(true);
     const instance = Object.create(p5Constructor.prototype);
 
-    await expect(instance.partyConnect("ws://host", "app")).resolves.toBeUndefined();
-    await expect(instance.partyLoadShared("shared")).resolves.toBe(state.shared);
+    await expect(
+      instance.partyConnect("ws://host", "app")
+    ).resolves.toBeUndefined();
+    await expect(instance.partyLoadShared("shared")).resolves.toBe(
+      state.shared
+    );
     await expect(instance.partyLoadMyShared()).resolves.toBe(
       state.rooms[0].myGuestRecord.shared
     );
@@ -100,17 +108,15 @@ describe("p5.js compatibility", () => {
     expect(instance.partyConnect("ws://host", "app", "_main", connected)).toBe(
       undefined
     );
-    expect(instance._incrementPreload).toHaveBeenCalledTimes(1);
     await connectedPromise;
 
     let loaded!: () => void;
     const loadedPromise = new Promise<void>((resolve) => {
       loaded = resolve;
     });
-    expect(
-      instance.partyLoadShared("shared", undefined, () => loaded())
-    ).toBe(state.shared);
-    expect(instance._incrementPreload).toHaveBeenCalledTimes(2);
+    expect(instance.partyLoadShared("shared", undefined, () => loaded())).toBe(
+      state.shared
+    );
     await loadedPromise;
     await Promise.resolve();
 
@@ -126,7 +132,21 @@ describe("p5.js compatibility", () => {
     await Promise.resolve();
     await Promise.resolve();
 
-    expect(instance._incrementPreload).toHaveBeenCalledTimes(3);
+    // p5.js 1 increments the preload count itself (only during preload), so
+    // p5.party should only decrement
+    expect(instance._incrementPreload).not.toHaveBeenCalled();
     expect(instance._decrementPreload).toHaveBeenCalledTimes(3);
+  });
+
+  it("registers preload methods with p5.js 1", () => {
+    const { p5Constructor } = loadP5Party(false);
+    const registered = (
+      p5Constructor.prototype.registerPreloadMethod as jest.Mock
+    ).mock.calls.map((call: unknown[]) => call[0]);
+    expect(registered).toEqual([
+      "partyConnect",
+      "partyLoadShared",
+      "partyLoadMyShared",
+    ]);
   });
 });
