@@ -161,15 +161,32 @@ function mousePressed() {
   pos.y = mouseY;
 }</code></pre>
 
-      <p>
-        Using p5.js 2? See <a href="examples/hello_party_v2">hello_party_v2</a>.
-        Not using p5.js? p5.party works with plain JavaScript too. See
-        <a href="examples/hello_party_vanilla">hello_party_vanilla</a>.
-      </p>
     </section>
 
     <link rel="stylesheet" href="./highlight-cover.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
+    <section class="block columns">
+      <div class="column feature">
+        <h2>Using p5.js 2?</h2>
+        <p>
+          p5.js 2 doesn't have <code>preload()</code>. Make
+          <code>setup()</code> async and <code>await</code>
+          <code>partyConnect()</code> and <code>partyLoadShared()</code>.
+          See <a href="examples/hello_party_v2">hello_party_v2</a>.
+        </p>
+      </div>
+
+      <div class="column feature">
+        <h2>Not using p5.js?</h2>
+        <p>
+          p5.party works with plain JavaScript too. Use
+          <code>p5party.connect()</code>, <code>p5party.loadShared()</code>,
+          and friends. See
+          <a href="examples/hello_party_vanilla">hello_party_vanilla</a>.
+        </p>
+      </div>
+    </section>
 
     <section class="block columns">
       <div class="column feature">
