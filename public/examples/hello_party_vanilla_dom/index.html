@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head> </head>
+  <body>
+    <style>
+      #stage {
+        position: relative;
+        width: 400px;
+        height: 400px;
+        background: #ffcccc;
+        overflow: hidden;
+        user-select: none;
+      }
+      #dot {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        margin: -50px 0 0 -50px;
+        border-radius: 50%;
+        background: #000066;
+        pointer-events: none;
+        transition:
+          left 0.2s,
+          top 0.2s;
+      }
+    </style>
+    <main>
+      <div id="stage">
+        <div id="dot"></div>
+      </div>
+    </main>
+
+    <div id="readme"></div>
+
+    <h2>index.js</h2>
+    <div id="source-javascript"></div>
+
+    <h2>index.html</h2>
+    <div id="source-html"></div>
+
+    <script src="/dist/p5.party.js"></script>
+    <script src="index.js" type="module"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
+    <link rel="stylesheet" href="/examples.css" />
+    <script src="/examples.js" type="module"></script>
+  </body>
+</html>
