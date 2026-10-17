@@ -19,7 +19,10 @@ module.exports = {
         project: ["./tsconfig.json"], // Specify it only for TypeScript files
       },
       rules: {
-        "ts-expect-error": "allow-with-description",
+        "@typescript-eslint/ban-ts-comment": [
+          "error",
+          { "ts-expect-error": "allow-with-description" },
+        ],
         "@typescript-eslint/non-nullable-type-assertion-style": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-unused-vars": ["error", { args: "none" }],
