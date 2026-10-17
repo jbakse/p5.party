@@ -21,6 +21,7 @@
   "scripts": {
     "start": "npm run esbuild -- --watch --outfile=public/dist/p5.party.js ",
     "test": "jest --coverage",
+    "test:unit": "jest --coverage=false --testPathIgnorePatterns Record.test Room.test",
     "release": "np",
     "serve": "PORT=${PORT:-6020} deepstream start",
     "netlify": "npm run esbuild -- --outfile=public/dist/p5.party.js",
