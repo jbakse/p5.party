@@ -193,7 +193,9 @@ See the [hello_party_v2](https://p5party.org/examples/hello_party_v2/), [hello_p
 
 The quickest way to get started with p5.party is to load it from a [CDN](https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js) or download the latest [release](https://github.com/jbakse/p5.party/releases) .
 
-Visit the [P5 Web Editor Quick Start Guide](https://www.notion.so/P5-js-Web-Editor-Quick-Start-Guide-5cc4a197886a4bda89573f5879e47c78) or [VS Code Quick Start Guide](https://www.notion.so/Hello-p5-party-c4c0f94127c1408e9d6dd51f91ac8414) to get started!
+Visit the [p5.js Web Editor Quick Start Guide (p5.js 1)](https://justinbakse.notion.site/p5-js-Web-Editor-Quick-Start-Guide-p5-js-1-5cc4a197886a4bda89573f5879e47c78), [VS Code Quick Start Guide (p5.js 1)](https://justinbakse.notion.site/VS-Code-Quick-Start-Guide-p5-js-1-c4c0f94127c1408e9d6dd51f91ac8414), or [p5.js 2 Quick Start Guide](https://justinbakse.notion.site/p5-js-2-Quick-Start-Guide-3fcb1bb21cec8151a1c9e642605dc22f) to get started!
+
+Not using p5.js? See [Using p5.party without p5.js](https://justinbakse.notion.site/Using-p5-party-without-p5-js-3fcb1bb21cec81869935fc26321e6d1e).
 
 ## Server Installation
 
