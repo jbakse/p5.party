@@ -12,7 +12,8 @@
 //
 // p5.js 2: functions are added via p5.registerAddon(). There is no
 // preload(), so those three functions return Promises to await in an async
-// setup().
+// setup(). If the p5.js-compatibility preload add-on is loaded, they also
+// work in preload() like p5.js 1.
 
 import { JSONObject, UserData, SubscriptionCallback } from "./validate";
 
@@ -22,8 +23,11 @@ import * as party from "./party";
 
 export function installP5(p5Constructor: any): void {
   if (typeof p5Constructor.registerAddon === "function") {
-    p5Constructor.registerAddon((registeredP5: any, fn: any) =>
-      init(registeredP5, fn)
+    p5Constructor.registerAddon(
+      (registeredP5: any, fn: any, lifecycles: any) => {
+        init(registeredP5, fn);
+        lifecycles.presetup = waitForPreloads;
+      }
     );
   } else {
     init(p5Constructor, p5Constructor.prototype);
@@ -37,12 +41,34 @@ function supportsPreload(instance: any): boolean {
   );
 }
 
+// p5.js 2 + p5.js-compatibility preload add-on: loads started in preload()
+const pendingPreloads: Promise<unknown>[] = [];
+
+async function waitForPreloads() {
+  // p5.js 2 calls every add-on's presetup hook before awaiting any of them,
+  // and the compatibility add-on's hook runs preload() synchronously. Waiting
+  // one tick lets preload() run first, even if that add-on registered after
+  // p5.party.
+  await Promise.resolve();
+  await Promise.allSettled(pendingPreloads);
+}
+
 function withPreload<T>(
   instance: any,
   operation: Promise<T>,
   legacyResult: T | undefined,
   methodName: string
 ): T | undefined | Promise<T> {
+  // p5.js 2 + p5.js-compatibility preload add-on, called from preload()
+  if (instance._isInPreload === true) {
+    pendingPreloads.push(
+      operation.catch((error: unknown) => {
+        log.error(`${methodName} failed`, error);
+      })
+    );
+    return legacyResult;
+  }
+
   if (!supportsPreload(instance)) return operation;
 
   // p5.js 1 increments the preload count for us, but only when the method is

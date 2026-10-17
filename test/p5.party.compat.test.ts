@@ -59,7 +59,7 @@ describe("p5.js compatibility", () => {
 
     if (isV2) {
       p5Constructor.registerAddon = (addon: Function) => {
-        addon(p5Constructor, p5Constructor.prototype);
+        addon(p5Constructor, p5Constructor.prototype, {});
       };
     }
 
@@ -185,5 +185,14 @@ describe("p5.js compatibility", () => {
     await instance.partyConnect("ws://host", "app");
     await (window as any).p5party.connect("ws://host", "app");
     expect(state.rooms.length).toBe(1);
+  });
+
+  it("supports preload() with the p5.js 2 compatibility add-on", async () => {
+    const { p5Constructor, state } = loadP5Party(true);
+    const instance = Object.create(p5Constructor.prototype);
+    instance._isInPreload = true;
+
+    expect(instance.partyConnect("ws://host", "app")).toBeUndefined();
+    expect(instance.partyLoadShared("shared")).toBe(state.shared);
   });
 });
