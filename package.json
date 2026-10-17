@@ -12,7 +12,7 @@
   "main": "dist/p5.party.js",
   "types": "dist/p5.party.d.ts",
   "engines": {
-    "node": "22.11.0"
+    "node": "24.x"
   },
   "repository": {
     "type": "git",
