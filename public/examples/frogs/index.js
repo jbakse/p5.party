@@ -1,5 +1,5 @@
-// require https://cdn.jsdelivr.net/npm/p5@latest/lib/p5.min.js
-// require https://cdn.jsdelivr.net/npm/p5@latest/lib/addons/p5.sound.js
+// require https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/p5.min.js
+// require https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/addons/p5.sound.js
 // require https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js
 
 /* global outputVolume */

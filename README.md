@@ -86,25 +86,25 @@ p5.party automatically designates one (and only one) guest in each room as the h
 <img src="assets/hello_p5party_opt.gif" align="right"/>
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/p5@2/lib/p5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/p5@1/lib/p5.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js"></script>
 ```
 
 ```javascript
 let shared;
 
-async function setup() {
-  // Connect and load shared data before continuing setup.
-  await partyConnect("...", "hello_party");
-  shared = await partyLoadShared("shared");
+function preload() {
+  // connect to the server
+  partyConnect("wss://demoserver.p5party.org", "hello_party");
 
+  // load a shared data object, with starting values
+  shared = partyLoadShared("shared", { x: 200, y: 200 });
+}
+
+function setup() {
   createCanvas(400, 400);
   noStroke();
   fill("red");
-
-  // set initial values if they are not set*
-  shared.x ??= width * 0.5;
-  shared.y ??= height * 0.5;
 }
 
 function mousePressed() {
@@ -120,18 +120,74 @@ function draw() {
 }
 ```
 
-\*using the newish [ES2020 ??= Operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_nullish_assignment)
+### p5.js 2
 
-This version of the example uses p5.js 2, where `partyConnect()`, `partyLoadShared()`, and `partyLoadMyShared()` return Promises. With p5.js 1, keep using `preload()` as before:
+p5.js 2 doesn't have `preload()`. Make `setup()` async and `await` loading. With p5.js 2, `partyConnect()`, `partyLoadShared()`, and `partyLoadMyShared()` return Promises.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/p5@2/lib/p5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js"></script>
+```
 
 ```javascript
-function preload() {
-  partyConnect("...", "hello_party");
-  shared = partyLoadShared("shared");
+let shared;
+
+async function setup() {
+  createCanvas(400, 400);
+  noStroke();
+  fill("red");
+
+  await partyConnect("wss://demoserver.p5party.org", "hello_party");
+  shared = await partyLoadShared("shared", { x: 200, y: 200 });
+}
+
+function mousePressed() {
+  // mousePressed() can be called before setup() finishes loading
+  if (!shared) return;
+  shared.x = mouseX;
+  shared.y = mouseY;
+}
+
+function draw() {
+  background("white");
+  ellipse(shared.x, shared.y, 100, 100);
 }
 ```
 
-p5.party detects the p5.js version at runtime, retaining preload synchronization and immediate shared-object returns in p5.js 1 while returning Promises in p5.js 2.
+p5.party detects the p5.js version when it loads. If you use the [p5.js-compatibility](https://github.com/processing/p5.js-compatibility) preload add-on with p5.js 2, the p5.js 1 version above works too.
+
+### Without p5.js
+
+p5.party also works without p5.js. Use the `p5party` namespace: `p5party.connect()`, `p5party.loadShared()`, `p5party.isHost()`, and so on. The loading functions return Promises.
+
+```html
+<canvas id="canvas" width="400" height="400"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js"></script>
+<script type="module">
+  await p5party.connect("wss://demoserver.p5party.org", "hello_party");
+  const shared = await p5party.loadShared("shared", { x: 200, y: 200 });
+
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.addEventListener("pointerdown", (e) => {
+    shared.x = e.offsetX;
+    shared.y = e.offsetY;
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    ctx.arc(shared.x, shared.y, 50, 0, Math.PI * 2);
+    ctx.fillStyle = "red";
+    ctx.fill();
+    requestAnimationFrame(draw);
+  }
+  draw();
+</script>
+```
+
+See the [hello_party_v2](https://p5party.org/examples/hello_party_v2/), [hello_party_vanilla](https://p5party.org/examples/hello_party_vanilla/), and [hello_party_vanilla_dom](https://p5party.org/examples/hello_party_vanilla_dom/) examples.
 
 ## Installation and Quickstart
 
