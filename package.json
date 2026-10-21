@@ -16,7 +16,8 @@
   "files": [
     "src",
     "dist",
-    "types"
+    "types",
+    "docs/api.md"
   ],
   "main": "dist/p5.party.js",
   "module": "dist/p5.party.mjs",
@@ -51,7 +52,7 @@
     "!posttest": "istanbul-badges-readme",
     "prenetlify": "npm run genversion",
     "prebuild": "npm run genversion",
-    "build": "npm run esbuild -- --outfile=dist/p5.party.js --loader:.css=text && npm run esbuild:esm -- --outfile=dist/p5.party.mjs && npm run build:types",
+    "build": "npm run esbuild -- --outfile=dist/p5.party.js --loader:.css=text && npm run esbuild:esm -- --outfile=dist/p5.party.mjs && npm run build:types && npm run docs",
     "prerelease": "npm run build",
     "prepublishOnly": "npm run build",
     "postpublish": "curl https://purge.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js",
@@ -59,7 +60,8 @@
     "esbuild": "esbuild src/p5.party.ts --bundle --sourcemap --minify --target=es6 --define:global=window --inject:esbuild.inject.js --loader:.css=text",
     "test:types": "tsc -p test-types",
     "build:types": "tsc -p tsconfig.types.json && mv types/types.d.ts types/p5.party.d.ts",
-    "esbuild:esm": "esbuild src/index.ts --bundle --sourcemap --minify --format=esm --target=es2017 --define:global=window --inject:esbuild.inject.js --loader:.css=text"
+    "esbuild:esm": "esbuild src/index.ts --bundle --sourcemap --minify --format=esm --target=es2017 --define:global=window --inject:esbuild.inject.js --loader:.css=text",
+    "docs": "node scripts/build-api-docs.mjs"
   },
   "dependencies": {
     "@deepstream/client": "^5.2.6",

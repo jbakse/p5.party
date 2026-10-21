@@ -249,6 +249,8 @@ The quickest way to get started with p5.party is to load it from a [CDN](https:/
 
 Visit the [p5.js Web Editor Quick Start Guide (p5.js 1)](https://justinbakse.notion.site/p5-js-Web-Editor-Quick-Start-Guide-p5-js-1-5cc4a197886a4bda89573f5879e47c78), [VS Code Quick Start Guide (p5.js 1)](https://justinbakse.notion.site/VS-Code-Quick-Start-Guide-p5-js-1-c4c0f94127c1408e9d6dd51f91ac8414), or [p5.js 2 Quick Start Guide](https://justinbakse.notion.site/p5-js-2-Quick-Start-Guide-3fcb1bb21cec8151a1c9e642605dc22f) to get started!
 
+Looking for every function? See the [API reference](docs/api.md).
+
 Not using p5.js? See [Using p5.party without p5.js](https://justinbakse.notion.site/Using-p5-party-without-p5-js-3fcb1bb21cec81869935fc26321e6d1e).
 
 ## Server Installation

@@ -1,0 +1,23 @@
+# p5.party
+
+> p5.party is a JavaScript library for quickly prototyping multi-user sketches, games, and apps. Clients connect to a shared server (no server code to write), load "shared objects", and read/write them like plain objects; p5.party syncs them between everyone in the same room. It works with p5.js 1 (preload), p5.js 2 (async setup + await), and plain JavaScript (the `p5party` namespace). It is for sketching and prototyping: no persistence guarantees, no authentication.
+
+Load it with a script tag (`https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js`, after p5.js if used) or from npm (`import { p5party } from "p5.party"`). Use a unique app name. Free demo server for prototypes: `wss://demoserver.p5party.org`.
+
+## Docs
+
+- [API reference](https://cdn.jsdelivr.net/npm/p5.party@latest/docs/api.md): every function (p5party.* and the p5.js partyXyz() functions), signatures, usage for p5.js 1 / p5.js 2 / plain JS, and common gotchas. Also on [GitHub](https://github.com/jbakse/p5.party/blob/main/docs/api.md).
+- [README](https://github.com/jbakse/p5.party#readme): overview and quick examples.
+- [TypeScript types](https://cdn.jsdelivr.net/npm/p5.party@latest/types/p5.party.d.ts): the published declarations, with JSDoc.
+
+## Examples
+
+- [Examples index](https://p5party.org/examples/): dozens of small sketches and games.
+- [hello_party](https://p5party.org/examples/hello_party/): the minimal p5.js 1 example.
+- [hello_party_v2](https://p5party.org/examples/hello_party_v2/): p5.js 2.
+- [hello_party_vanilla](https://p5party.org/examples/hello_party_vanilla/): no p5.js.
+
+## Optional
+
+- [Guides (Notion)](https://justinbakse.notion.site/Welcome-to-p5-party-887564cad8ec455e9bee994362322f2e): longer guides on shared objects, hosts, rooms, messaging, and avoiding write conflicts.
+- [Source](https://github.com/jbakse/p5.party)
