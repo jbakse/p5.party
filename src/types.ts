@@ -64,6 +64,10 @@ export interface P5PartyAPI {
   /**
    * Loads this client's own shared object ("myShared"), which every other
    * client can see in `loadGuestShareds()`.
+   *
+   * Each page load gets a new, empty myShared (a client that reloads or
+   * reconnects doesn't get its old data back), so `initObject` always
+   * applies. Use `===` to find it in `loadGuestShareds()`.
    * @param initObject starting values
    * @returns resolves to this client's shared object once it's loaded
    * @throws (rejects) if called before `connect()`
@@ -72,7 +76,9 @@ export interface P5PartyAPI {
 
   /**
    * Returns a live array of every guest's "myShared" object, including this
-   * client's. The array updates as guests join, leave, and add data.
+   * client's (the same object `loadMyShared()` returns, so `guest === me`
+   * works). The array updates as guests join, leave, and add data, so you
+   * can call this once, right after connecting, and keep it.
    *
    * Guests with empty shared objects are left out. But a guest's object may
    * not have the properties you expect yet (or another sketch using the same
@@ -85,18 +91,20 @@ export interface P5PartyAPI {
 
   /**
    * Returns true if this client is the room's host. Every room with guests
-   * has exactly one host.
+   * has exactly one host: the guest who has been in the room the longest.
+   * It's known as soon as `connect()` resolves. If the host leaves, another
+   * guest becomes host, so check `isHost()` each time you need it.
    */
   isHost(): boolean;
 
   /**
-   * Replaces all of a shared object's properties with `data` (not merged).
-   * `setShared(shared, {})` clears it.
+   * Replaces all of a shared object's properties with `data` (not merged):
+   * properties not in `data` are removed. `setShared(shared, {})` clears it.
    */
   setShared<T extends object>(shared: T, data: Partial<T>): void;
 
   /**
-   * Calls `callback` when the shared object changes.
+   * Calls `callback` with the whole shared object when it changes.
    * @param triggerNow also call `callback` right away
    */
   watchShared<T extends object>(
@@ -105,7 +113,7 @@ export interface P5PartyAPI {
     triggerNow?: boolean
   ): void;
   /**
-   * Calls `callback` when the value at `path` on the shared object changes.
+   * Calls `callback` with the value at `path` when it changes.
    * @param path a property path, e.g. `"position.x"`
    * @param triggerNow also call `callback` right away
    */

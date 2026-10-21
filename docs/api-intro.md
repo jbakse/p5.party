@@ -15,9 +15,9 @@ More: [README](https://github.com/jbakse/p5.party#readme) · [Examples](https://
 <script src="https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js"></script>
 ```
 
-This defines the global `p5party` namespace and, when p5.js is loaded, adds the `partyXyz()` functions to p5.
+For p5.js 2, use `https://cdn.jsdelivr.net/npm/p5@2.3.4/lib/p5.js`. The same p5.party script works with p5.js 1, p5.js 2, or no p5.js at all. It defines the global `p5party` namespace and, when p5.js is loaded, adds the `partyXyz()` functions to p5.
 
-**npm + a bundler** (Vite, etc.):
+**npm + a bundler** (Vite, etc.). The package includes TypeScript types; `import type { JSONObject } from "p5.party"` for the helper types:
 
 ```js
 import { p5party } from "p5.party";
@@ -69,7 +69,7 @@ function draw() {
 }
 ```
 
-**No p5.js**: use the `p5party` namespace; the loading functions return Promises.
+**No p5.js**: use the `p5party` namespace; the loading functions return Promises. Top-level `await` works in a `<script type="module">`; in a regular `<script>`, put this in an `async` function.
 
 ```js
 await p5party.connect("wss://demoserver.p5party.org", "my_app");
@@ -83,6 +83,8 @@ shared.x = 100; // synced to everyone in the room
 - **Shared objects hold JSON data only**: numbers, strings, booleans, `null`, arrays, and plain objects. Not functions, class instances, or p5 objects (store `color.toString()` or `{ x, y }` instead).
 - **Don't reassign a shared object** (`shared = { x: 1 }` breaks syncing). Set properties (`shared.x = 1`) or use `setShared()` / `partySetShared()` to replace everything.
 - **Starting values only apply if the room is empty.** Otherwise you get the existing data.
+- **Telling guests apart:** there are no built-in guest ids. Your own object is in the guest list (`guest === me`); to label others, store something in your myShared, e.g. `loadMyShared({ name, hue })`.
+- **The host** is the guest who has been in the room longest. It's known when `connect()` resolves and changes only when the host leaves, so check `isHost()` when you need it (e.g. each frame) instead of once.
 - **Check other guests' data before using it.** `loadGuestShareds()` leaves out empty objects, but a guest may not have the properties you expect yet, or may be another sketch using the same app name.
 - **p5.js 2:** `draw()` waits for an `async setup()`, but event handlers like `mousePressed()` don't. Check that shared objects are loaded first.
 - **Write conflicts:** if two clients write to the same shared object at almost the same time, one write is lost. Have each client write to its own `loadMyShared()` object, or let the host (`isHost()`) do shared writes.
