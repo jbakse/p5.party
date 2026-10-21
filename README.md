@@ -189,6 +189,60 @@ p5.party also works without p5.js. Use the `p5party` namespace: `p5party.connect
 
 See the [hello_party_v2](https://p5party.org/examples/hello_party_v2/), [hello_party_vanilla](https://p5party.org/examples/hello_party_vanilla/), and [hello_party_vanilla_dom](https://p5party.org/examples/hello_party_vanilla_dom/) examples.
 
+### npm, bundlers, and TypeScript
+
+Using the `<script>` tag? You can skip this section.
+
+If you build your project with a bundler like Vite, install p5.party from npm and import it:
+
+```bash
+npm install p5.party
+```
+
+```ts
+import { p5party } from "p5.party";
+
+type Player = { x: number; y: number };
+
+async function main() {
+  await p5party.connect("wss://demoserver.p5party.org", "my_app");
+  const me = await p5party.loadMyShared<Player>({ x: 0, y: 0 });
+  me.x = 100;
+
+  for (const guest of p5party.loadGuestShareds<Player>()) {
+    if (typeof guest.x !== "number") continue; // see below
+    console.log(guest.x, guest.y);
+  }
+}
+main();
+```
+
+p5.party includes TypeScript types. A type like `Player` describes your shared data, but p5.party doesn't check it: starting values are only used if the room is empty, and other clients (or an older version of your sketch) may have written different data. Check a guest's data before you use it.
+
+**Importing p5.js too?** p5.party adds `partyConnect()` and the other p5 functions automatically when p5.js is loaded with a `<script>` tag. If you `import p5 from "p5"` instead, call `p5party.installP5(p5)` before you create your sketch:
+
+```js
+import p5 from "p5";
+import { p5party } from "p5.party";
+
+p5party.installP5(p5);
+
+new p5((p) => {
+  let shared;
+  p.setup = async () => {
+    p.createCanvas(400, 400);
+    await p.partyConnect("wss://demoserver.p5party.org", "my_app");
+    shared = await p.partyLoadShared("shared", { x: 200, y: 200 });
+  };
+  p.draw = () => {
+    p.background(220);
+    p.ellipse(shared.x, shared.y, 100, 100);
+  };
+});
+```
+
+(In TypeScript, p5's own types don't include the `partyXyz()` functions on the sketch object yet.)
+
 ## Installation and Quickstart
 
 The quickest way to get started with p5.party is to load it from a [CDN](https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js) or download the latest [release](https://github.com/jbakse/p5.party/releases) .
