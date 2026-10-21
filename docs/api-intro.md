@@ -2,7 +2,7 @@
 
 p5.party is a library for making multi-user sketches and prototypes. Clients connect to a shared server, load **shared objects**, and read and write them like plain JavaScript objects. p5.party keeps them in sync between everyone in the same room. It works with p5.js 1, p5.js 2, and plain JavaScript.
 
-More: [README](https://github.com/jbakse/p5.party#readme) · [Examples](https://p5party.org/examples/) · [Guides (Notion)](https://justinbakse.notion.site/Welcome-to-p5-party-887564cad8ec455e9bee994362322f2e)
+This is a compact reference for quick lookup and tools. The main documentation, with guides and tutorials, is at [p5party.org](https://p5party.org/) and in the [p5.party docs on Notion](https://justinbakse.notion.site/Welcome-to-p5-party-887564cad8ec455e9bee994362322f2e). See also the [README](https://github.com/jbakse/p5.party#readme) and the [examples](https://p5party.org/examples/).
 
 > This file is generated from `src/types.ts` by `npm run docs`. Edit the JSDoc there, or this intro in `docs/api-intro.md`.
 

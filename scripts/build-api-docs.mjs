@@ -79,6 +79,11 @@ function renderInterface(name, prefix) {
   const groups = new Map(); // overloads share a name
   for (const member of declaration.members) {
     if (!ts.isMethodSignature(member)) continue;
+    // @hidden members are left out of the reference (e.g. installP5, which
+    // is documented with bundler usage instead)
+    if (ts.getJSDocTags(member).some((t) => t.tagName.text === "hidden")) {
+      continue;
+    }
     const key = member.name.getText(source);
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(member);

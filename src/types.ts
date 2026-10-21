@@ -155,6 +155,7 @@ export interface P5PartyAPI {
    * `import p5 from "p5"` in a bundler. With `<script>` tags, p5.party does
    * this for you. Call it before creating your sketch.
    * @param p5 the p5 constructor
+   * @hidden
    */
   installP5(p5: unknown): void;
 }

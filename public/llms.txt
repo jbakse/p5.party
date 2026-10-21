@@ -6,7 +6,8 @@ Load it with a script tag (`https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5
 
 ## Docs
 
-- [API reference](https://cdn.jsdelivr.net/npm/p5.party@latest/docs/api.md): every function (p5party.* and the p5.js partyXyz() functions), signatures, usage for p5.js 1 / p5.js 2 / plain JS, and common gotchas. Also on [GitHub](https://github.com/jbakse/p5.party/blob/main/docs/api.md).
+- [p5.party docs (Notion)](https://justinbakse.notion.site/Welcome-to-p5-party-887564cad8ec455e9bee994362322f2e): the main documentation: quick start guides (p5.js 1, p5.js 2, no p5.js), guides on shared objects, hosts, rooms, messaging, and avoiding write conflicts, the full API reference, and gotchas.
+- [API reference](https://cdn.jsdelivr.net/npm/p5.party@latest/docs/api.md): a compact, single-page reference of every function (p5party.* and the p5.js partyXyz() functions) with usage for p5.js 1 / p5.js 2 / plain JS and common gotchas; handy for tools. Also on [GitHub](https://github.com/jbakse/p5.party/blob/main/docs/api.md).
 - [README](https://github.com/jbakse/p5.party#readme): overview and quick examples.
 - [TypeScript types](https://cdn.jsdelivr.net/npm/p5.party@latest/types/p5.party.d.ts): the published declarations, with JSDoc.
 
@@ -19,5 +20,4 @@ Load it with a script tag (`https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5
 
 ## Optional
 
-- [Guides (Notion)](https://justinbakse.notion.site/Welcome-to-p5-party-887564cad8ec455e9bee994362322f2e): longer guides on shared objects, hosts, rooms, messaging, and avoiding write conflicts.
 - [Source](https://github.com/jbakse/p5.party)
