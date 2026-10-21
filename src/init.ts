@@ -36,7 +36,10 @@ export function init(): P5PartyAPI {
     installP5(w.p5);
   } else {
     log.styled("font-weight: bold", `p5.party v${version}`);
-    log.log("p5.js not found. Use the p5party.* API, e.g. p5party.connect().");
+    log.log(
+      "p5.js not found. Use the p5party.* API, e.g. p5party.connect(). " +
+        "(Importing p5 in a bundler? Call p5party.installP5(p5).)"
+    );
   }
 
   return namespace;
