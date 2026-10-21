@@ -210,14 +210,13 @@ async function main() {
   me.x = 100;
 
   for (const guest of p5party.loadGuestShareds<Player>()) {
-    if (typeof guest.x !== "number") continue; // see below
     console.log(guest.x, guest.y);
   }
 }
 main();
 ```
 
-p5.party includes TypeScript types. A type like `Player` describes your shared data, but p5.party doesn't check it: starting values are only used if the room is empty, and other clients (or an older version of your sketch) may have written different data. Check a guest's data before you use it.
+p5.party includes TypeScript types. A type like `Player` describes your shared data, but p5.party doesn't check it at runtime: an older version of your sketch, or another sketch using the same app name, can still write differently shaped data.
 
 **Importing p5.js too?** p5.party adds `partyConnect()` and the other p5 functions automatically when p5.js is loaded with a `<script>` tag. If you `import p5 from "p5"` instead, call `p5party.installP5(p5)` before you create your sketch:
 

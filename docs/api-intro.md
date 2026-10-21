@@ -85,7 +85,8 @@ shared.x = 100; // synced to everyone in the room
 - **Starting values only apply if the room is empty.** Otherwise you get the existing data.
 - **Telling guests apart:** there are no built-in guest ids. Your own object is in the guest list (`guest === me`); to label others, store something in your myShared, e.g. `loadMyShared({ name, hue })`.
 - **The host** is the guest who has been in the room longest. It's known when `connect()` resolves and changes only when the host leaves, so check `isHost()` when you need it (e.g. each frame) instead of once.
-- **Check other guests' data before using it.** `loadGuestShareds()` leaves out empty objects, but a guest may not have the properties you expect yet, or may be another sketch using the same app name.
+- **Give your myShared object starting values for every property.** A guest appears in `loadGuestShareds()` as soon as their object has any data, so properties set later can be missing for a moment.
+- **Old versions of your sketch keep running.** Tabs still running old code keep connecting to the same app and room, with whatever data shape that code uses. Reload every tab after you change your code, or check a guest's data before you use it.
 - **p5.js 2:** `draw()` waits for an `async setup()`, but event handlers like `mousePressed()` don't. Check that shared objects are loaded first.
 - **Write conflicts:** if two clients write to the same shared object at almost the same time, one write is lost. Have each client write to its own `loadMyShared()` object, or let the host (`isHost()`) do shared writes.
 - **Nothing is permanent or secure.** Shared data lasts until the server restarts; there are no accounts or permissions. p5.party is for sketching and prototyping.

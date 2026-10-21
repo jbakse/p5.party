@@ -80,10 +80,10 @@ export interface P5PartyAPI {
    * works). The array updates as guests join, leave, and add data, so you
    * can call this once, right after connecting, and keep it.
    *
-   * Guests with empty shared objects are left out. But a guest's object may
-   * not have the properties you expect yet (or another sketch using the same
-   * app name may have written different data), so check before using it,
-   * e.g. `if (typeof guest.x !== "number") continue;`.
+   * Guests with empty shared objects are left out; a guest appears once
+   * their object has data, so give `loadMyShared()` starting values for
+   * every property. An older version of your sketch (or another sketch using
+   * the same app name) can still put differently shaped data here.
    *
    * Call after connecting.
    */
@@ -215,8 +215,7 @@ export interface P5PartyFunctions {
 
   /**
    * Returns a live array of every guest's "myShared" object. Guests with
-   * empty objects are left out, but check that a guest has the properties
-   * you need before using them. See `p5party.loadGuestShareds()`.
+   * empty objects are left out. See `p5party.loadGuestShareds()`.
    */
   partyLoadGuestShareds<T extends object = JSONObject>(): T[];
 
