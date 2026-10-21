@@ -195,4 +195,49 @@ describe("p5.js compatibility", () => {
     expect(instance.partyConnect("ws://host", "app")).toBeUndefined();
     expect(instance.partyLoadShared("shared")).toBe(state.shared);
   });
+
+  it("adds the p5 functions with p5party.installP5() (bundlers)", () => {
+    const { p5Constructor } = loadP5Party(false, false);
+    expect(p5Constructor.prototype.partyConnect).toBeUndefined();
+
+    (window as any).p5party.installP5(p5Constructor);
+    expect(typeof p5Constructor.prototype.partyConnect).toBe("function");
+  });
+
+  it("installs into the same p5 only once", () => {
+    // installed automatically at load, because p5 is a global
+    const { p5Constructor } = loadP5Party(false);
+    (window as any).p5party.installP5(p5Constructor);
+
+    const registered = (
+      p5Constructor.prototype.registerPreloadMethod as jest.Mock
+    ).mock.calls.length;
+    expect(registered).toBe(3);
+  });
+
+  it("reuses the first copy when p5.party is loaded twice", () => {
+    loadP5Party(false, false);
+    const first = (window as any).p5party;
+
+    let moduleExport: unknown;
+    jest.isolateModules(() => {
+      require("../src/p5.party");
+      moduleExport = require("../src/index").p5party;
+    });
+
+    expect((window as any).p5party).toBe(first);
+    expect(moduleExport).toBe(first);
+  });
+
+  it("exports p5party from the module build", () => {
+    loadP5Party(false, false); // sets up the mocks
+    delete (window as any).p5party; // start fresh
+
+    let moduleExport: any;
+    jest.isolateModules(() => {
+      moduleExport = require("../src/index").p5party;
+    });
+    expect(moduleExport).toBe((window as any).p5party);
+    expect(typeof moduleExport.connect).toBe("function");
+  });
 });

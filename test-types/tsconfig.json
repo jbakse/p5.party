@@ -1,0 +1,16 @@
+{
+  // Type tests for the published declarations (types/p5.party.d.ts).
+  // Run with `npm run test:types` (after `npm run build`).
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "types": [],
+    "paths": {
+      "p5.party": ["../types/p5.party.d.ts"]
+    }
+  },
+  "include": ["*.ts"]
+}

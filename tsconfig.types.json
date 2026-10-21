@@ -1,0 +1,13 @@
+{
+  // Builds the published type declarations (types/p5.party.d.ts) from
+  // src/types.ts. Used by `npm run build:types`.
+  "compilerOptions": {
+    "strict": true,
+    "target": "es2017",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "types": [],
+    "outDir": "./types"
+  },
+  "files": ["src/types.ts"]
+}

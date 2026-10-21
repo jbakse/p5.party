@@ -15,13 +15,20 @@
 // setup(). If the p5.js-compatibility preload add-on is loaded, they also
 // work in preload() like p5.js 1.
 
-import { JSONObject, UserData, SubscriptionCallback } from "./validate";
+import type { P5PartyFunctions, JSONObject } from "./types";
 
 import { version } from "../version";
 import * as log from "./log";
 import * as party from "./party";
 
+// p5 constructors already set up, so installP5() is safe to call twice (e.g.
+// automatically at load and again by p5party.installP5() in a bundler)
+const installed = new WeakSet<object>();
+
 export function installP5(p5Constructor: any): void {
+  if (!p5Constructor || installed.has(p5Constructor)) return;
+  installed.add(p5Constructor);
+
   if (typeof p5Constructor.registerAddon === "function") {
     p5Constructor.registerAddon(
       (registeredP5: any, fn: any, lifecycles: any) => {
@@ -100,115 +107,130 @@ function init(p5Constructor: any, fn: any) {
     fn.registerPreloadMethod("partyLoadMyShared", fn);
   }
 
-  /// partyConnect (preload)
+  // The functions are typed against P5PartyFunctions (types.ts), the
+  // published API types. `this` is the p5 instance they're called on.
+  const functions: P5PartyFunctions = {
+    /// partyConnect (preload)
 
-  fn.partyConnect = function (
-    host: string,
-    appName: string,
-    roomName = "_main",
-    cb?: () => void
-  ) {
-    const connected = party
-      .connect(host, appName, roomName, "partyConnect()")
-      .then(() => cb?.());
-    return withPreload(this, connected, undefined, "partyConnect()");
+    partyConnect(this: any, server, appName, roomName = "_main", callback) {
+      const connected = party
+        .connect(server, appName, roomName, "partyConnect()")
+        .then(() => callback?.());
+      return withPreload(this, connected, undefined, "partyConnect()");
+    },
+
+    partyDisconnect() {
+      party.disconnect("partyDisconnect()");
+    },
+
+    /// partyLoadShared (preload)
+
+    partyLoadShared<T extends object = JSONObject>(
+      this: any,
+      name: string,
+      initObject?: T,
+      callback?: (shared: T) => void
+    ): T {
+      const load = party.startLoadShared(name, initObject, "partyLoadShared()");
+      if (!load) return undefined as unknown as T;
+      const loaded = load.loaded.then((shared) => {
+        callback?.(shared as unknown as T);
+        return shared;
+      });
+      // p5.js 1: the shared object; p5.js 2: a Promise (see P5PartyFunctions)
+      return withPreload(
+        this,
+        loaded,
+        load.shared,
+        "partyLoadShared()"
+      ) as unknown as T;
+    },
+
+    /// partyLoadMyShared (preload)
+
+    partyLoadMyShared<T extends object = JSONObject>(
+      this: any,
+      initObject?: T,
+      callback?: (shared: T) => void
+    ): T {
+      const load = party.startLoadMyShared(
+        initObject ?? {},
+        "partyLoadMyShared()"
+      );
+      if (!load) return undefined as unknown as T;
+      const loaded = load.loaded.then((shared) => {
+        callback?.(shared as unknown as T);
+        return shared;
+      });
+      return withPreload(
+        this,
+        loaded,
+        load.shared,
+        "partyLoadMyShared()"
+      ) as unknown as T;
+    },
+
+    /// partyLoadGuestShareds
+
+    partyLoadGuestShareds<T extends object = JSONObject>(): T[] {
+      const guests = party.loadGuestShareds("partyLoadGuestShareds()");
+      return (guests ?? []) as unknown[] as T[];
+    },
+
+    partyLoadParticipantShareds<T extends object = JSONObject>(): T[] {
+      log.warn(
+        "partyLoadParticipantShareds is deprecated. Use partyLoadGuestShareds instead."
+      );
+      const guests = party.loadGuestShareds("partyLoadParticipantShareds()");
+      return (guests ?? []) as unknown[] as T[];
+    },
+
+    /// partyIsHost
+
+    partyIsHost() {
+      return party.isHost("partyIsHost()");
+    },
+
+    /// partySetShared
+
+    partySetShared(shared, data) {
+      party.setShared(
+        shared as JSONObject,
+        data as JSONObject,
+        "partySetShared()"
+      );
+    },
+
+    /// partyWatchShared
+
+    partyWatchShared(shared: object, a: any, b?: any, c?: any): void {
+      party.watchShared(shared as JSONObject, a, b, c, "partyWatchShared()");
+    },
+
+    /// partySubscribe
+
+    partySubscribe(eventName, callback) {
+      party.subscribe(eventName, callback, "partySubscribe()");
+    },
+
+    /// partyUnsubscribe
+
+    partyUnsubscribe(eventName, callback) {
+      party.unsubscribe(eventName, callback, "partyUnsubscribe()");
+    },
+
+    /// partyEmit
+
+    partyEmit(eventName, data) {
+      party.emit(eventName, data, "partyEmit()");
+    },
+
+    /// partyToggleInfo
+
+    partyToggleInfo(show) {
+      party.toggleInfo(show, "partyToggleInfo()");
+    },
   };
 
-  fn.partyDisconnect = function () {
-    party.disconnect("partyDisconnect()");
-  };
-
-  /// partyLoadShared (preload)
-
-  fn.partyLoadShared = function (
-    name: string,
-    initObject?: UserData,
-    cb?: (shared: JSONObject) => void
-  ): JSONObject | undefined | Promise<JSONObject> {
-    const load = party.startLoadShared(name, initObject, "partyLoadShared()");
-    if (!load) return undefined;
-    const loaded = load.loaded.then((shared) => {
-      cb?.(shared);
-      return shared;
-    });
-    return withPreload(this, loaded, load.shared, "partyLoadShared()");
-  };
-
-  /// partyLoadMyShared (preload)
-
-  fn.partyLoadMyShared = function (
-    initObject: UserData = {},
-    cb?: (shared: JSONObject) => void
-  ): JSONObject | undefined | Promise<JSONObject> {
-    const load = party.startLoadMyShared(initObject, "partyLoadMyShared()");
-    if (!load) return undefined;
-    const loaded = load.loaded.then((shared) => {
-      cb?.(shared);
-      return shared;
-    });
-    return withPreload(this, loaded, load.shared, "partyLoadMyShared()");
-  };
-
-  /// partyLoadGuestShareds
-
-  fn.partyLoadGuestShareds = function () {
-    return party.loadGuestShareds("partyLoadGuestShareds()");
-  };
-
-  fn.partyLoadParticipantShareds = function () {
-    log.warn(
-      "partyLoadParticipantShareds is deprecated. Use partyLoadGuestShareds instead."
-    );
-    return party.loadGuestShareds("partyLoadParticipantShareds()");
-  };
-
-  /// partyIsHost
-
-  fn.partyIsHost = function (): boolean {
-    return party.isHost("partyIsHost()");
-  };
-
-  /// partySetShared
-
-  fn.partySetShared = function (shared: JSONObject, object: JSONObject): void {
-    party.setShared(shared, object, "partySetShared()");
-  };
-
-  /// partyWatchShared
-
-  fn.partyWatchShared = function (
-    shared: JSONObject,
-    a: any,
-    b: any,
-    c: any
-  ): void {
-    party.watchShared(shared, a, b, c, "partyWatchShared()");
-  };
-
-  /// partySubscribe
-
-  fn.partySubscribe = function (event: string, cb: SubscriptionCallback): void {
-    party.subscribe(event, cb, "partySubscribe()");
-  };
-
-  /// partyUnsubscribe
-
-  fn.partyUnsubscribe = function (
-    event: string,
-    cb?: SubscriptionCallback
-  ): void {
-    party.unsubscribe(event, cb, "partyUnsubscribe()");
-  };
-
-  /// partyEmit
-
-  fn.partyEmit = function (event: string, data?: UserData): void {
-    party.emit(event, data, "partyEmit()");
-  };
-
-  /// partyToggleInfo
-
-  fn.partyToggleInfo = function (show?: boolean) {
-    party.toggleInfo(show, "partyToggleInfo()");
-  };
+  Object.assign(fn, functions);
 }

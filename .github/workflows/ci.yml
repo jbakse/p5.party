@@ -16,6 +16,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      # Record and Room tests need a deepstream server, so CI runs only the
+      # type-check the published declarations (types/p5.party.d.ts, made by build)
+      - run: npm run test:types
+      # Record, Room, and guestShareds tests need a deepstream server, so CI runs only the
       # unit tests. Run `npm run serve` + `npm test` locally for the full suite.
       - run: npm run test:unit

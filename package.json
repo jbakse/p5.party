@@ -15,10 +15,23 @@
   },
   "files": [
     "src",
-    "dist"
+    "dist",
+    "types"
   ],
   "main": "dist/p5.party.js",
-  "types": "dist/p5.party.d.ts",
+  "module": "dist/p5.party.mjs",
+  "types": "types/p5.party.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/p5.party.d.ts",
+      "import": "./dist/p5.party.mjs",
+      "default": "./dist/p5.party.js"
+    },
+    "./dist/*": "./dist/*",
+    "./src/*": "./src/*",
+    "./types/*": "./types/*",
+    "./package.json": "./package.json"
+  },
   "engines": {
     "node": "24.x"
   },
@@ -29,7 +42,7 @@
   "scripts": {
     "start": "npm run esbuild -- --watch --outfile=public/dist/p5.party.js ",
     "test": "jest --coverage",
-    "test:unit": "jest --coverage=false --testPathIgnorePatterns Record.test Room.test",
+    "test:unit": "jest --coverage=false --testPathIgnorePatterns Record.test Room.test guestShareds.test",
     "release": "np",
     "serve": "PORT=${PORT:-6020} deepstream start",
     "netlify": "npm run esbuild -- --outfile=public/dist/p5.party.js",
@@ -38,12 +51,15 @@
     "!posttest": "istanbul-badges-readme",
     "prenetlify": "npm run genversion",
     "prebuild": "npm run genversion",
-    "build": "npm run esbuild -- --outfile=dist/p5.party.js --loader:.css=text",
+    "build": "npm run esbuild -- --outfile=dist/p5.party.js --loader:.css=text && npm run esbuild:esm -- --outfile=dist/p5.party.mjs && npm run build:types",
     "prerelease": "npm run build",
     "prepublishOnly": "npm run build",
     "postpublish": "curl https://purge.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js",
     "genversion": "genversion --es6 --semi version.js",
-    "esbuild": "esbuild src/p5.party.ts --bundle --sourcemap --minify --target=es6 --define:global=window --inject:esbuild.inject.js --loader:.css=text"
+    "esbuild": "esbuild src/p5.party.ts --bundle --sourcemap --minify --target=es6 --define:global=window --inject:esbuild.inject.js --loader:.css=text",
+    "test:types": "tsc -p test-types",
+    "build:types": "tsc -p tsconfig.types.json && mv types/types.d.ts types/p5.party.d.ts",
+    "esbuild:esm": "esbuild src/index.ts --bundle --sourcemap --minify --format=esm --target=es2017 --define:global=window --inject:esbuild.inject.js --loader:.css=text"
   },
   "dependencies": {
     "@deepstream/client": "^5.2.6",

@@ -24,3 +24,5 @@ production
 ai_plans
 
 .git
+# generated type declarations
+types
