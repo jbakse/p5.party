@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "@deepstream/client": "^5.2.6",
-    "@deepstream/server": "^5.2.6",
+    "@deepstream/server": "^10.2.4",
     "ts-dedent": "^2.2.0"
   },
   "devDependencies": {
