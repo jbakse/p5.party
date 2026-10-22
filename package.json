@@ -64,7 +64,7 @@
     "docs": "node scripts/build-api-docs.mjs"
   },
   "dependencies": {
-    "@deepstream/client": "^5.2.6",
+    "@deepstream/client": "^7.1.1",
     "@deepstream/server": "^5.2.6",
     "ts-dedent": "^2.2.0"
   },
